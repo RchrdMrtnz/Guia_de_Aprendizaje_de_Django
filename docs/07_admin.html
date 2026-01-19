@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Admin Profesional - Guía Definitiva de Django</title>
+<link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+
+
+<style>
+        :root {
+            --django-dark: #0C4B33;
+            --django-light: #44B78B;
+            --django-bg: #F8F9FA;
+            --text-main: #333333;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: var(--django-bg);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding-top: 0; /* Override Pico */
+        }
+
+        /* Navbar for mobile only or simple header */
+        header.top-bar {
+            background-color: var(--django-dark);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header.top-bar h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+        }
+
+        aside nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        aside nav a:hover {
+            background-color: rgba(68, 183, 139, 0.1);
+            color: var(--django-dark);
+        }
+
+        aside nav a.active {
+            background-color: var(--django-dark);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            display: block;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            font-weight: 700;
+            padding-left: 0.6rem;
+        }
+
+        /* Main Content Styling */
+        main {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: 1200px; /* Limit width for readability */
+            margin: 0 auto;
+        }
+
+        article h1 {
+            color: var(--django-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--django-light);
+            padding-bottom: 0.5rem;
+        }
+
+        article h2 {
+            color: var(--django-dark);
+            margin-top: 2.5rem;
+            font-size: 1.75rem;
+        }
+
+        article h3 {
+            color: #555;
+            margin-top: 1.5rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #2d2d2d !important;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 1.5rem 0;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eaeaea;
+            color: #777;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            aside {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            main { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout"><aside class="">
+<nav>
+<ul>
+<li><a class="nav-link" href="index.html">Inicio</a></li>
+<li>
+<span class="nav-section">Fundamentos</span>
+<ul>
+<li><a class="nav-link" href="01_introduccion.html">Introducción</a></li>
+<li><a class="nav-link" href="02_configuracion.html">Configuración</a></li>
+<li><a class="nav-link" href="03_modelos.html">Modelos Avanzados</a></li>
+<li><a class="nav-link" href="04_vistas_urls.html">Vistas y URLs (CBV)</a></li>
+<li><a class="nav-link" href="05_plantillas.html">Plantillas</a></li>
+<li><a class="nav-link" href="06_formularios.html">Formularios</a></li>
+<li><a class="nav-link" href="09_autenticacion.html">Autenticación</a></li>
+<li><a class="nav-link active" href="07_admin.html">Admin Profesional</a></li>
+<li><a class="nav-link" href="08_avanzado.html">Temas Avanzados</a></li>
+<li><a class="nav-link" href="recursos.html">Recursos</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside><main class="">
+<article>
+<h1 id="7-administracion-profesional">7. Administración Profesional</h1>
+<p>El panel de administración de Django es una de sus "killer features". Con muy poca configuración, obtienes una interfaz CRUD completa y gestionable.</p>
+<h2 id="personalizacion-con-modeladmin">Personalización con <code>ModelAdmin</code></h2>
+<p>Para ir más allá del registro básico, usamos clases que heredan de <code>admin.ModelAdmin</code>.</p>
+<h3 id="configuracion-comun">Configuración Común</h3>
+<ul>
+<li><code>list_display</code>: Qué columnas mostrar en la lista de objetos.</li>
+<li><code>list_filter</code>: Filtros laterales (por fecha, booleano, relación).</li>
+<li><code>search_fields</code>: Barra de búsqueda (busca en los campos indicados).</li>
+<li><code>prepopulated_fields</code>: Rellena campos automáticamente (ideal para slugs).</li>
+<li><code>filter_horizontal</code>: Widget de doble caja para selección múltiple (ManyToMany).</li>
+</ul>
+<h3 id="ejemplo-ver-srcconceptos_basicosadminpy">Ejemplo (ver <code>src/conceptos_basicos/admin.py</code>)</h3>
+<div class="codehilite"><pre><span></span><code><span class="nd">@admin</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Curso</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'titulo'</span><span class="p">,</span> <span class="s1">'fecha_inicio'</span><span class="p">,</span> <span class="s1">'es_reciente'</span><span class="p">)</span>
+    <span class="n">list_filter</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'fecha_inicio'</span><span class="p">,)</span>
+    <span class="n">search_fields</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'titulo'</span><span class="p">,</span> <span class="s1">'descripcion'</span><span class="p">)</span>
+    <span class="n">prepopulated_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'slug'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'titulo'</span><span class="p">,)}</span>
+</code></pre></div>
+<h2 id="campos-calculados-en-el-admin">Campos Calculados en el Admin</h2>
+<p>Puedes añadir columnas que no existen en la base de datos pero que son calculadas por métodos del modelo o del Admin.</p>
+<div class="codehilite"><pre><span></span><code>    <span class="nd">@admin</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">boolean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">'¿Es reciente?'</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">es_reciente_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">es_reciente</span>
+</code></pre></div>
+<h2 id="acciones-personalizadas">Acciones Personalizadas</h2>
+<p>Puedes agregar acciones al desplegable "Action" para procesar lotes de objetos.</p>
+<div class="codehilite"><pre><span></span><code>    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'marcar_como_archivado'</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">marcar_como_archivado</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">queryset</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">activo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_user</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> cursos archivados."</span><span class="p">)</span>
+</code></pre></div>
+<hr/>
+<p><a href="./08_avanzado.html">Siguiente: Temas Avanzados y Optimización</a></p>
+</article>
+<hr/>
+<footer>
+<small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+</footer>
+</main></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

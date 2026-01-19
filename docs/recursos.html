@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Recursos - Guía Definitiva de Django</title>
+<link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+
+
+<style>
+        :root {
+            --django-dark: #0C4B33;
+            --django-light: #44B78B;
+            --django-bg: #F8F9FA;
+            --text-main: #333333;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: var(--django-bg);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding-top: 0; /* Override Pico */
+        }
+
+        /* Navbar for mobile only or simple header */
+        header.top-bar {
+            background-color: var(--django-dark);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header.top-bar h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+        }
+
+        aside nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        aside nav a:hover {
+            background-color: rgba(68, 183, 139, 0.1);
+            color: var(--django-dark);
+        }
+
+        aside nav a.active {
+            background-color: var(--django-dark);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            display: block;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            font-weight: 700;
+            padding-left: 0.6rem;
+        }
+
+        /* Main Content Styling */
+        main {
+            flex-grow: 1;
+            padding: 3rem 4rem;
+            max-width: 1200px; /* Limit width for readability */
+            margin: 0 auto;
+        }
+
+        article h1 {
+            color: var(--django-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--django-light);
+            padding-bottom: 0.5rem;
+        }
+
+        article h2 {
+            color: var(--django-dark);
+            margin-top: 2.5rem;
+            font-size: 1.75rem;
+        }
+
+        article h3 {
+            color: #555;
+            margin-top: 1.5rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #2d2d2d !important;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 1.5rem 0;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eaeaea;
+            color: #777;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            aside {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            main { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout"><aside class="">
+<nav>
+<ul>
+<li><a class="nav-link" href="index.html">Inicio</a></li>
+<li>
+<span class="nav-section">Fundamentos</span>
+<ul>
+<li><a class="nav-link" href="01_introduccion.html">Introducción</a></li>
+<li><a class="nav-link" href="02_configuracion.html">Configuración</a></li>
+<li><a class="nav-link" href="03_modelos.html">Modelos Avanzados</a></li>
+<li><a class="nav-link" href="04_vistas_urls.html">Vistas y URLs (CBV)</a></li>
+<li><a class="nav-link" href="05_plantillas.html">Plantillas</a></li>
+<li><a class="nav-link" href="06_formularios.html">Formularios</a></li>
+<li><a class="nav-link" href="09_autenticacion.html">Autenticación</a></li>
+<li><a class="nav-link" href="07_admin.html">Admin Profesional</a></li>
+<li><a class="nav-link" href="08_avanzado.html">Temas Avanzados</a></li>
+<li><a class="nav-link active" href="recursos.html">Recursos</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside><main class="">
+<article>
+<h1 id="recursos-adicionales">Recursos Adicionales</h1>
+<p>Esta lista recopila recursos de alta calidad para aprender y profundizar en Django.</p>
+<h2 id="documentacion-oficial">Documentación Oficial</h2>
+<ul>
+<li><a href="https://docs.djangoproject.com/en/stable/">Django Documentation</a> - La fuente más completa y actualizada.</li>
+<li><a href="https://www.django-rest-framework.org/">Django REST Framework</a> - Para construir APIs.</li>
+</ul>
+<h2 id="tutoriales-y-cursos-gratuitos">Tutoriales y Cursos (Gratuitos)</h2>
+<ul>
+<li><a href="https://tutorial.djangogirls.org/">Django Girls Tutorial</a> - Excelente para principiantes absolutos.</li>
+<li><a href="https://www.youtube.com/watch?v=F5mRW0jo-U4">Curso Completo de Django (YouTube)</a></li>
+<li><a href="https://www.youtube.com/watch?v=RbJOmgTX63M">Django Models &amp; Database Tutorial</a></li>
+<li><a href="https://www.youtube.com/watch?v=TblSa29DX6I">Django Views &amp; URL Routing Tutorial</a></li>
+</ul>
+<h2 id="blogs-y-articulos">Blogs y Artículos</h2>
+<ul>
+<li><a href="https://simpleisbetterthancomplex.com/">Simple is Better Than Complex</a> - Consejos prácticos y tutoriales claros.</li>
+<li><a href="https://realpython.com/tutorials/django/">Real Python - Django</a></li>
+<li><a href="https://wsvincent.com/django-for-beginners-32-update/">Django for Beginners - Will Vincent</a></li>
+</ul>
+<h2 id="despliegue-deployment">Despliegue (Deployment)</h2>
+<ul>
+<li><a href="https://devcenter.heroku.com/articles/deploying-python">Despliegue en Heroku</a></li>
+<li><a href="https://docs.djangoproject.com/en/stable/howto/deployment/checklist/">Deployment Checklist</a></li>
+</ul>
+<h2 id="libros-recomendados">Libros Recomendados</h2>
+<ul>
+<li>"Two Scoops of Django" - Mejores prácticas (Avanzado).</li>
+<li>"Django for Professionals" - William S. Vincent.</li>
+</ul>
+</article>
+<hr/>
+<footer>
+<small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+</footer>
+</main></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

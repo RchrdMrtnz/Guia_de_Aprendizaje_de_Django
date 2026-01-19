@@ -1,78 +1,37 @@
-<p align="center">
-  <img src="https://img.icons8.com/color/48/000000/django.png" alt="Django Logo"/>
-  <img src="https://img.icons8.com/color/48/000000/python.png" alt="Python Logo"/>
-</p>
+# Guía Definitiva de Django
 
-<h1 align="center">Guía Definitiva de Django</h1>
+Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene **código fuente validado** que acompaña a cada lección.
 
-Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene **código fuente validado** que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.
+## 🌐 Documentación Web
 
-## 🚀 ¿Cómo usar este repositorio?
+La documentación completa de esta guía ha sido migrada a formato web para una mejor experiencia de lectura.
 
-Este repositorio se divide en dos partes principales:
+👉 **[Ver la Guía Completa (Sitio Web)](./docs/index.html)**
 
-1.  **Guías (`docs/`)**: Documentación detallada paso a paso.
-2.  **Código Fuente (`src/`)**: Un proyecto de Django funcional (`curso_django`) que implementa los conceptos explicados.
+Puedes navegar por los archivos HTML generados en la carpeta `docs/`. Si estás viendo esto en GitHub Pages, la documentación debería cargarse automáticamente.
 
-### 📚 Índice de Contenidos
+## 🚀 Código Fuente
 
-1.  [Introducción a Django](./docs/01_introduccion.md)
-2.  [Configuración del Entorno](./docs/02_configuracion.md)
-3.  [Modelos y Bases de Datos (Avanzado)](./docs/03_modelos.md)
-4.  [Vistas y URLs (CBVs)](./docs/04_vistas_urls.md)
-5.  [Plantillas y Archivos Estáticos](./docs/05_plantillas.md)
-6.  [Formularios y Validaciones](./docs/06_formularios.md)
-7.  [Autenticación y Autorización](./docs/09_autenticacion.md)
-8.  [Administración Profesional](./docs/07_admin.md)
-9.  [Temas Avanzados y Optimización](./docs/08_avanzado.md)
-10. [Recursos Adicionales](./docs/recursos.md)
+El código funcional del proyecto Django se encuentra en la carpeta `src/`.
 
-## 🛠️ Instalación y Ejecución
+### Instalación y Ejecución
 
-Para ejecutar el código de ejemplo en tu máquina local:
-
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone <url-del-repo>
-    cd <nombre-del-repo>
-    ```
-
-2.  **Crear y activar un entorno virtual:**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # En Windows: venv\Scripts\activate
-    ```
-
-3.  **Instalar dependencias:**
+1.  **Instalar dependencias:**
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Ejecutar migraciones:**
+2.  **Ejecutar el proyecto:**
     ```bash
     cd src
     python manage.py migrate
-    ```
-
-5.  **Correr el servidor:**
-    ```bash
     python manage.py runserver
     ```
 
-## ✅ Validación del Código
-
-Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:
-
-```bash
-# Desde la raíz del repositorio
-./validar_codigo.sh
-```
-
-Esto ejecutará la suite de pruebas de Django (`tests.py`) para asegurar que los modelos y vistas se comportan como se espera.
-
-5.  **Correr el servidor:**
+3.  **Validar el código:**
+    Ejecuta el script de validación para correr las pruebas automatizadas:
     ```bash
-    python manage.py runserver
+    ./validar_codigo.sh
     ```
 
 <p align="center">Hecho con ❤️ para la comunidad de Django.</p>
