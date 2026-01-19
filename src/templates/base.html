@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Curso Django{% endblock %}</title>
+    <!-- Pico.css para estilos rápidos y bonitos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong><a href="{% url 'curso_list_cbv' %}">Django Guide</a></strong></li>
+        </ul>
+        <ul>
+            <li><a href="{% url 'curso_list_cbv' %}">Cursos</a></li>
+            <li><a href="#">Admin</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="container">
+        <small>Creado con ❤️ para aprender Django.</small>
+    </footer>
+</body>
+</html>

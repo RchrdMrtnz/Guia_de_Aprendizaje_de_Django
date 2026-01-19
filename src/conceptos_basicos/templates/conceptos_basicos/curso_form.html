@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Nuevo Curso{% endblock %}
+
+{% block content %}
+    <h1>Crear Nuevo Curso</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Renderizado manual o automático del formulario -->
+        <!-- form.as_p renderiza cada campo envuelto en <p> -->
+        {{ form.as_p }}
+
+        <div class="grid">
+            <button type="submit">Guardar Curso</button>
+            <a href="{% url 'curso_list_cbv' %}" role="button" class="secondary outline">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

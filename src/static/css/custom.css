@@ -1,0 +1,17 @@
+/* Custom styles overriding or extending Pico.css */
+h1 {
+    color: #1095c1;
+}
+.curso-card {
+    border: 1px solid #e5e5e5;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+.badge {
+    background-color: #ffc107;
+    color: black;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}

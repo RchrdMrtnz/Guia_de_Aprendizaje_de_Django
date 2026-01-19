@@ -1,45 +1,63 @@
-# 4. Vistas y URLs
+# 4. Vistas y URLs: Profundización
 
-## Vistas (Views)
-Una vista es una función de Python (o una clase) que recibe una petición web (`HttpRequest`) y devuelve una respuesta (`HttpResponse`).
+## Class-Based Views (CBVs)
+Las Vistas Basadas en Clases son una forma poderosa de escribir vistas en Django, permitiendo reutilizar código y organizar la lógica de manera orientada a objetos.
 
-### Tipos de Vistas
-1.  **Function-Based Views (FBV):** Vistas escritas como funciones. Son simples y explícitas.
-2.  **Class-Based Views (CBV):** Vistas escritas como clases. Permiten reutilizar código mediante herencia.
+### Ventajas de las CBVs
+*   **Reutilización de código:** A través de la herencia y Mixins.
+*   **Vistas Genéricas:** Django incluye vistas para tareas comunes (listar, ver detalle, crear, editar, borrar).
 
-### Ejemplo (ver `src/conceptos_basicos/views.py`)
+### Vistas Genéricas Comunes
+1.  **ListView:** Muestra una lista de objetos.
+2.  **DetailView:** Muestra los detalles de un solo objeto.
+3.  **CreateView / UpdateView / DeleteView:** Manejan formularios para editar datos.
+
+### Ejemplo de Implementación (ver `src/conceptos_basicos/views.py`)
 
 ```python
-from django.http import HttpResponse
+from django.views.generic import ListView, DetailView
 from .models import Curso
 
-def lista_cursos(request):
-    cursos = Curso.objects.all()
-    # Lógica simple para mostrar datos
-    response_content = "<h1>Listado de Cursos</h1>"
-    for curso in cursos:
-        response_content += f"<p>{curso.titulo}</p>"
-    return HttpResponse(response_content)
+class CursoListView(ListView):
+    model = Curso
+    template_name = "conceptos_basicos/curso_list.html" # Plantilla a usar
+    context_object_name = "cursos" # Nombre de la variable en el template
+
+    def get_queryset(self):
+        """Podemos sobrescribir este método para filtrar datos."""
+        return Curso.objects.filter(fecha_inicio__year=2023)
+
+class CursoDetailView(DetailView):
+    model = Curso
+    # Busca por 'pk' o 'slug' automáticamente
 ```
 
-## URLs (Routing)
-Para que una vista sea accesible, debe estar vinculada a una URL. Django usa un sistema de configuración de URLs (`URLconf`) elegante y potente.
+## Configuración de URLs para CBVs
 
-### Configuración
-1.  **App URLs (`src/conceptos_basicos/urls.py`):** Define las rutas específicas de la aplicación.
-2.  **Project URLs (`src/curso_django/urls.py`):** Incluye las rutas de las aplicaciones.
-
-### Path Converters
-Puedes capturar valores de la URL para pasarlos como argumentos a tus vistas.
+Para usar una CBV en `urls.py`, debemos llamar al método `.as_view()`.
 
 ```python
 # urls.py
-path('cursos/<int:curso_id>/', views.detalle_curso)
+from .views import CursoListView, CursoDetailView
+
+urlpatterns = [
+    path('cursos/', CursoListView.as_view(), name='curso_list'),
+    path('curso/<slug:slug>/', CursoDetailView.as_view(), name='curso_detail'),
+]
 ```
 
-*   `int`: Coincide con cero o más enteros.
-*   `slug`: Coincide con una cadena slug (letras, números, guiones, guiones bajos).
-*   `str`: Coincide con cualquier cadena no vacía (por defecto).
+## Mixins
+Los Mixins son clases que aportan funcionalidad extra a una vista.
+*   `LoginRequiredMixin`: Requiere que el usuario esté logueado.
+*   `PermissionRequiredMixin`: Requiere permisos específicos.
+
+```python
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class CursoCreateView(LoginRequiredMixin, CreateView):
+    model = Curso
+    fields = ['titulo', 'descripcion']
+```
 
 ---
-[Volver al índice](../README.md)
+[Siguiente: Plantillas y Archivos Estáticos](./05_plantillas.md)

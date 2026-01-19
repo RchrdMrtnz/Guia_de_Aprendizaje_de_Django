@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Listado de Cursos{% endblock %}
+
+{% block content %}
+    <div class="grid">
+        <div>
+            <h1>Nuestros Cursos</h1>
+            <p>Explora nuestra variedad de cursos para dominar Django.</p>
+        </div>
+        <div style="text-align: right; align-self: center;">
+            <a href="{% url 'curso_create_cbv' %}" role="button">Crear Nuevo Curso</a>
+        </div>
+    </div>
+
+    <div class="grid">
+        {% for curso in cursos %}
+            <article class="curso-card">
+                <header>
+                    <strong>{{ curso.titulo }}</strong>
+                    {% if curso.es_reciente %}
+                        <span class="badge">Nuevo</span>
+                    {% endif %}
+                </header>
+                <p>{{ curso.descripcion|truncatewords:20 }}</p>
+                <footer>
+                    <a href="{% url 'curso_detail_cbv' curso.slug %}" role="button" class="secondary">Ver detalles</a>
+                </footer>
+            </article>
+        {% empty %}
+            <p>No hay cursos disponibles por el momento.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

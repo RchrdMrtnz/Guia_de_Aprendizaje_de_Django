@@ -1,18 +1,40 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
 from .models import Curso
+from .forms import CursoForm
 
-# Function Based View (FBV)
+# --- FUNCTION BASED VIEWS (FBV) ---
+
 def lista_cursos(request):
     cursos = Curso.objects.all()
-    # En un caso real usaríamos render() con un template, pero aquí usamos HttpResponse para simplificar
-    # o podríamos armar un string simple.
-    response_content = "<h1>Listado de Cursos</h1><ul>"
-    for curso in cursos:
-        response_content += f"<li>{curso.titulo} - {curso.fecha_inicio}</li>"
-    response_content += "</ul>"
-    return HttpResponse(response_content)
+    # Versión simple sin templates (para demos)
+    return HttpResponse(f"<h1>Listado de Cursos (FBV)</h1><p>Cursos encontrados: {cursos.count()}</p>")
 
 def detalle_curso(request, curso_id):
     curso = get_object_or_404(Curso, pk=curso_id)
-    return HttpResponse(f"<h1>{curso.titulo}</h1><p>{curso.descripcion}</p>")
+    return HttpResponse(f"<h1>{curso.titulo} (FBV)</h1><p>{curso.descripcion}</p>")
+
+
+# --- CLASS BASED VIEWS (CBV) ---
+
+class CursoListView(ListView):
+    model = Curso
+    template_name = "conceptos_basicos/curso_list.html"
+    context_object_name = "cursos"
+
+    def get_queryset(self):
+        # Ejemplo de filtro personalizado: solo cursos recientes o todos
+        return Curso.objects.all()
+
+class CursoDetailView(DetailView):
+    model = Curso
+    template_name = "conceptos_basicos/curso_detail.html"
+    context_object_name = "curso"
+
+class CursoCreateView(CreateView):
+    model = Curso
+    form_class = CursoForm
+    template_name = "conceptos_basicos/curso_form.html"
+    success_url = reverse_lazy('curso_list_cbv')

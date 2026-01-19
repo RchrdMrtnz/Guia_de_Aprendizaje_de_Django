@@ -18,10 +18,13 @@ Este repositorio se divide en dos partes principales:
 
 1.  [Introducción a Django](./docs/01_introduccion.md)
 2.  [Configuración del Entorno](./docs/02_configuracion.md)
-3.  [Modelos y Bases de Datos](./docs/03_modelos.md)
-4.  [Vistas y URLs](./docs/04_vistas_urls.md)
-5.  *Próximamente: Plantillas, Formularios, Autenticación...*
-6.  [Recursos Adicionales](./docs/recursos.md)
+3.  [Modelos y Bases de Datos (Avanzado)](./docs/03_modelos.md)
+4.  [Vistas y URLs (CBVs)](./docs/04_vistas_urls.md)
+5.  [Plantillas y Archivos Estáticos](./docs/05_plantillas.md)
+6.  [Formularios y Validaciones](./docs/06_formularios.md)
+7.  [Administración Profesional](./docs/07_admin.md)
+8.  [Temas Avanzados y Optimización](./docs/08_avanzado.md)
+9.  [Recursos Adicionales](./docs/recursos.md)
 
 ## 🛠️ Instalación y Ejecución
 
