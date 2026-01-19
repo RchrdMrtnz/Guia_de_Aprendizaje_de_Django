@@ -1,29 +1,12 @@
 # Guía Definitiva de Django
 
-Bienvenido a la documentación oficial del repositorio **Guía Definitiva de Django**. Este sitio está diseñado para servir como una referencia visual y teórica, mientras que el código fuente del repositorio contiene la implementación práctica.
+Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene **código fuente validado** que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.
 
-![Django Banner](img/lista_cursos.png)
+## 🚀 ¿Cómo usar esta guía?
 
-## 🎯 ¿Qué aprenderás?
+Esta documentación se divide en lecciones que cubren desde lo básico hasta temas avanzados. Cada sección está respaldada por código funcional que puedes encontrar en la carpeta `src/` del repositorio.
 
-Esta guía cubre todo el espectro del desarrollo web con Django:
-
-*   ✅ **Fundamentos**: Configuración, estructura MVT y bases de datos.
-*   ✅ **Modelos Avanzados**: Slugs, ORM optimizado y relaciones complejas.
-*   ✅ **Vistas Modernas**: Uso extensivo de Class Based Views (CBVs).
-*   ✅ **Frontend**: Integración con estilos modernos (Pico.css) y Jinja templates.
-*   ✅ **Seguridad**: Autenticación completa, permisos y protección CSRF.
-*   ✅ **Calidad**: Validación automática con Tests y buenas prácticas.
-
-## 🚀 Empezar
-
-Si quieres seguir el código paso a paso:
-
-1.  Ve al repositorio en GitHub.
-2.  Clona el proyecto.
-3.  Sigue las instrucciones de [Configuración del Entorno](02_configuracion.md).
-
-## 📚 Índice de Contenidos
+### 📚 Índice de Contenidos
 
 *   [Introducción a Django](01_introduccion.md)
 *   [Configuración del Entorno](02_configuracion.md)
@@ -35,3 +18,46 @@ Si quieres seguir el código paso a paso:
 *   [Administración Profesional](07_admin.md)
 *   [Temas Avanzados y Optimización](08_avanzado.md)
 *   [Recursos Adicionales](recursos.md)
+
+## 🛠️ Instalación y Ejecución
+
+Para ejecutar el código de ejemplo en tu máquina local:
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone <url-del-repo>
+    cd <nombre-del-repo>
+    ```
+
+2.  **Crear y activar un entorno virtual:**
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # En Windows: venv\Scripts\activate
+    ```
+
+3.  **Instalar dependencias:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Ejecutar migraciones:**
+    ```bash
+    cd src
+    python manage.py migrate
+    ```
+
+5.  **Correr el servidor:**
+    ```bash
+    python manage.py runserver
+    ```
+
+## ✅ Validación del Código
+
+Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:
+
+```bash
+# Desde la raíz del repositorio
+./validar_codigo.sh
+```
+
+Esto ejecutará la suite de pruebas de Django (`tests.py`) para asegurar que los modelos y vistas se comportan como se espera.

@@ -5,17 +5,7 @@
 
 <h1 align="center">Guía Definitiva de Django</h1>
 
-<p align="center">
-  <a href="https://usuario.github.io/repo-django/">
-    <img src="https://img.shields.io/badge/Documentación-Ver%20Sitio%20Web-blue?style=for-the-badge&logo=github" alt="Ver Documentación" />
-  </a>
-</p>
-
 Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene **código fuente validado** que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.
-
-## 🌟 Documentación Visual
-
-Para una mejor experiencia de lectura, visita nuestra **[Sitio Web de Documentación](https://usuario.github.io/repo-django/)**. Allí encontrarás la guía visual completa, capturas de pantalla y navegación mejorada.
 
 ## 🚀 ¿Cómo usar este repositorio?
 
@@ -80,6 +70,9 @@ Una característica clave de esta guía es que todo el código está validado me
 
 Esto ejecutará la suite de pruebas de Django (`tests.py`) para asegurar que los modelos y vistas se comportan como se espera.
 
----
+5.  **Correr el servidor:**
+    ```bash
+    python manage.py runserver
+    ```
 
 <p align="center">Hecho con ❤️ para la comunidad de Django.</p>

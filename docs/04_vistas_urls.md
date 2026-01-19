@@ -46,15 +46,6 @@ urlpatterns = [
 ]
 ```
 
-### Resultado Visual
-Así se ve la lista de cursos generada con nuestras Vistas Basadas en Clases y plantillas:
-
-![Listado de Cursos](img/lista_cursos.png)
-
-Y el detalle de un curso:
-
-![Detalle de Curso](img/detalle_curso.png)
-
 ## Mixins
 Los Mixins son clases que aportan funcionalidad extra a una vista.
 *   `LoginRequiredMixin`: Requiere que el usuario esté logueado.

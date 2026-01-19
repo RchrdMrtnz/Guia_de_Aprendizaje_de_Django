@@ -85,13 +85,5 @@ La variable `user` está disponible automáticamente en los templates.
 {% endif %}
 ```
 
-## Resultado Visual
-
-### Pantalla de Login
-![Pantalla de Login](img/login_page.png)
-
-### Pantalla de Registro
-![Pantalla de Registro](img/registro_page.png)
-
 ---
 [Volver al índice](index.md)
