@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ curso.titulo }}{% endblock %}
+
+{% block content %}
+    <article>
+        <header>
+            <h1>{{ curso.titulo }}</h1>
+            <p><small>Inicia el: {{ curso.fecha_inicio }}</small></p>
+        </header>
+
+        <p>{{ curso.descripcion|linebreaks }}</p>
+
+        <footer>
+            <a href="{% url 'curso_list_cbv' %}" role="button" class="outline">Volver al listado</a>
+        </footer>
+    </article>
+{% endblock %}

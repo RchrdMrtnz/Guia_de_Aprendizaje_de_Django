@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Registro de Usuario{% endblock %}
+
+{% block content %}
+<div class="grid">
+    <div></div>
+    <article>
+        <header><h1>Crear Cuenta</h1></header>
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <small style="color: red;">{{ error }}</small>
+                {% endfor %}
+            {% endfor %}
+
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <footer>
+            <small>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>.</small>
+        </footer>
+    </article>
+    <div></div>
+</div>
+{% endblock %}
