@@ -1,0 +1,52 @@
+site_name: Guía Definitiva de Django
+site_description: Curso completo de Django, de principiante a profesional.
+site_url: https://usuario.github.io/repo-django/
+repo_url: https://github.com/usuario/repo-django
+repo_name: repo-django
+
+theme:
+  name: material
+  language: es
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+nav:
+  - Inicio: index.md
+  - Fundamentos:
+      - Introducción: 01_introduccion.md
+      - Configuración: 02_configuracion.md
+      - Modelos Avanzados: 03_modelos.md
+      - Vistas y URLs (CBV): 04_vistas_urls.md
+      - Plantillas: 05_plantillas.md
+      - Formularios: 06_formularios.md
+      - Autenticación: 09_autenticacion.md
+      - Admin Profesional: 07_admin.md
+      - Temas Avanzados: 08_avanzado.md
+      - Recursos: recursos.md

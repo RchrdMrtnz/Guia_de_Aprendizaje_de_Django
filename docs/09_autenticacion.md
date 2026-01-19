@@ -86,4 +86,4 @@ La variable `user` está disponible automáticamente en los templates.
 ```
 
 ---
-[Volver al índice](../README.md)
+[Volver al índice](index.md)

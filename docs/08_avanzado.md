@@ -60,4 +60,4 @@ class CursoViewSet(viewsets.ModelViewSet):
 *   [Channels](https://channels.readthedocs.io/): Para WebSockets y tiempo real.
 
 ---
-[Volver al índice](../README.md)
+[Volver al índice](index.md)
