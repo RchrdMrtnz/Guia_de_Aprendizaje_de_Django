@@ -70,6 +70,9 @@ Una característica clave de esta guía es que todo el código está validado me
 
 Esto ejecutará la suite de pruebas de Django (`tests.py`) para asegurar que los modelos y vistas se comportan como se espera.
 
----
+5.  **Correr el servidor:**
+    ```bash
+    python manage.py runserver
+    ```
 
 <p align="center">Hecho con ❤️ para la comunidad de Django.</p>
