@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Temas Avanzados - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link active">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="8-temas-avanzados-y-optimizacion">8. Temas Avanzados y Optimización</h1>
+<p>Para llevar tus habilidades de Django al nivel profesional, es crucial entender cómo optimizar tus consultas y cómo exponer tu aplicación al mundo a través de APIs.</p>
+<h2 id="optimizacion-de-consultas-database-performance">Optimización de Consultas (Database Performance)</h2>
+<p>El problema "N+1" es el asesino de rendimiento más común en Django. Ocurre cuando accedes a datos relacionados dentro de un bucle.</p>
+<h3 id="select_related"><code>select_related</code></h3>
+<p>Úsalo para relaciones "Uno a Uno" o "Muchos a Uno" (ForeignKey). Realiza un SQL JOIN.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Malo: N+1 consultas</span>
+<span class="n">libros</span> <span class="o">=</span> <span class="n">Libro</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">libro</span> <span class="ow">in</span> <span class="n">libros</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">libro</span><span class="o">.</span><span class="n">autor</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span> <span class="c1"># ¡Hace una consulta extra por cada libro!</span>
+
+<span class="c1"># Bueno: 1 consulta única</span>
+<span class="n">libros</span> <span class="o">=</span> <span class="n">Libro</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s1">&#39;autor&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">libro</span> <span class="ow">in</span> <span class="n">libros</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">libro</span><span class="o">.</span><span class="n">autor</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span> <span class="c1"># Los datos ya están en memoria</span>
+</code></pre></div>
+
+<h3 id="prefetch_related"><code>prefetch_related</code></h3>
+<p>Úsalo para relaciones "Muchos a Muchos" o "Inversas". Hace dos consultas y une los resultados en Python.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Traer todos los estudiantes y sus cursos eficientemente</span>
+<span class="n">estudiantes</span> <span class="o">=</span> <span class="n">Estudiante</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s1">&#39;cursos&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</code></pre></div>
+
+<h2 id="django-rest-framework-drf">Django REST Framework (DRF)</h2>
+<p>Hoy en día, es común que el backend sirva datos JSON para un frontend en React/Vue o una App Móvil. DRF es el estándar para esto.</p>
+<h3 id="serializers">Serializers</h3>
+<p>Convierten tus modelos a JSON.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s1">&#39;__all__&#39;</span>
+</code></pre></div>
+
+<h3 id="viewsets">ViewSets</h3>
+<p>Manejan la lógica CRUD automáticamente.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">viewsets</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Curso</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CursoSerializer</span>
+</code></pre></div>
+
+<h2 id="recursos-para-profundizar">Recursos para Profundizar</h2>
+<ul>
+<li><a href="https://django-debug-toolbar.readthedocs.io/">Django Debug Toolbar</a>: Herramienta indispensable para ver las consultas SQL que hace tu vista.</li>
+<li><a href="https://docs.celeryproject.org/">Celery</a>: Para tareas en segundo plano (emails, procesamiento de imágenes).</li>
+<li><a href="https://channels.readthedocs.io/">Channels</a>: Para WebSockets y tiempo real.</li>
+</ul>
+<hr />
+<p><a href="index.html">Volver al índice</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

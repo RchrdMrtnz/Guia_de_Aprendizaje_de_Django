@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formularios - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link active">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="6-formularios-y-validacion">6. Formularios y Validación</h1>
+<p>Django facilita enormemente el manejo de formularios, encargándose de la renderización HTML, la validación de datos y la conversión a objetos Python.</p>
+<h2 id="tipos-de-formularios">Tipos de Formularios</h2>
+<ol>
+<li><strong>Form:</strong> Formularios genéricos que no están directamente vinculados a un modelo.</li>
+<li><strong>ModelForm:</strong> Formularios que se crean automáticamente a partir de un modelo existente.</li>
+</ol>
+<h2 id="creando-un-modelform">Creando un ModelForm</h2>
+<p>Definimos nuestros formularios en <code>forms.py</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django</span><span class="w"> </span><span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Curso</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;titulo&#39;</span><span class="p">,</span> <span class="s1">&#39;descripcion&#39;</span><span class="p">,</span> <span class="s1">&#39;fecha_inicio&#39;</span><span class="p">]</span>
+        <span class="n">widgets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fecha_inicio&#39;</span><span class="p">:</span> <span class="n">forms</span><span class="o">.</span><span class="n">DateInput</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">}),</span>
+        <span class="p">}</span>
+</code></pre></div>
+
+<h2 id="validacion-personalizada">Validación Personalizada</h2>
+<p>Podemos añadir reglas de validación específicas sobrescribiendo el método <code>clean_&lt;campo&gt;</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_titulo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;titulo&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">titulo</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;El título no puede estar todo en mayúsculas.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">titulo</span>
+</code></pre></div>
+
+<h2 id="usando-formularios-en-vistas-createview">Usando Formularios en Vistas (CreateView)</h2>
+<p>Las CBVs como <code>CreateView</code> y <code>UpdateView</code> se integran perfectamente con los formularios.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CursoCreateView</span><span class="p">(</span><span class="n">CreateView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">CursoForm</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">&quot;curso_form.html&quot;</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="s1">&#39;/cursos/&#39;</span>
+</code></pre></div>
+
+<h2 id="renderizado-en-plantillas">Renderizado en Plantillas</h2>
+<p>Django ofrece métodos rápidos para renderizar formularios:
+*   <code>{{ form.as_p }}</code>: Cada campo en un párrafo <code>&lt;p&gt;</code>.
+*   <code>{{ form.as_table }}</code>: Como filas de tabla <code>&lt;tr&gt;</code>.
+*   <code>{{ form.as_ul }}</code>: Como lista <code>&lt;li&gt;</code>.</p>
+<p>Para mayor control, puedes iterar sobre los campos:</p>
+<div class="codehilite"><pre><span></span><code>{% for field in form %}
+    <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span>{{ field.label }}<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+    {{ field }}
+    {{ field.errors }}
+{% endfor %}
+</code></pre></div>
+
+<hr />
+<p><a href="./07_admin.html">Siguiente: Administración Avanzada</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

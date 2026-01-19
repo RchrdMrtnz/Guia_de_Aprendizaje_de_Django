@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link active">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="guia-definitiva-de-django">Guía Definitiva de Django</h1>
+<p>Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene <strong>código fuente validado</strong> que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.</p>
+<h2 id="como-usar-esta-guia">🚀 ¿Cómo usar esta guía?</h2>
+<p>Esta documentación se divide en lecciones que cubren desde lo básico hasta temas avanzados. Cada sección está respaldada por código funcional que puedes encontrar en la carpeta <code>src/</code> del repositorio.</p>
+<h3 id="indice-de-contenidos">📚 Índice de Contenidos</h3>
+<ul>
+<li><a href="01_introduccion.html">Introducción a Django</a></li>
+<li><a href="02_configuracion.html">Configuración del Entorno</a></li>
+<li><a href="03_modelos.html">Modelos y Bases de Datos (Avanzado)</a></li>
+<li><a href="04_vistas_urls.html">Vistas y URLs (CBVs)</a></li>
+<li><a href="05_plantillas.html">Plantillas y Archivos Estáticos</a></li>
+<li><a href="06_formularios.html">Formularios y Validaciones</a></li>
+<li><a href="09_autenticacion.html">Autenticación y Autorización</a></li>
+<li><a href="07_admin.html">Administración Profesional</a></li>
+<li><a href="08_avanzado.html">Temas Avanzados y Optimización</a></li>
+<li><a href="recursos.html">Recursos Adicionales</a></li>
+</ul>
+<h2 id="instalacion-y-ejecucion">🛠️ Instalación y Ejecución</h2>
+<p>Para ejecutar el código de ejemplo en tu máquina local:</p>
+<ol>
+<li>
+<p><strong>Clonar el repositorio:</strong>
+    <code>bash
+    git clone &lt;url-del-repo&gt;
+    cd &lt;nombre-del-repo&gt;</code></p>
+</li>
+<li>
+<p><strong>Crear y activar un entorno virtual:</strong>
+    <code>bash
+    python3 -m venv venv
+    source venv/bin/activate  # En Windows: venv\Scripts\activate</code></p>
+</li>
+<li>
+<p><strong>Instalar dependencias:</strong>
+    <code>bash
+    pip install -r requirements.txt</code></p>
+</li>
+<li>
+<p><strong>Ejecutar migraciones:</strong>
+    <code>bash
+    cd src
+    python manage.py migrate</code></p>
+</li>
+<li>
+<p><strong>Correr el servidor:</strong>
+    <code>bash
+    python manage.py runserver</code></p>
+</li>
+</ol>
+<h2 id="validacion-del-codigo">✅ Validación del Código</h2>
+<p>Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Desde la raíz del repositorio</span>
+./validar_codigo.sh
+</code></pre></div>
+
+<p>Esto ejecutará la suite de pruebas de Django (<code>tests.py</code>) para asegurar que los modelos y vistas se comportan como se espera.</p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

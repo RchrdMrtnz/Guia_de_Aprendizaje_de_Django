@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plantillas - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link active">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="5-plantillas-y-archivos-estaticos">5. Plantillas y Archivos Estáticos</h1>
+<p>Django usa un potente motor de plantillas para generar HTML dinámicamente. Además, facilita el manejo de archivos estáticos (CSS, JS, imágenes).</p>
+<h2 id="herencia-de-plantillas">Herencia de Plantillas</h2>
+<p>Una de las características más potentes es la herencia. Permite crear un template base (<code>base.html</code>) con la estructura común (header, footer, navegación) y que otros templates rellenen bloques específicos.</p>
+<h3 id="ejemplo-basehtml">Ejemplo: <code>base.html</code></h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{% block title %}Mi Sitio{% endblock %}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">nav</span><span class="p">&gt;</span>...<span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;content&quot;</span><span class="p">&gt;</span>
+        {% block content %}
+        {% endblock %}
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h3 id="ejemplo-hijohtml">Ejemplo: <code>hijo.html</code></h3>
+<div class="codehilite"><pre><span></span><code>{% extends &quot;base.html&quot; %}
+
+{% block title %}Página de Inicio{% endblock %}
+
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Bienvenido<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Este es el contenido específico.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+{% endblock %}
+</code></pre></div>
+
+<h2 id="django-template-language-dtl">Django Template Language (DTL)</h2>
+<p>Sintaxis básica:
+*   <code>{{ variable }}</code>: Imprime una variable.
+*   <code>{% tag %}</code>: Lógica de control (for, if, block).
+*   <code>{{ variable|filtro }}</code>: Modifica la variable (ej: <code>date</code>, <code>upper</code>, <code>truncatewords</code>).</p>
+<h3 id="tags-comunes">Tags Comunes</h3>
+<ul>
+<li><code>{% for item in lista %} ... {% endfor %}</code></li>
+<li><code>{% if condicion %} ... {% else %} ... {% endif %}</code></li>
+<li><code>{% url 'nombre_ruta' arg1 %}</code>: Genera URLs dinámicas.</li>
+<li><code>{% static 'path/to/file' %}</code>: Genera la URL de un archivo estático.</li>
+</ul>
+<h2 id="archivos-estaticos">Archivos Estáticos</h2>
+<p>Para servir CSS, JS e imágenes, Django usa la app <code>django.contrib.staticfiles</code>.</p>
+<ol>
+<li>Configura <code>STATIC_URL</code> en <code>settings.py</code>.</li>
+<li>Crea una carpeta <code>static/</code> en tu app o en la raíz (configurando <code>STATICFILES_DIRS</code>).</li>
+<li>Carga el tag en el template: <code>{% load static %}</code>.</li>
+<li>Usa el tag: <code>&lt;link href="{% static 'css/style.css' %}"&gt;</code>.</li>
+</ol>
+<hr />
+<p><a href="./06_formularios.html">Siguiente: Formularios y Validaciones</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
