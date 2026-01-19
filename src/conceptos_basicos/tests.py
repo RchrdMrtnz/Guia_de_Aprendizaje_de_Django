@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from .models import Curso, Estudiante
+from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
 
@@ -42,6 +43,8 @@ class VistasTest(TestCase):
             descripcion="Descripcion de prueba",
             fecha_inicio=datetime.date.today()
         )
+        # Crear usuario para pruebas de autenticación
+        self.user = User.objects.create_user(username='testuser', password='password123')
 
     def test_lista_cursos_view(self):
         """Prueba que la vista de lista devuelve 200 y contiene el conteo de cursos."""
@@ -74,8 +77,15 @@ class VistasTest(TestCase):
         self.assertTemplateUsed(response, "conceptos_basicos/curso_detail.html")
         self.assertContains(response, self.curso.titulo)
 
+    def test_crear_curso_requiere_login(self):
+        """Prueba que crear curso redirige al login si no estás autenticado."""
+        url = reverse('curso_create_cbv')
+        response = self.client.get(url)
+        self.assertRedirects(response, f'/accounts/login/?next={url}')
+
     def test_crear_curso_view(self):
-        """Prueba que se puede acceder al formulario y crear un curso."""
+        """Prueba que se puede acceder al formulario y crear un curso (logeado)."""
+        self.client.login(username='testuser', password='password123')
         url = reverse('curso_create_cbv')
 
         # GET request
@@ -96,6 +106,7 @@ class VistasTest(TestCase):
 
     def test_validacion_curso_form(self):
         """Prueba la validación personalizada del formulario (titulo mayúsculas)."""
+        self.client.login(username='testuser', password='password123')
         url = reverse('curso_create_cbv')
         datos = {
             'titulo': 'TITULO EN MAYUSCULAS', # Esto debería fallar

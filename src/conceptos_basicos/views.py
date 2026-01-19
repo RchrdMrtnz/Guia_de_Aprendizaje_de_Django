@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Curso
 from .forms import CursoForm
 
@@ -33,8 +35,13 @@ class CursoDetailView(DetailView):
     template_name = "conceptos_basicos/curso_detail.html"
     context_object_name = "curso"
 
-class CursoCreateView(CreateView):
+class CursoCreateView(LoginRequiredMixin, CreateView):
     model = Curso
     form_class = CursoForm
     template_name = "conceptos_basicos/curso_form.html"
     success_url = reverse_lazy('curso_list_cbv')
+
+class RegistroView(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = "registration/signup.html"

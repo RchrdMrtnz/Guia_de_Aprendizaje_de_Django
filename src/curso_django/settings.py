@@ -120,3 +120,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# Redirección tras login/logout
+LOGIN_REDIRECT_URL = "curso_list_cbv"
+LOGOUT_REDIRECT_URL = "curso_list_cbv"

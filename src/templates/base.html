@@ -16,7 +16,18 @@
         </ul>
         <ul>
             <li><a href="{% url 'curso_list_cbv' %}">Cursos</a></li>
-            <li><a href="#">Admin</a></li>
+            {% if user.is_authenticated %}
+                <li>Bienvenido, {{ user.username }}</li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="outline" style="padding: 5px 10px; font-size: 0.8em; margin: 0;">Salir</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'login' %}" role="button" class="outline">Entrar</a></li>
+                <li><a href="{% url 'registro' %}" role="button">Registrarse</a></li>
+            {% endif %}
         </ul>
     </nav>
 

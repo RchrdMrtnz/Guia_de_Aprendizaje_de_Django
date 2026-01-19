@@ -22,9 +22,10 @@ Este repositorio se divide en dos partes principales:
 4.  [Vistas y URLs (CBVs)](./docs/04_vistas_urls.md)
 5.  [Plantillas y Archivos Estáticos](./docs/05_plantillas.md)
 6.  [Formularios y Validaciones](./docs/06_formularios.md)
-7.  [Administración Profesional](./docs/07_admin.md)
-8.  [Temas Avanzados y Optimización](./docs/08_avanzado.md)
-9.  [Recursos Adicionales](./docs/recursos.md)
+7.  [Autenticación y Autorización](./docs/09_autenticacion.md)
+8.  [Administración Profesional](./docs/07_admin.md)
+9.  [Temas Avanzados y Optimización](./docs/08_avanzado.md)
+10. [Recursos Adicionales](./docs/recursos.md)
 
 ## 🛠️ Instalación y Ejecución
 
