@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vistas y URLs (CBV) - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link active">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="4-vistas-y-urls-profundizacion">4. Vistas y URLs: Profundización</h1>
+<h2 id="class-based-views-cbvs">Class-Based Views (CBVs)</h2>
+<p>Las Vistas Basadas en Clases son una forma poderosa de escribir vistas en Django, permitiendo reutilizar código y organizar la lógica de manera orientada a objetos.</p>
+<h3 id="ventajas-de-las-cbvs">Ventajas de las CBVs</h3>
+<ul>
+<li><strong>Reutilización de código:</strong> A través de la herencia y Mixins.</li>
+<li><strong>Vistas Genéricas:</strong> Django incluye vistas para tareas comunes (listar, ver detalle, crear, editar, borrar).</li>
+</ul>
+<h3 id="vistas-genericas-comunes">Vistas Genéricas Comunes</h3>
+<ol>
+<li><strong>ListView:</strong> Muestra una lista de objetos.</li>
+<li><strong>DetailView:</strong> Muestra los detalles de un solo objeto.</li>
+<li><strong>CreateView / UpdateView / DeleteView:</strong> Manejan formularios para editar datos.</li>
+</ol>
+<h3 id="ejemplo-de-implementacion-ver-srcconceptos_basicosviewspy">Ejemplo de Implementación (ver <code>src/conceptos_basicos/views.py</code>)</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.views.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListView</span><span class="p">,</span> <span class="n">DetailView</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Curso</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">&quot;conceptos_basicos/curso_list.html&quot;</span> <span class="c1"># Plantilla a usar</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s2">&quot;cursos&quot;</span> <span class="c1"># Nombre de la variable en el template</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Podemos sobrescribir este método para filtrar datos.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Curso</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fecha_inicio__year</span><span class="o">=</span><span class="mi">2023</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoDetailView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+    <span class="c1"># Busca por &#39;pk&#39; o &#39;slug&#39; automáticamente</span>
+</code></pre></div>
+
+<h2 id="configuracion-de-urls-para-cbvs">Configuración de URLs para CBVs</h2>
+<p>Para usar una CBV en <code>urls.py</code>, debemos llamar al método <code>.as_view()</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># urls.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">CursoListView</span><span class="p">,</span> <span class="n">CursoDetailView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;cursos/&#39;</span><span class="p">,</span> <span class="n">CursoListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;curso_list&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;curso/&lt;slug:slug&gt;/&#39;</span><span class="p">,</span> <span class="n">CursoDetailView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;curso_detail&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h2 id="mixins">Mixins</h2>
+<p>Los Mixins son clases que aportan funcionalidad extra a una vista.
+*   <code>LoginRequiredMixin</code>: Requiere que el usuario esté logueado.
+*   <code>PermissionRequiredMixin</code>: Requiere permisos específicos.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginRequiredMixin</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CursoCreateView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;titulo&#39;</span><span class="p">,</span> <span class="s1">&#39;descripcion&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<p><a href="./05_plantillas.html">Siguiente: Plantillas y Archivos Estáticos</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

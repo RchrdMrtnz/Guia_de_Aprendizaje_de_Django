@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Configuración - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link active">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="2-configuracion-del-entorno">2. Configuración del Entorno</h1>
+<h2 id="prerrequisitos">Prerrequisitos</h2>
+<ul>
+<li>Python 3.8 o superior instalado.</li>
+<li>pip (gestor de paquetes de Python).</li>
+</ul>
+<h2 id="paso-1-crear-un-entorno-virtual">Paso 1: Crear un Entorno Virtual</h2>
+<p>Es recomendable usar entornos virtuales para aislar las dependencias de tu proyecto.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># En Linux/macOS</span>
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+
+<span class="c1"># En Windows</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</code></pre></div>
+
+<h2 id="paso-2-instalar-django">Paso 2: Instalar Django</h2>
+<p>Con el entorno virtual activado:</p>
+<div class="codehilite"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>django
+</code></pre></div>
+
+<h2 id="paso-3-crear-un-proyecto">Paso 3: Crear un Proyecto</h2>
+<p>Django ofrece un comando para generar la estructura inicial.</p>
+<div class="codehilite"><pre><span></span><code>django-admin<span class="w"> </span>startproject<span class="w"> </span>mi_proyecto
+<span class="nb">cd</span><span class="w"> </span>mi_proyecto
+</code></pre></div>
+
+<h2 id="estructura-generada">Estructura generada</h2>
+<ul>
+<li><code>manage.py</code>: Una utilidad de línea de comandos para interactuar con el proyecto.</li>
+<li><code>mi_proyecto/settings.py</code>: Configuración global (base de datos, apps instaladas, etc).</li>
+<li><code>mi_proyecto/urls.py</code>: Declaración de rutas (URL dispatcher).</li>
+<li><code>mi_proyecto/wsgi.py</code> y <code>asgi.py</code>: Puntos de entrada para servidores web.</li>
+</ul>
+<h2 id="ejecutar-el-servidor-de-desarrollo">Ejecutar el servidor de desarrollo</h2>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>runserver
+</code></pre></div>
+
+<p>Visita <code>http://127.0.0.1:8000/</code> para ver tu web funcionando.</p>
+<hr />
+<p><a href="./03_modelos.html">Siguiente: Modelos y Bases de Datos</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

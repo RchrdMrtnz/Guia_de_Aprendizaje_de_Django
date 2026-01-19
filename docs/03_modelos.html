@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modelos Avanzados - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link active">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="3-modelos-y-bases-de-datos-profundizacion">3. Modelos y Bases de Datos: Profundización</h1>
+<p>Los modelos son la fuente única y definitiva de información sobre tus datos. Contienen los campos y comportamientos esenciales de los datos que estás almacenando. Django sigue el principio DRY (Don't Repeat Yourself).</p>
+<h2 id="definicion-avanzada-de-modelos">Definición Avanzada de Modelos</h2>
+<p>Además de los campos básicos, los modelos pueden contener metadatos, métodos personalizados y lógica de negocio.</p>
+<h3 id="ejemplo-completo-ver-srcconceptos_basicosmodelspy">Ejemplo Completo (ver <code>src/conceptos_basicos/models.py</code>)</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">slugify</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Curso</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;Título&quot;</span><span class="p">)</span>
+    <span class="c1"># Slug: Cadena URL-friendly (ej: &quot;curso-django-avanzado&quot;)</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">descripcion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+
+    <span class="c1"># Campos de auditoría (timestamps)</span>
+    <span class="n">creado_en</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Se fija al crear</span>
+    <span class="n">actualizado_en</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Se actualiza al guardar</span>
+
+    <span class="c1"># CLASE META: Opciones de configuración del modelo</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;Curso&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s2">&quot;Cursos&quot;</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-fecha_inicio&#39;</span><span class="p">]</span> <span class="c1"># Ordenar por defecto por fecha descendente</span>
+
+    <span class="c1"># MÉTODOS MÁGICOS</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">titulo</span>
+
+    <span class="c1"># SOBRESCRIBIR SAVE: Lógica automática antes de guardar</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slugify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">titulo</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># PROPIEDADES: Campos calculados que no se guardan en BD</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">es_reciente</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">creado_en</span> <span class="o">&gt;=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="conceptos-clave">Conceptos Clave</h2>
+<h3 id="1-clase-meta">1. Clase Meta</h3>
+<p>Dentro de un modelo, la clase <code>Meta</code> se usa para definir opciones que no son campos.
+*   <code>ordering</code>: Define el orden por defecto al hacer consultas (<code>Curso.objects.all()</code>).
+*   <code>verbose_name</code> / <code>verbose_name_plural</code>: Nombres legibles para el panel de administración.
+*   <code>indexes</code>: Para crear índices de base de datos y mejorar rendimiento.</p>
+<h3 id="2-sobrescritura-de-save">2. Sobrescritura de <code>save()</code></h3>
+<p>Es común sobrescribir <code>save()</code> para ejecutar lógica cada vez que un objeto se crea o modifica.
+*   <strong>Caso de uso:</strong> Generar slugs, redimensionar imágenes, calcular totales.
+*   <strong>Importante:</strong> Siempre llamar a <code>super().save()</code> al final para que Django guarde realmente el objeto.</p>
+<h3 id="3-propiedades-property">3. Propiedades (<code>@property</code>)</h3>
+<p>Permiten añadir atributos al objeto que se calculan en tiempo de ejecución.
+*   Ejemplo: <code>nombre_completo</code> uniendo <code>nombre</code> y <code>apellido</code>.
+*   No se pueden usar directamente en filtros de base de datos (<code>filter()</code>), pero son muy útiles en templates y vistas.</p>
+<h3 id="4-slugs">4. Slugs</h3>
+<p>Un <code>Slug</code> es una etiqueta corta para algo, que contiene solo letras, números, guiones bajos o guiones. Generalmente se usan en URLs.
+*   Ejemplo: <code>www.misitio.com/cursos/aprende-django-facil/</code> (donde <code>aprende-django-facil</code> es el slug).</p>
+<hr />
+<p><a href="./04_vistas_urls.html">Siguiente: Vistas y URLs Avanzadas</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

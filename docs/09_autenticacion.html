@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Autenticación - Guía Definitiva de Django</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body { padding-top: 2rem; }
+        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
+        main { padding-bottom: 4rem; }
+        /* Custom styles for better readability */
+        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
+        .nav-link.active { font-weight: bold; color: var(--primary); }
+        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- Sidebar -->
+            <aside class="col-3">
+                <nav>
+                    <ul>
+
+
+                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+
+
+
+                                <li>
+                                    <span class="nav-section">Fundamentos</span>
+                                    <ul>
+
+                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+
+                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+
+                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
+
+                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
+
+                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
+
+                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
+
+                                            <li><a href="09_autenticacion.html" class="nav-link active">Autenticación</a></li>
+
+                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
+
+                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
+
+                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
+
+                                    </ul>
+                                </li>
+
+
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-9">
+                <article>
+                    <h1 id="9-autenticacion-y-autorizacion">9. Autenticación y Autorización</h1>
+<p>Django viene con un sistema de autenticación de usuario robusto que maneja cuentas de usuario, grupos, permisos y sesiones basadas en cookies.</p>
+<h2 id="configuracion-basica">Configuración Básica</h2>
+<p>Para usar la autenticación predeterminada, incluye <code>django.contrib.auth.urls</code> en tu <code>urls.py</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># urls.py</span>
+<span class="n">path</span><span class="p">(</span><span class="s2">&quot;accounts/&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;django.contrib.auth.urls&quot;</span><span class="p">)),</span>
+</code></pre></div>
+
+<p>Esto habilita rutas como:
+*   <code>/accounts/login/</code>
+*   <code>/accounts/logout/</code>
+*   <code>/accounts/password_change/</code></p>
+<h2 id="vistas-de-login-y-logout">Vistas de Login y Logout</h2>
+<p>Por defecto, Django busca las plantillas en <code>registration/login.html</code>.</p>
+<h3 id="ejemplo-registrationloginhtml">Ejemplo <code>registration/login.html</code></h3>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Entrar<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Debes configurar hacia dónde redirigir tras el login en <code>settings.py</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+<span class="n">LOGOUT_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+</code></pre></div>
+
+<h2 id="registro-de-usuarios">Registro de Usuarios</h2>
+<p>Django provee <code>UserCreationForm</code> para crear nuevos usuarios fácilmente.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserCreationForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.views.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">CreateView</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RegistroView</span><span class="p">(</span><span class="n">CreateView</span><span class="p">):</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">UserCreationForm</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="s1">&#39;/accounts/login/&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">&quot;registration/signup.html&quot;</span>
+</code></pre></div>
+
+<h2 id="restringir-acceso-autorizacion">Restringir Acceso (Autorización)</h2>
+<p>Para proteger vistas y asegurar que solo usuarios logueados accedan:</p>
+<h3 id="en-vistas-basadas-en-funciones-fbv">En Vistas Basadas en Funciones (FBV)</h3>
+<p>Usa el decorador <code>@login_required</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mi_vista_protegida</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+
+<h3 id="en-vistas-basadas-en-clases-cbv">En Vistas Basadas en Clases (CBV)</h3>
+<p>Usa el mixin <code>LoginRequiredMixin</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginRequiredMixin</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MiVistaProtegida</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+
+<h2 id="acceso-en-plantillas">Acceso en Plantillas</h2>
+<p>La variable <code>user</code> está disponible automáticamente en los templates.</p>
+<div class="codehilite"><pre><span></span><code>{% if user.is_authenticated %}
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hola, {{ user.username }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;{% url &#39;logout&#39; %}&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>{% csrf_token %}<span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Salir<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+{% else %}
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{% url &#39;login&#39; %}&quot;</span><span class="p">&gt;</span>Entrar<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+{% endif %}
+</code></pre></div>
+
+<hr />
+<p><a href="index.html">Volver al índice</a></p>
+                </article>
+                <hr>
+                <footer>
+                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
