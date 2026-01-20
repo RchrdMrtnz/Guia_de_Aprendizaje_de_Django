@@ -1,72 +1,122 @@
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vistas y URLs (CBV) - Guía Definitiva de Django</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
     <style>
-        body { padding-top: 2rem; }
-        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
-        main { padding-bottom: 4rem; }
-        /* Custom styles for better readability */
-        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
-        code { font-family: 'Courier New', Courier, monospace; }
-        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
-        .nav-link.active { font-weight: bold; color: var(--primary); }
-        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+        /* Custom Scrollbar for Sidebar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Prism overrides */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="grid">
-            <!-- Sidebar -->
-            <aside class="col-3">
-                <nav>
-                    <ul>
+<body class="bg-gray-50 text-gray-800 antialiased">
 
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
 
-                                <li><a href="index.html" class="nav-link ">Inicio</a></li>
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
 
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
 
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+                <div class="animate-pulse flex space-x-4">
+                    <div class="flex-1 space-y-4 py-1">
+                        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                        <div class="space-y-2">
+                            <div class="h-4 bg-gray-700 rounded"></div>
+                            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <li>
-                                    <span class="nav-section">Fundamentos</span>
-                                    <ul>
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/tu-repo" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
 
-                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
-                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
+                <!-- Content Start -->
 
-                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
-
-                                            <li><a href="04_vistas_urls.html" class="nav-link active">Vistas y URLs (CBV)</a></li>
-
-                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
-
-                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
-
-                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
-
-                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
-
-                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
-
-                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
-
-                                    </ul>
-                                </li>
-
-
-                    </ul>
-                </nav>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="col-9">
-                <article>
                     <h1 id="4-vistas-y-urls-profundizacion">4. Vistas y URLs: Profundización</h1>
 <h2 id="class-based-views-cbvs">Class-Based Views (CBVs)</h2>
 <p>Las Vistas Basadas en Clases son una forma poderosa de escribir vistas en Django, permitiendo reutilizar código y organizar la lógica de manera orientada a objetos.</p>
@@ -82,56 +132,60 @@
 <li><strong>CreateView / UpdateView / DeleteView:</strong> Manejan formularios para editar datos.</li>
 </ol>
 <h3 id="ejemplo-de-implementacion-ver-srcconceptos_basicosviewspy">Ejemplo de Implementación (ver <code>src/conceptos_basicos/views.py</code>)</h3>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.views.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListView</span><span class="p">,</span> <span class="n">DetailView</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Curso</span>
+<pre><code class="language-python">from django.views.generic import ListView, DetailView
+from .models import Curso
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CursoListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
-    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">&quot;conceptos_basicos/curso_list.html&quot;</span> <span class="c1"># Plantilla a usar</span>
-    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s2">&quot;cursos&quot;</span> <span class="c1"># Nombre de la variable en el template</span>
+class CursoListView(ListView):
+    model = Curso
+    template_name = &quot;conceptos_basicos/curso_list.html&quot; # Plantilla a usar
+    context_object_name = &quot;cursos&quot; # Nombre de la variable en el template
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Podemos sobrescribir este método para filtrar datos.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Curso</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fecha_inicio__year</span><span class="o">=</span><span class="mi">2023</span><span class="p">)</span>
+    def get_queryset(self):
+        &quot;&quot;&quot;Podemos sobrescribir este método para filtrar datos.&quot;&quot;&quot;
+        return Curso.objects.filter(fecha_inicio__year=2023)
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CursoDetailView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
-    <span class="c1"># Busca por &#39;pk&#39; o &#39;slug&#39; automáticamente</span>
-</code></pre></div>
+class CursoDetailView(DetailView):
+    model = Curso
+    # Busca por &#39;pk&#39; o &#39;slug&#39; automáticamente
+</code></pre>
 
 <h2 id="configuracion-de-urls-para-cbvs">Configuración de URLs para CBVs</h2>
 <p>Para usar una CBV en <code>urls.py</code>, debemos llamar al método <code>.as_view()</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># urls.py</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.views</span><span class="w"> </span><span class="kn">import</span> <span class="n">CursoListView</span><span class="p">,</span> <span class="n">CursoDetailView</span>
+<pre><code class="language-python"># urls.py
+from .views import CursoListView, CursoDetailView
 
-<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;cursos/&#39;</span><span class="p">,</span> <span class="n">CursoListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;curso_list&#39;</span><span class="p">),</span>
-    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;curso/&lt;slug:slug&gt;/&#39;</span><span class="p">,</span> <span class="n">CursoDetailView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;curso_detail&#39;</span><span class="p">),</span>
-<span class="p">]</span>
-</code></pre></div>
+urlpatterns = [
+    path(&#39;cursos/&#39;, CursoListView.as_view(), name=&#39;curso_list&#39;),
+    path(&#39;curso/&lt;slug:slug&gt;/&#39;, CursoDetailView.as_view(), name=&#39;curso_detail&#39;),
+]
+</code></pre>
 
 <h2 id="mixins">Mixins</h2>
 <p>Los Mixins son clases que aportan funcionalidad extra a una vista.
 *   <code>LoginRequiredMixin</code>: Requiere que el usuario esté logueado.
 *   <code>PermissionRequiredMixin</code>: Requiere permisos específicos.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginRequiredMixin</span>
+<pre><code class="language-python">from django.contrib.auth.mixins import LoginRequiredMixin
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CursoCreateView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Curso</span>
-    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;titulo&#39;</span><span class="p">,</span> <span class="s1">&#39;descripcion&#39;</span><span class="p">]</span>
-</code></pre></div>
+class CursoCreateView(LoginRequiredMixin, CreateView):
+    model = Curso
+    fields = [&#39;titulo&#39;, &#39;descripcion&#39;]
+</code></pre>
 
 <hr />
 <p><a href="./05_plantillas.html">Siguiente: Plantillas y Archivos Estáticos</a></p>
-                </article>
-                <hr>
-                <footer>
-                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
-                </footer>
+
+<!-- Content End -->
+
             </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Código validado y moderno.</p>
+            </footer>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
