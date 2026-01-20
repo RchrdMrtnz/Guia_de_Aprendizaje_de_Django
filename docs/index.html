@@ -1,137 +1,179 @@
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Guía Definitiva de Django</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
     <style>
-        body { padding-top: 2rem; }
-        aside nav { position: sticky; top: 2rem; max-height: 90vh; overflow-y: auto; padding-left: 1rem; }
-        main { padding-bottom: 4rem; }
-        /* Custom styles for better readability */
-        pre { background: #2d2d2d; padding: 1rem; border-radius: 5px; overflow-x: auto; }
-        code { font-family: 'Courier New', Courier, monospace; }
-        .nav-link { display: block; padding: 0.5rem 0; text-decoration: none; }
-        .nav-link.active { font-weight: bold; color: var(--primary); }
-        .nav-section { margin-top: 1rem; font-weight: bold; text-transform: uppercase; font-size: 0.8em; color: var(--muted); }
+        /* Custom Scrollbar for Sidebar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Prism overrides */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="grid">
-            <!-- Sidebar -->
-            <aside class="col-3">
-                <nav>
-                    <ul>
+<body class="bg-gray-50 text-gray-800 antialiased">
 
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
 
-                                <li><a href="index.html" class="nav-link active">Inicio</a></li>
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
 
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
 
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+                <div class="animate-pulse flex space-x-4">
+                    <div class="flex-1 space-y-4 py-1">
+                        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                        <div class="space-y-2">
+                            <div class="h-4 bg-gray-700 rounded"></div>
+                            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <li>
-                                    <span class="nav-section">Fundamentos</span>
-                                    <ul>
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/tu-repo" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
 
-                                            <li><a href="01_introduccion.html" class="nav-link ">Introducción</a></li>
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
-                                            <li><a href="02_configuracion.html" class="nav-link ">Configuración</a></li>
-
-                                            <li><a href="03_modelos.html" class="nav-link ">Modelos Avanzados</a></li>
-
-                                            <li><a href="04_vistas_urls.html" class="nav-link ">Vistas y URLs (CBV)</a></li>
-
-                                            <li><a href="05_plantillas.html" class="nav-link ">Plantillas</a></li>
-
-                                            <li><a href="06_formularios.html" class="nav-link ">Formularios</a></li>
-
-                                            <li><a href="09_autenticacion.html" class="nav-link ">Autenticación</a></li>
-
-                                            <li><a href="07_admin.html" class="nav-link ">Admin Profesional</a></li>
-
-                                            <li><a href="08_avanzado.html" class="nav-link ">Temas Avanzados</a></li>
-
-                                            <li><a href="recursos.html" class="nav-link ">Recursos</a></li>
-
-                                    </ul>
-                                </li>
-
-
-                    </ul>
-                </nav>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="col-9">
-                <article>
-                    <h1 id="guia-definitiva-de-django">Guía Definitiva de Django</h1>
+                <!-- Content Start -->
+                <h1 id="guia-definitiva-de-django">Guía Definitiva de Django</h1>
 <p>Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene <strong>código fuente validado</strong> que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.</p>
 <h2 id="como-usar-esta-guia">🚀 ¿Cómo usar esta guía?</h2>
 <p>Esta documentación se divide en lecciones que cubren desde lo básico hasta temas avanzados. Cada sección está respaldada por código funcional que puedes encontrar en la carpeta <code>src/</code> del repositorio.</p>
 <h3 id="indice-de-contenidos">📚 Índice de Contenidos</h3>
-<ul>
-<li><a href="01_introduccion.html">Introducción a Django</a></li>
-<li><a href="02_configuracion.html">Configuración del Entorno</a></li>
-<li><a href="03_modelos.html">Modelos y Bases de Datos (Avanzado)</a></li>
-<li><a href="04_vistas_urls.html">Vistas y URLs (CBVs)</a></li>
-<li><a href="05_plantillas.html">Plantillas y Archivos Estáticos</a></li>
-<li><a href="06_formularios.html">Formularios y Validaciones</a></li>
-<li><a href="09_autenticacion.html">Autenticación y Autorización</a></li>
-<li><a href="07_admin.html">Administración Profesional</a></li>
-<li><a href="08_avanzado.html">Temas Avanzados y Optimización</a></li>
-<li><a href="recursos.html">Recursos Adicionales</a></li>
+<ul class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+    <li><a href="01_introduccion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">01. Introducción</h5><p class="font-normal text-gray-700 text-sm">Conceptos básicos y arquitectura.</p></a></li>
+    <li><a href="02_configuracion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">02. Configuración</h5><p class="font-normal text-gray-700 text-sm">Entorno virtual y setup inicial.</p></a></li>
+    <li><a href="03_modelos.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">03. Modelos</h5><p class="font-normal text-gray-700 text-sm">Bases de datos y ORM.</p></a></li>
+    <li><a href="04_vistas_urls.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">04. Vistas y URLs</h5><p class="font-normal text-gray-700 text-sm">Controladores y enrutamiento.</p></a></li>
+    <!-- More items can be added here or generated -->
 </ul>
+
 <h2 id="instalacion-y-ejecucion">🛠️ Instalación y Ejecución</h2>
 <p>Para ejecutar el código de ejemplo en tu máquina local:</p>
 <ol>
 <li>
-<p><strong>Clonar el repositorio:</strong>
-    <code>bash
-    git clone &lt;url-del-repo&gt;
-    cd &lt;nombre-del-repo&gt;</code></p>
+<p><strong>Clonar el repositorio:</strong></p>
+<pre><code class="language-bash">git clone &lt;url-del-repo&gt;
+cd &lt;nombre-del-repo&gt;</code></pre>
 </li>
 <li>
-<p><strong>Crear y activar un entorno virtual:</strong>
-    <code>bash
-    python3 -m venv venv
-    source venv/bin/activate  # En Windows: venv\Scripts\activate</code></p>
+<p><strong>Crear y activar un entorno virtual:</strong></p>
+<pre><code class="language-bash">python3 -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate</code></pre>
 </li>
 <li>
-<p><strong>Instalar dependencias:</strong>
-    <code>bash
-    pip install -r requirements.txt</code></p>
+<p><strong>Instalar dependencias:</strong></p>
+<pre><code class="language-bash">pip install -r requirements.txt</code></pre>
 </li>
 <li>
-<p><strong>Ejecutar migraciones:</strong>
-    <code>bash
-    cd src
-    python manage.py migrate</code></p>
+<p><strong>Ejecutar migraciones:</strong></p>
+<pre><code class="language-bash">cd src
+python manage.py migrate</code></pre>
 </li>
 <li>
-<p><strong>Correr el servidor:</strong>
-    <code>bash
-    python manage.py runserver</code></p>
+<p><strong>Correr el servidor:</strong></p>
+<pre><code class="language-bash">python manage.py runserver</code></pre>
 </li>
 </ol>
 <h2 id="validacion-del-codigo">✅ Validación del Código</h2>
 <p>Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Desde la raíz del repositorio</span>
-./validar_codigo.sh
-</code></pre></div>
+<pre><code class="language-bash"># Desde la raíz del repositorio
+./validar_codigo.sh</code></pre>
 
 <p>Esto ejecutará la suite de pruebas de Django (<code>tests.py</code>) para asegurar que los modelos y vistas se comportan como se espera.</p>
-                </article>
-                <hr>
-                <footer>
-                    <small>Guía Definitiva de Django - Generado para GitHub Pages</small>
-                </footer>
+                <!-- Content End -->
+
             </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Código validado y moderno.</p>
+            </footer>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
