@@ -2,219 +2,174 @@
 <!DOCTYPE html>
 
 <html lang="es">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Autenticación - Guía Definitiva de Django</title>
-<link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-
+<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><title>Autenticación - Guía Definitiva de Django</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          django: {
+            900: '#0C4B33',
+            800: '#156143',
+            700: '#237C58',
+            600: '#44B78B',
+            500: '#60CC9F',
+            100: '#D4F1E4',
+            50: '#E8FDF5',
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          mono: ['Fira Code', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    pre { border-radius: 0.5rem; }
+    /* Custom Scrollbar for Sidebar */
+    aside::-webkit-scrollbar { width: 4px; }
+    aside::-webkit-scrollbar-track { background: transparent; }
+    aside::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    aside::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
 
 <style>
-        :root {
-            --django-dark: #0C4B33;
-            --django-light: #44B78B;
-            --django-bg: #F8F9FA;
-            --text-main: #333333;
-            --sidebar-width: 280px;
-        }
-
-        body {
-            background-color: var(--django-bg);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            padding-top: 0; /* Override Pico */
-        }
-
-        /* Navbar for mobile only or simple header */
-        header.top-bar {
-            background-color: var(--django-dark);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        header.top-bar h1 {
-            color: white;
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Styling */
-        aside {
-            width: var(--sidebar-width);
-            background-color: #fff;
-            border-right: 1px solid #e0e0e0;
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 2rem 1.5rem;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.02);
-        }
-
-        aside nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        aside nav li {
-            margin-bottom: 0.5rem;
-        }
-
-        aside nav a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.95rem;
-            display: block;
-            padding: 0.4rem 0.6rem;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        aside nav a:hover {
-            background-color: rgba(68, 183, 139, 0.1);
-            color: var(--django-dark);
-        }
-
-        aside nav a.active {
-            background-color: var(--django-dark);
-            color: white;
-            font-weight: 600;
-        }
-
-        .nav-section {
-            display: block;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #888;
-            font-weight: 700;
-            padding-left: 0.6rem;
-        }
-
-        /* Main Content Styling */
-        main {
-            flex-grow: 1;
-            padding: 3rem 4rem;
-            max-width: 1200px; /* Limit width for readability */
-            margin: 0 auto;
-        }
-
-        article h1 {
-            color: var(--django-dark);
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--django-light);
-            padding-bottom: 0.5rem;
-        }
-
-        article h2 {
-            color: var(--django-dark);
-            margin-top: 2.5rem;
-            font-size: 1.75rem;
-        }
-
-        article h3 {
-            color: #555;
-            margin-top: 1.5rem;
-        }
-
-        /* Code Blocks */
-        pre {
-            background: #2d2d2d !important;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 1.5rem 0;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eaeaea;
-            color: #777;
-            font-size: 0.875rem;
-            text-align: center;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .layout { flex-direction: column; }
-            aside {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid #e0e0e0;
-            }
-            main { padding: 2rem 1.5rem; }
-        }
+        /* Pygments CSS for Tomorrow Night Theme */
+        pre { line-height: 125%; }
+        td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+        span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+        td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+        span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+        .hll { background-color: #49483e }
+        .c { color: #75715e } /* Comment */
+        .err { color: #960050; background-color: #1e0010 } /* Error */
+        .k { color: #66d9ef } /* Keyword */
+        .l { color: #ae81ff } /* Literal */
+        .n { color: #f8f8f2 } /* Name */
+        .o { color: #f92672 } /* Operator */
+        .p { color: #f8f8f2 } /* Punctuation */
+        .ch { color: #75715e } /* Comment.Hashbang */
+        .cm { color: #75715e } /* Comment.Multiline */
+        .cp { color: #75715e } /* Comment.Preproc */
+        .cpf { color: #75715e } /* Comment.PreprocFile */
+        .c1 { color: #75715e } /* Comment.Single */
+        .cs { color: #75715e } /* Comment.Special */
+        .gd { color: #f92672 } /* Generic.Deleted */
+        .ge { font-style: italic } /* Generic.Emph */
+        .gi { color: #a6e22e } /* Generic.Inserted */
+        .gs { font-weight: bold } /* Generic.Strong */
+        .gu { color: #75715e } /* Generic.Subheading */
+        .kc { color: #66d9ef } /* Keyword.Constant */
+        .kd { color: #66d9ef } /* Keyword.Declaration */
+        .kn { color: #f92672 } /* Keyword.Namespace */
+        .kp { color: #66d9ef } /* Keyword.Pseudo */
+        .kr { color: #66d9ef } /* Keyword.Reserved */
+        .kt { color: #66d9ef } /* Keyword.Type */
+        .ld { color: #e6db74 } /* Literal.Date */
+        .m { color: #ae81ff } /* Literal.Number */
+        .s { color: #e6db74 } /* Literal.String */
+        .na { color: #a6e22e } /* Name.Attribute */
+        .nb { color: #f8f8f2 } /* Name.Builtin */
+        .nc { color: #a6e22e } /* Name.Class */
+        .no { color: #66d9ef } /* Name.Constant */
+        .nd { color: #a6e22e } /* Name.Decorator */
+        .ni { color: #f8f8f2 } /* Name.Entity */
+        .ne { color: #a6e22e } /* Name.Exception */
+        .nf { color: #a6e22e } /* Name.Function */
+        .nl { color: #f8f8f2 } /* Name.Label */
+        .nn { color: #f8f8f2 } /* Name.Namespace */
+        .nx { color: #a6e22e } /* Name.Other */
+        .py { color: #f8f8f2 } /* Name.Property */
+        .nt { color: #f92672 } /* Name.Tag */
+        .nv { color: #f8f8f2 } /* Name.Variable */
+        .ow { color: #f92672 } /* Operator.Word */
+        .w { color: #f8f8f2 } /* Text.Whitespace */
+        .mb { color: #ae81ff } /* Literal.Number.Bin */
+        .mf { color: #ae81ff } /* Literal.Number.Float */
+        .mh { color: #ae81ff } /* Literal.Number.Hex */
+        .mi { color: #ae81ff } /* Literal.Number.Integer */
+        .mo { color: #ae81ff } /* Literal.Number.Oct */
+        .sa { color: #e6db74 } /* Literal.String.Affix */
+        .sb { color: #e6db74 } /* Literal.String.Backtick */
+        .sc { color: #e6db74 } /* Literal.String.Char */
+        .dl { color: #e6db74 } /* Literal.String.Delimiter */
+        .sd { color: #e6db74 } /* Literal.String.Doc */
+        .s2 { color: #e6db74 } /* Literal.String.Double */
+        .se { color: #ae81ff } /* Literal.String.Escape */
+        .sh { color: #e6db74 } /* Literal.String.Heredoc */
+        .si { color: #e6db74 } /* Literal.String.Interpol */
+        .sx { color: #e6db74 } /* Literal.String.Other */
+        .sr { color: #e6db74 } /* Literal.String.Regex */
+        .s1 { color: #e6db74 } /* Literal.String.Single */
+        .ss { color: #e6db74 } /* Literal.String.Symbol */
+        .bp { color: #f8f8f2 } /* Name.Builtin.Pseudo */
+        .fm { color: #a6e22e } /* Name.Function.Magic */
+        .vc { color: #f8f8f2 } /* Name.Variable.Class */
+        .vg { color: #f8f8f2 } /* Name.Variable.Global */
+        .vi { color: #f8f8f2 } /* Name.Variable.Instance */
+        .vm { color: #f8f8f2 } /* Name.Variable.Magic */
+        .il { color: #ae81ff } /* Literal.Number.Integer.Long */
     </style>
 </head>
-<body>
-<div class="layout"><aside class="">
-<nav>
-<ul>
-<li><a class="nav-link" href="index.html">Inicio</a></li>
-<li>
-<span class="nav-section">Fundamentos</span>
-<ul>
-<li><a class="nav-link" href="01_introduccion.html">Introducción</a></li>
-<li><a class="nav-link" href="02_configuracion.html">Configuración</a></li>
-<li><a class="nav-link" href="03_modelos.html">Modelos Avanzados</a></li>
-<li><a class="nav-link" href="04_vistas_urls.html">Vistas y URLs (CBV)</a></li>
-<li><a class="nav-link" href="05_plantillas.html">Plantillas</a></li>
-<li><a class="nav-link" href="06_formularios.html">Formularios</a></li>
-<li><a class="nav-link active" href="09_autenticacion.html">Autenticación</a></li>
-<li><a class="nav-link" href="07_admin.html">Admin Profesional</a></li>
-<li><a class="nav-link" href="08_avanzado.html">Temas Avanzados</a></li>
-<li><a class="nav-link" href="recursos.html">Recursos</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-</aside><main class="">
-<article>
-<h1 id="9-autenticacion-y-autorizacion">9. Autenticación y Autorización</h1>
-<p>Django viene con un sistema de autenticación de usuario robusto que maneja cuentas de usuario, grupos, permisos y sesiones basadas en cookies.</p>
-<h2 id="configuracion-basica">Configuración Básica</h2>
-<p>Para usar la autenticación predeterminada, incluye <code>django.contrib.auth.urls</code> en tu <code>urls.py</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># urls.py</span>
+<body class="bg-gray-50 text-gray-800 antialiased"><div class="flex min-h-screen"><aside class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg md:shadow-none overflow-y-auto">
+<div class="p-6 border-b border-gray-100 bg-django-900">
+<h1 class="text-xl font-bold text-white flex items-center gap-2">
+<i class="fa-brands fa-python text-yellow-400"></i>
+<span>Django Guide</span>
+</h1>
+<p class="text-django-100 text-xs mt-1">De 0 a Experto</p>
+</div>
+<nav class="p-4 space-y-1"><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md mb-1 transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="index.html"><i class="fa-solid fa-house mr-3 text-gray-400 w-5 text-center"></i>Inicio</a><div class="px-3 pt-5 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Fundamentos</div><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="01_introduccion.html"><i class="fa-solid fa-flag mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Introducción</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="02_configuracion.html"><i class="fa-solid fa-gear mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Configuración</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="03_modelos.html"><i class="fa-solid fa-database mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Modelos Avanzados</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="04_vistas_urls.html"><i class="fa-solid fa-globe mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Vistas y URLs (CBV)</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="05_plantillas.html"><i class="fa-brands fa-html5 mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Plantillas</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="06_formularios.html"><i class="fa-solid fa-pen-to-square mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Formularios</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 bg-django-50 text-django-700" href="09_autenticacion.html"><i class="fa-solid fa-lock mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-django-600"></i>Autenticación</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="07_admin.html"><i class="fa-solid fa-user-shield mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Admin Profesional</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="08_avanzado.html"><i class="fa-solid fa-microchip mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Temas Avanzados</a><a class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 text-gray-600 hover:bg-gray-50 hover:text-gray-900" href="recursos.html"><i class="fa-solid fa-book-bookmark mr-3 text-opacity-50 group-hover:text-opacity-100 transition-opacity w-5 text-center text-gray-400"></i>Recursos</a></nav></aside><div class="flex-1 md:ml-72 flex flex-col min-h-screen">
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+<div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<button class="md:hidden p-2 mr-4 text-gray-600 hover:text-gray-900 focus:outline-none" id="mobile-menu-btn">
+<i class="fa-solid fa-bars text-xl"></i>
+</button>
+
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-semibold text-gray-800">Autenticación</h2>
+</div>
+<div class="flex items-center gap-2">
+<a class="text-gray-400 hover:text-gray-600 transition-colors" href="https://github.com/rchrdmrtnz/Guia_de_Aprendizaje_de_Django" target="_blank">
+<i class="fa-brands fa-github text-xl"></i>
+</a>
+</div>
+</div>
+</header>
+<main class="flex-1 px-4 sm:px-6 lg:px-8 py-8 max-w-5xl mx-auto w-full"><article>
+<h1 class="text-3xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200" id="9-autenticacion-y-autorizacion">9. Autenticación y Autorización</h1>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Django viene con un sistema de autenticación de usuario robusto que maneja cuentas de usuario, grupos, permisos y sesiones basadas en cookies.</p>
+<h2 class="text-2xl font-semibold text-django-800 mt-10 mb-4 flex items-center gap-2" id="configuracion-basica">Configuración Básica</h2>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Para usar la autenticación predeterminada, incluye <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">django.contrib.auth.urls</code> en tu <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">urls.py</code>.</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="c1"># urls.py</span>
 <span class="n">path</span><span class="p">(</span><span class="s2">"accounts/"</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">"django.contrib.auth.urls"</span><span class="p">)),</span>
 </code></pre></div>
-<p>Esto habilita rutas como:
-*   <code>/accounts/login/</code>
-*   <code>/accounts/logout/</code>
-*   <code>/accounts/password_change/</code></p>
-<h2 id="vistas-de-login-y-logout">Vistas de Login y Logout</h2>
-<p>Por defecto, Django busca las plantillas en <code>registration/login.html</code>.</p>
-<h3 id="ejemplo-registrationloginhtml">Ejemplo <code>registration/login.html</code></h3>
-<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">"post"</span><span class="p">&gt;</span>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Esto habilita rutas como:
+*   <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">/accounts/login/</code>
+*   <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">/accounts/logout/</code>
+*   <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">/accounts/password_change/</code></p>
+<h2 class="text-2xl font-semibold text-django-800 mt-10 mb-4 flex items-center gap-2" id="vistas-de-login-y-logout">Vistas de Login y Logout</h2>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Por defecto, Django busca las plantillas en <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">registration/login.html</code>.</p>
+<h3 class="text-xl font-semibold text-gray-800 mt-8 mb-3" id="ejemplo-registrationloginhtml">Ejemplo <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">registration/login.html</code></h3>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">"post"</span><span class="p">&gt;</span>
     {% csrf_token %}
     {{ form.as_p }}
     <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">"submit"</span><span class="p">&gt;</span>Entrar<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
 </code></pre></div>
-<p>Debes configurar hacia dónde redirigir tras el login en <code>settings.py</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">'/'</span>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Debes configurar hacia dónde redirigir tras el login en <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">settings.py</code>:</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">'/'</span>
 <span class="n">LOGOUT_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">'/'</span>
 </code></pre></div>
-<h2 id="registro-de-usuarios">Registro de Usuarios</h2>
-<p>Django provee <code>UserCreationForm</code> para crear nuevos usuarios fácilmente.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserCreationForm</span>
+<h2 class="text-2xl font-semibold text-django-800 mt-10 mb-4 flex items-center gap-2" id="registro-de-usuarios">Registro de Usuarios</h2>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Django provee <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">UserCreationForm</code> para crear nuevos usuarios fácilmente.</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserCreationForm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">django.views.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">CreateView</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">RegistroView</span><span class="p">(</span><span class="n">CreateView</span><span class="p">):</span>
@@ -222,26 +177,26 @@
     <span class="n">success_url</span> <span class="o">=</span> <span class="s1">'/accounts/login/'</span>
     <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"registration/signup.html"</span>
 </code></pre></div>
-<h2 id="restringir-acceso-autorizacion">Restringir Acceso (Autorización)</h2>
-<p>Para proteger vistas y asegurar que solo usuarios logueados accedan:</p>
-<h3 id="en-vistas-basadas-en-funciones-fbv">En Vistas Basadas en Funciones (FBV)</h3>
-<p>Usa el decorador <code>@login_required</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<h2 class="text-2xl font-semibold text-django-800 mt-10 mb-4 flex items-center gap-2" id="restringir-acceso-autorizacion">Restringir Acceso (Autorización)</h2>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Para proteger vistas y asegurar que solo usuarios logueados accedan:</p>
+<h3 class="text-xl font-semibold text-gray-800 mt-8 mb-3" id="en-vistas-basadas-en-funciones-fbv">En Vistas Basadas en Funciones (FBV)</h3>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Usa el decorador <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">@login_required</code>.</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
 
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">mi_vista_protegida</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
     <span class="o">...</span>
 </code></pre></div>
-<h3 id="en-vistas-basadas-en-clases-cbv">En Vistas Basadas en Clases (CBV)</h3>
-<p>Usa el mixin <code>LoginRequiredMixin</code>.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginRequiredMixin</span>
+<h3 class="text-xl font-semibold text-gray-800 mt-8 mb-3" id="en-vistas-basadas-en-clases-cbv">En Vistas Basadas en Clases (CBV)</h3>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">Usa el mixin <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">LoginRequiredMixin</code>.</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoginRequiredMixin</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MiVistaProtegida</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
     <span class="o">...</span>
 </code></pre></div>
-<h2 id="acceso-en-plantillas">Acceso en Plantillas</h2>
-<p>La variable <code>user</code> está disponible automáticamente en los templates.</p>
-<div class="codehilite"><pre><span></span><code>{% if user.is_authenticated %}
+<h2 class="text-2xl font-semibold text-django-800 mt-10 mb-4 flex items-center gap-2" id="acceso-en-plantillas">Acceso en Plantillas</h2>
+<p class="text-gray-600 leading-relaxed mb-4 text-base">La variable <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">user</code> está disponible automáticamente en los templates.</p>
+<div class="codehilite"><pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 shadow-md text-sm font-mono"><span></span><code>{% if user.is_authenticated %}
     <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hola, {{ user.username }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
     <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">"{% url 'logout' %}"</span> <span class="na">method</span><span class="o">=</span><span class="s">"post"</span><span class="p">&gt;</span>{% csrf_token %}<span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Salir<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
 {% else %}
@@ -249,15 +204,35 @@
 {% endif %}
 </code></pre></div>
 <hr/>
-<p><a href="index.html">Volver al índice</a></p>
-</article>
-<hr/>
-<footer>
-<small>Guía Definitiva de Django - Generado para GitHub Pages</small>
+<p class="text-gray-600 leading-relaxed mb-4 text-base"><a class="text-django-600 hover:text-django-800 font-medium underline decoration-django-200 hover:decoration-django-600 transition-all" href="index.html">Volver al índice</a></p>
+</article></main>
+<footer class="bg-white border-t border-gray-200 mt-auto">
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+<p class="text-center text-sm text-gray-500">
+                © 2024 Guía Definitiva de Django. Hecho con <i class="fa-solid fa-heart text-red-500"></i> para la comunidad.
+            </p>
+</div>
 </footer>
-</main></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script id="mobile-menu-script">
+            document.addEventListener('DOMContentLoaded', () => {
+                const btn = document.getElementById('mobile-menu-btn');
+                const sidebar = document.querySelector('aside');
+                const overlay = document.createElement('div');
+
+                overlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden';
+                document.body.appendChild(overlay);
+
+                btn.addEventListener('click', () => {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                });
+
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            });
+        </script>
 </body>
 </html>

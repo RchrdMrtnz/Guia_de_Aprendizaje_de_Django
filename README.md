@@ -6,7 +6,7 @@ Bienvenido a este repositorio diseñado para aprender Django de manera profunda 
 
 La documentación completa de esta guía ha sido migrada a formato web para una mejor experiencia de lectura.
 
-👉 **[Ver la Guía Completa (Sitio Web)](./docs/index.html)**
+👉 **[Ver la Guía Completa (Sitio Web)](https://rchrdmrtnz.github.io/Guia_de_Aprendizaje_de_Django/)**
 
 Puedes navegar por los archivos HTML generados en la carpeta `docs/`. Si estás viendo esto en GitHub Pages, la documentación debería cargarse automáticamente.
 
