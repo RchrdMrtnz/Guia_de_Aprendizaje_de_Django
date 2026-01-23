@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modelos Avanzados - Guía Definitiva de Django</title>
+    <title>Modelos y ORM Experto - Guía Definitiva de Django</title>
     <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
 
     <!-- Fonts -->
@@ -116,67 +116,115 @@
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
+                <h1 id="modelos-y-orm-de-0-a-experto">Modelos y ORM: De 0 a Experto 🚀</h1>
+<p>Esta guía te llevará desde la definición básica de tablas hasta consultas complejas y optimizadas con el ORM de Django.</p>
 
-                    <h1 id="3-modelos-y-bases-de-datos-profundizacion">3. Modelos y Bases de Datos: Profundización</h1>
-<p>Los modelos son la fuente única y definitiva de información sobre tus datos. Contienen los campos y comportamientos esenciales de los datos que estás almacenando. Django sigue el principio DRY (Don't Repeat Yourself).</p>
-<h2 id="definicion-avanzada-de-modelos">Definición Avanzada de Modelos</h2>
-<p>Además de los campos básicos, los modelos pueden contener metadatos, métodos personalizados y lógica de negocio.</p>
-<h3 id="ejemplo-completo-ver-srcconceptos_basicosmodelspy">Ejemplo Completo (ver <code>src/conceptos_basicos/models.py</code>)</h3>
-<pre><code class="language-python">from django.db import models
-from django.utils.text import slugify
+<h2 id="1-anatomia-de-un-modelo-experto">1. Anatomía de un Modelo Experto</h2>
+<p>Un modelo robusto utiliza los tipos de datos correctos para garantizar la integridad y el rendimiento.</p>
+<pre><code class="language-python"># src/conceptos_basicos/models.py
+from django.db import models
 
 class Curso(models.Model):
-    titulo = models.CharField(max_length=200, verbose_name=&quot;Título&quot;)
-    # Slug: Cadena URL-friendly (ej: &quot;curso-django-avanzado&quot;)
-    slug = models.SlugField(unique=True, blank=True, null=True)
-    descripcion = models.TextField()
-    fecha_inicio = models.DateField()
+    # Enum para opciones limitadas (Django 3.0+)
+    NIVEL_CHOICES = [
+        ('BASICO', 'Básico'),
+        ('INTERMEDIO', 'Intermedio'),
+        ('AVANZADO', 'Avanzado'),
+    ]
 
-    # Campos de auditoría (timestamps)
-    creado_en = models.DateTimeField(auto_now_add=True) # Se fija al crear
-    actualizado_en = models.DateTimeField(auto_now=True) # Se actualiza al guardar
+    titulo = models.CharField(max_length=200, verbose_name="Título")
 
-    # CLASE META: Opciones de configuración del modelo
-    class Meta:
-        verbose_name = &quot;Curso&quot;
-        verbose_name_plural = &quot;Cursos&quot;
-        ordering = [&#39;-fecha_inicio&#39;] # Ordenar por defecto por fecha descendente
+    # DecimalField es CRÍTICO para dinero. Float pierde precisión.
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # MÉTODOS MÁGICOS
-    def __str__(self):
-        return self.titulo
+    # BooleanField con valor por defecto
+    publicado = models.BooleanField(default=False)
 
-    # SOBRESCRIBIR SAVE: Lógica automática antes de guardar
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.titulo)
-        super().save(*args, **kwargs)
-
-    # PROPIEDADES: Campos calculados que no se guardan en BD
-    @property
-    def es_reciente(self):
-        from django.utils import timezone
-        import datetime
-        return self.creado_en &gt;= timezone.now() - datetime.timedelta(days=30)
+    # Choices limita la entrada a valores predefinidos en la BD y Admin
+    nivel = models.CharField(max_length=10, choices=NIVEL_CHOICES, default='BASICO')
 </code></pre>
 
-<h2 id="conceptos-clave">Conceptos Clave</h2>
-<h3 id="1-clase-meta">1. Clase Meta</h3>
-<p>Dentro de un modelo, la clase <code>Meta</code> se usa para definir opciones que no son campos.
-*   <code>ordering</code>: Define el orden por defecto al hacer consultas (<code>Curso.objects.all()</code>).
-*   <code>verbose_name</code> / <code>verbose_name_plural</code>: Nombres legibles para el panel de administración.
-*   <code>indexes</code>: Para crear índices de base de datos y mejorar rendimiento.</p>
-<h3 id="2-sobrescritura-de-save">2. Sobrescritura de <code>save()</code></h3>
-<p>Es común sobrescribir <code>save()</code> para ejecutar lógica cada vez que un objeto se crea o modifica.
-*   <strong>Caso de uso:</strong> Generar slugs, redimensionar imágenes, calcular totales.
-*   <strong>Importante:</strong> Siempre llamar a <code>super().save()</code> al final para que Django guarde realmente el objeto.</p>
-<h3 id="3-propiedades-property">3. Propiedades (<code>@property</code>)</h3>
-<p>Permiten añadir atributos al objeto que se calculan en tiempo de ejecución.
-*   Ejemplo: <code>nombre_completo</code> uniendo <code>nombre</code> y <code>apellido</code>.
-*   No se pueden usar directamente en filtros de base de datos (<code>filter()</code>), pero son muy útiles en templates y vistas.</p>
-<h3 id="4-slugs">4. Slugs</h3>
-<p>Un <code>Slug</code> es una etiqueta corta para algo, que contiene solo letras, números, guiones bajos o guiones. Generalmente se usan en URLs.
-*   Ejemplo: <code>www.misitio.com/cursos/aprende-django-facil/</code> (donde <code>aprende-django-facil</code> es el slug).</p>
+<h2 id="2-relaciones-entre-tablas">2. Relaciones entre Tablas</h2>
+<p>El poder de las bases de datos relacionales reside en... las relaciones. Django ofrece tres tipos principales:</p>
+
+<h3 id="a-foreignkey-uno-a-muchos">A. ForeignKey (Uno a Muchos)</h3>
+<p>Un <code>Curso</code> pertenece a una <code>Categoria</code>. Una <code>Categoria</code> tiene muchos <code>Cursos</code>.</p>
+<pre><code class="language-python">class Categoria(models.Model):
+    nombre = models.CharField(max_length=50)
+
+class Curso(models.Model):
+    # related_name='cursos' permite acceder desde categoria: mi_categoria.cursos.all()
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, related_name="cursos")
+</code></pre>
+
+<h3 id="b-manytomanyfield-muchos-a-muchos">B. ManyToManyField (Muchos a Muchos)</h3>
+<p>Un <code>Estudiante</code> puede tomar muchos <code>Cursos</code>. Un <code>Curso</code> tiene muchos <code>Estudiantes</code>.</p>
+<pre><code class="language-python">class Estudiante(models.Model):
+    # Django crea una tabla intermedia automáticamente
+    cursos = models.ManyToManyField(Curso, related_name="estudiantes")
+</code></pre>
+
+<h3 id="c-onetoonefield-uno-a-uno">C. OneToOneField (Uno a Uno)</h3>
+<p>Extender información de un usuario o entidad.</p>
+<pre><code class="language-python">class PerfilEstudiante(models.Model):
+    estudiante = models.OneToOneField(Estudiante, on_delete=models.CASCADE)
+    bio = models.TextField()
+</code></pre>
+
+<h2 id="3-consultas-con-el-orm-el-poder-real">3. Consultas con el ORM (El Poder Real)</h2>
+<p>Aquí es donde dejamos de ser principiantes. Ejemplos reales validados en nuestros tests (<code>tests/test_orm_avanzado.py</code>).</p>
+
+<h3 id="filtrado-basico-y-lookups">Filtrado Básico y Lookups</h3>
+<p>Los "lookups" se añaden al nombre del campo con doble guion bajo (<code>__</code>).</p>
+<pre><code class="language-python"># Obtener cursos que contengan "django" (ignora mayúsculas/minúsculas)
+Curso.objects.filter(titulo__icontains="django")
+
+# Cursos GRATUITOS (precio menor o igual a 0)
+Curso.objects.filter(precio__lte=0)
+
+# Cursos publicados en el año 2024
+Curso.objects.filter(fecha_inicio__year=2024)
+</code></pre>
+
+<h3 id="consultas-avanzadas-con-q-objects">Consultas Avanzadas con Q Objects</h3>
+<p>Cuando necesitas lógica <code>OR</code> (|) o negaciones complejas (<code>~</code>), usas objetos <code>Q</code>.</p>
+<pre><code class="language-python">from django.db.models import Q
+
+# Quiero cursos que sean GRATIS O que sean nivel AVANZADO
+Curso.objects.filter(Q(precio=0) | Q(nivel="AVANZADO"))
+</code></pre>
+
+<h3 id="relaciones-inversas-spanning">Relaciones Inversas (Spanning)</h3>
+<p>Puedes filtrar basándote en campos de modelos relacionados.</p>
+<pre><code class="language-python"># Todos los cursos de la categoría "Desarrollo Web"
+Curso.objects.filter(categoria__nombre="Desarrollo Web")
+
+# Todos los estudiantes inscritos en cursos "Avanzados"
+Estudiante.objects.filter(cursos__nivel="AVANZADO").distinct()
+</code></pre>
+
+<h3 id="agregacion-y-anotacion">Agregación y Anotación</h3>
+<p>Operaciones matemáticas sobre grupos de datos.</p>
+<pre><code class="language-python">from django.db.models import Avg, Count
+
+# ¿Cuál es el precio promedio de mis cursos?
+Curso.objects.aggregate(Avg('precio'))
+# Retorna: {'precio__avg': 49.99}
+
+# Añadir un campo 'num_estudiantes' a cada curso en la consulta
+cursos = Curso.objects.annotate(num_estudiantes=Count('estudiantes'))
+for c in cursos:
+    print(f"{c.titulo}: {c.num_estudiantes} alumnos")
+</code></pre>
+
+<h3 id="expresiones-f-atomic-updates">Expresiones F (Atomic Updates)</h3>
+<p>Actualizar un campo basándose en su valor actual, directamente en la base de datos (sin race conditions).</p>
+<pre><code class="language-python">from django.db.models import F
+
+# Aumentar el precio de TODOS los cursos en un 10%
+Curso.objects.update(precio=F('precio') * 1.1)
+</code></pre>
+
 <hr />
 <p><a href="./04_vistas_urls.html">Siguiente: Vistas y URLs Avanzadas</a></p>
 
