@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import Curso, Estudiante
+from conceptos_basicos.models import Curso, Estudiante
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
