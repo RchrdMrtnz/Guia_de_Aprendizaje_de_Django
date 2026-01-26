@@ -15,6 +15,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -61,7 +62,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
 
     <!-- Mobile Header -->
     <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
@@ -113,7 +114,7 @@
     <!-- Main Content -->
     <div class="p-4 lg:ml-64 min-h-screen">
         <div class="p-4 lg:p-8 max-w-4xl mx-auto">
-            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
 
@@ -140,7 +141,13 @@ venv\Scripts\activate
 </code></pre>
 
 <h2 id="paso-3-crear-un-proyecto">Paso 3: Crear un Proyecto</h2>
-<p>Django ofrece un comando para generar la estructura inicial.</p>
+<p>Django distingue entre un "Proyecto" y una "Aplicación" (App):</p>
+<ul>
+    <li><strong>Proyecto:</strong> La configuración global y colección de aplicaciones (ej. "SitioWeb").</li>
+    <li><strong>Aplicación:</strong> Un módulo que hace algo específico (ej. "Blog", "Foro", "Tienda").</li>
+</ul>
+
+<p>Primero, crea el proyecto:</p>
 <pre><code class="language-bash">django-admin startproject mi_proyecto
 cd mi_proyecto
 </code></pre>
@@ -152,13 +159,35 @@ cd mi_proyecto
 <li><code>mi_proyecto/urls.py</code>: Declaración de rutas (URL dispatcher).</li>
 <li><code>mi_proyecto/wsgi.py</code> y <code>asgi.py</code>: Puntos de entrada para servidores web.</li>
 </ul>
+
+<h2 id="paso-4-gestion-de-dependencias">Paso 4: Gestión de Dependencias</h2>
+<p>Es fundamental registrar las librerías que usa tu proyecto para que otros desarrolladores (o el servidor de producción) puedan instalarlas.</p>
+
+<pre><code class="language-bash"># Guardar dependencias actuales en un archivo
+pip freeze > requirements.txt
+
+# Instalar dependencias desde el archivo
+pip install -r requirements.txt
+</code></pre>
+
+<h2 id="paso-5-configuracion-git">Paso 5: Configuración de Git</h2>
+<p>Nunca debes subir archivos temporales, bases de datos locales o secretos al repositorio. Crea un archivo <code>.gitignore</code> en la raíz:</p>
+
+<pre><code class="language-text"># .gitignore básico para Django
+__pycache__/
+*.py[cod]
+db.sqlite3
+venv/
+.env
+.DS_Store
+</code></pre>
+
 <h2 id="ejecutar-el-servidor-de-desarrollo">Ejecutar el servidor de desarrollo</h2>
+<p>Django incluye un servidor web ligero para pruebas. <strong>No uses este servidor en producción.</strong></p>
 <pre><code class="language-bash">python manage.py runserver
 </code></pre>
 
 <p>Visita <code>http://127.0.0.1:8000/</code> para ver tu web funcionando.</p>
-<hr />
-<p><a href="./03_modelos.html">Siguiente: Modelos y Bases de Datos</a></p>
 
 <!-- Content End -->
 
