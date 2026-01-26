@@ -3,3 +3,5 @@ Django==6.0.1
 sqlparse==0.5.5
 typing_extensions==4.15.0
 tzdata; sys_platform == 'win32'
+djangorestframework
+python-decouple

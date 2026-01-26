@@ -4,8 +4,10 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import viewsets
 from .models import Curso
 from .forms import CursoForm
+from .serializers import CursoSerializer
 
 # --- FUNCTION BASED VIEWS (FBV) ---
 
@@ -28,7 +30,7 @@ class CursoListView(ListView):
 
     def get_queryset(self):
         # Ejemplo de filtro personalizado: solo cursos recientes o todos
-        return Curso.objects.all()
+        return Curso.objects.select_related('categoria').all()
 
 class CursoDetailView(DetailView):
     model = Curso
@@ -45,3 +47,10 @@ class RegistroView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = "registration/signup.html"
+
+
+# --- DRF VIEWSETS ---
+
+class CursoViewSet(viewsets.ModelViewSet):
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
