@@ -15,6 +15,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -61,7 +62,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
 
     <!-- Mobile Header -->
     <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
@@ -113,28 +114,84 @@
     <!-- Main Content -->
     <div class="p-4 lg:ml-64 min-h-screen">
         <div class="p-4 lg:p-8 max-w-4xl mx-auto">
-            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
 
                     <h1 id="1-introduccion-a-django">1. Introducción a Django</h1>
+
+<div class="bg-blue-50 dark:bg-gray-800 border-l-4 border-blue-500 p-4 mb-6">
+    <p class="text-blue-700 dark:text-blue-300 font-medium">Django es el framework web para perfeccionistas con plazos de entrega ajustados.</p>
+</div>
+
 <h2 id="que-es-django">¿Qué es Django?</h2>
 <p>Django es un framework web de alto nivel escrito en Python que fomenta un desarrollo rápido y un diseño limpio y pragmático. Construido por desarrolladores experimentados, se encarga de gran parte de las complicaciones del desarrollo web, por lo que puedes concentrarte en escribir tu aplicación sin necesidad de reinventar la rueda.</p>
+
+<h3 id="historia-breve">Breve Historia</h3>
+<p>Django nació en el otoño de 2003, cuando los programadores web del periódico <em>Lawrence Journal-World</em> en Kansas, Adrian Holovaty y Simon Willison, comenzaron a usar Python para crear aplicaciones. Fue liberado públicamente bajo licencia BSD en julio de 2005. El framework lleva el nombre del guitarrista de jazz <strong>Django Reinhardt</strong>.</p>
+
 <h3 id="principales-caracteristicas">Principales características</h3>
-<ul>
-<li><strong>Completo ("Batteries included"):</strong> Incluye autenticación, ORM, sitemaps, RSS, y más.</li>
-<li><strong>Seguro:</strong> Ayuda a evitar errores de seguridad comunes como SQL Injection, XSS, CSRF.</li>
-<li><strong>Escalable:</strong> Usado por sitios como Instagram, Pinterest, y Mozilla.</li>
-</ul>
+<p>Django sigue la filosofía "Batteries Included" (Baterías incluidas), lo que significa que viene con todo lo necesario para desarrollar una aplicación completa sin depender de librerías externas para lo básico.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h4 class="font-bold text-gray-900 dark:text-white mt-0">🔋 Completo</h4>
+        <p class="text-sm">Incluye autenticación, ORM, sitemaps, RSS, administración de contenidos y más, listos para usar.</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h4 class="font-bold text-gray-900 dark:text-white mt-0">🛡️ Seguro</h4>
+        <p class="text-sm">Protege automáticamente contra SQL Injection, XSS, CSRF y Clickjacking. Gestiona contraseñas de forma segura.</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h4 class="font-bold text-gray-900 dark:text-white mt-0">📈 Escalable</h4>
+        <p class="text-sm">Su arquitectura "share-nothing" permite escalar horizontalmente. Usado por Instagram, Pinterest y Mozilla.</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h4 class="font-bold text-gray-900 dark:text-white mt-0">🔄 Versátil</h4>
+        <p class="text-sm">Sirve para construir desde CMS y redes sociales hasta plataformas de computación científica.</p>
+    </div>
+</div>
+
 <h2 id="arquitectura-mvt-modelo-vista-template">Arquitectura MVT (Modelo-Vista-Template)</h2>
-<p>A diferencia del tradicional MVC (Modelo-Vista-Controlador), Django usa MVT:</p>
+<p>A diferencia del tradicional MVC (Modelo-Vista-Controlador), Django usa una variación llamada <strong>MVT</strong>. En Django, el framework mismo actúa como el "Controlador".</p>
+
 <ol>
-<li><strong>Modelo (Model):</strong> La capa de acceso a datos. Define la estructura de la base de datos.</li>
-<li><strong>Vista (View):</strong> La capa de lógica de negocio. Procesa las peticiones y devuelve respuestas. (Equivalente al "Controlador" en MVC).</li>
-<li><strong>Template:</strong> La capa de presentación. Define cómo se muestran los datos al usuario. (Equivalente a la "Vista" en MVC).</li>
+<li><strong>Modelo (Model):</strong> La capa de acceso a datos. Define la estructura de la base de datos y la lógica de los datos.</li>
+<li><strong>Vista (View):</strong> La capa de lógica de negocio. Procesa las peticiones HTTP, consulta el modelo y decide qué template renderizar.</li>
+<li><strong>Template:</strong> La capa de presentación. Define cómo se muestran los datos al usuario (HTML con lógica de presentación).</li>
 </ol>
-<hr />
-<p><a href="./02_configuracion.html">Siguiente: Configuración del Entorno</a></p>
+
+<h3 id="flujo-de-peticion">Flujo de una Petición en Django</h3>
+
+<div class="overflow-x-auto my-8">
+    <div class="flex items-center justify-between min-w-[600px] text-sm text-center font-bold">
+        <div class="flex-1 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
+            <span class="block text-2xl mb-2">👤</span>
+            Usuario
+        </div>
+        <div class="px-2 text-gray-400">➡️ URL ➡️</div>
+        <div class="flex-1 bg-blue-100 dark:bg-blue-900 p-4 rounded-lg border border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100">
+            <span class="block text-2xl mb-2">🌐</span>
+            URL Dispatcher
+            <span class="block text-xs font-normal mt-1">urls.py</span>
+        </div>
+        <div class="px-2 text-gray-400">➡️</div>
+        <div class="flex-1 bg-green-100 dark:bg-green-900 p-4 rounded-lg border border-green-300 dark:border-green-700 text-green-900 dark:text-green-100">
+            <span class="block text-2xl mb-2">⚙️</span>
+            Vista (View)
+            <span class="block text-xs font-normal mt-1">views.py</span>
+        </div>
+        <div class="px-2 text-gray-400">➡️</div>
+        <div class="flex flex-col space-y-2">
+            <div class="bg-yellow-100 dark:bg-yellow-900 p-2 rounded border border-yellow-300 dark:border-yellow-700 text-yellow-900 dark:text-yellow-100 w-32">
+                🗄️ Modelo
+            </div>
+            <div class="bg-red-100 dark:bg-red-900 p-2 rounded border border-red-300 dark:border-red-700 text-red-900 dark:text-red-100 w-32">
+                🎨 Template
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Content End -->
 
