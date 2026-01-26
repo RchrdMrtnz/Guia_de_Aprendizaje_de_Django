@@ -15,6 +15,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -61,7 +62,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
 
     <!-- Mobile Header -->
     <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
@@ -113,7 +114,7 @@
     <!-- Main Content -->
     <div class="p-4 lg:ml-64 min-h-screen">
         <div class="p-4 lg:p-8 max-w-4xl mx-auto">
-            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
 
@@ -154,8 +155,7 @@ class CursoAdmin(admin.ModelAdmin):
         self.message_user(request, f&quot;{count} cursos archivados.&quot;)
 </code></pre>
 
-<hr />
-<p><a href="./08_avanzado.html">Siguiente: Temas Avanzados y Optimización</a></p>
+
 
 <!-- Content End -->
 
