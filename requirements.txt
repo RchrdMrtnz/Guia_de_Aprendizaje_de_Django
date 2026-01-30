@@ -5,3 +5,10 @@ typing_extensions==4.15.0
 tzdata; sys_platform == 'win32'
 djangorestframework
 python-decouple
+gunicorn
+psycopg2-binary
+dj-database-url
+flake8
+black
+isort
+pre-commit
