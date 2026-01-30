@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from conceptos_basicos.models import Curso, Estudiante
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 import datetime
 
@@ -44,6 +44,7 @@ class VistasTest(TestCase):
             fecha_inicio=datetime.date.today()
         )
         # Crear usuario para pruebas de autenticación
+        User = get_user_model()
         self.user = User.objects.create_user(username='testuser', password='password123')
 
     def test_lista_cursos_view(self):
