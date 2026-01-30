@@ -155,10 +155,16 @@ cd mi_proyecto
 <h2 id="estructura-generada">Estructura generada</h2>
 <ul>
 <li><code>manage.py</code>: Una utilidad de línea de comandos para interactuar con el proyecto.</li>
-<li><code>mi_proyecto/settings.py</code>: Configuración global (base de datos, apps instaladas, etc).</li>
+<li><code>mi_proyecto/settings/</code>: Paquete de configuración modular (base, local, production).</li>
 <li><code>mi_proyecto/urls.py</code>: Declaración de rutas (URL dispatcher).</li>
 <li><code>mi_proyecto/wsgi.py</code> y <code>asgi.py</code>: Puntos de entrada para servidores web.</li>
 </ul>
+
+<div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 my-4">
+    <p class="text-yellow-700 dark:text-yellow-300">
+        <strong>Nota de Arquitectura:</strong> En este repositorio, hemos reemplazado el archivo único <code>settings.py</code> por una estructura modular para separar entornos. Consulta la sección de <a href="10_arquitectura.html" class="underline font-bold">Arquitectura Moderna</a> para más detalles.
+    </p>
+</div>
 
 <h2 id="paso-4-gestion-de-dependencias">Paso 4: Gestión de Dependencias</h2>
 <p>Es fundamental registrar las librerías que usa tu proyecto para que otros desarrolladores (o el servidor de producción) puedan instalarlas.</p>
