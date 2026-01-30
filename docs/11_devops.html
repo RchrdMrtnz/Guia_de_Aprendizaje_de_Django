@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Guía Definitiva de Django</title>
-    <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
+    <title>DevOps y Calidad - Guía Definitiva de Django</title>
+    <meta name="description" content="Aprende a dockerizar Django y usar herramientas de calidad de código como Flake8 y Black.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,53 +117,66 @@
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
-                <h1 id="guia-definitiva-de-django">Guía Definitiva de Django</h1>
-<p>Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene <strong>código fuente validado</strong> que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.</p>
-<h2 id="como-usar-esta-guia">🚀 ¿Cómo usar esta guía?</h2>
-<p>Esta documentación se divide en lecciones que cubren desde lo básico hasta temas avanzados. Cada sección está respaldada por código funcional que puedes encontrar en la carpeta <code>src/</code> del repositorio.</p>
-<h3 id="indice-de-contenidos">📚 Índice de Contenidos</h3>
-<ul class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-    <li><a href="01_introduccion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">01. Introducción</h5><p class="font-normal text-gray-700 text-sm">Conceptos básicos y arquitectura.</p></a></li>
-    <li><a href="02_configuracion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">02. Configuración</h5><p class="font-normal text-gray-700 text-sm">Entorno virtual y setup inicial.</p></a></li>
-    <li><a href="03_modelos.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">03. Modelos</h5><p class="font-normal text-gray-700 text-sm">Bases de datos y ORM.</p></a></li>
-    <li><a href="04_vistas_urls.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">04. Vistas y URLs</h5><p class="font-normal text-gray-700 text-sm">Controladores y enrutamiento.</p></a></li>
-    <li><a href="10_arquitectura.html" class="block p-6 bg-white border-l-4 border-blue-500 border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">10. Arquitectura Moderna</h5><p class="font-normal text-gray-700 text-sm">Settings modulares y Custom User.</p></a></li>
-    <li><a href="11_devops.html" class="block p-6 bg-white border-l-4 border-blue-500 border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">11. DevOps & Calidad</h5><p class="font-normal text-gray-700 text-sm">Docker, CI/CD y buenas prácticas.</p></a></li>
+                <h1 id="11-devops-y-calidad-de-codigo">11. DevOps y Calidad de Código</h1>
+
+<div class="bg-blue-50 dark:bg-gray-800 border-l-4 border-blue-500 p-4 mb-6">
+    <p class="text-blue-700 dark:text-blue-300 font-medium">Un proyecto profesional no termina al escribir el código. Necesitamos asegurarnos de que funcione en cualquier máquina y mantener un estilo consistente.</p>
+</div>
+
+<h2 id="1-docker-y-docker-compose">1. Docker y Docker Compose</h2>
+<p>Hemos "dockerizado" la aplicación para garantizar que el entorno de desarrollo sea idéntico para todos los desarrolladores.</p>
+
+<h3 id="dockerfile">Dockerfile</h3>
+<p>Define la imagen del sistema operativo, instala Python, las dependencias y prepara el servidor Gunicorn.</p>
+<pre><code class="language-dockerfile">FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt
+COPY src/ /app/src/
+CMD ["gunicorn", "--chdir", "src", "curso_django.wsgi:application", "--bind", "0.0.0.0:8000"]
+</code></pre>
+
+<h3 id="docker-compose">Docker Compose</h3>
+<p>Orquesta los servicios. En este caso, levanta Django (web) y una base de datos PostgreSQL real (db), conectándolos automáticamente.</p>
+
+<pre><code class="language-yaml"># docker-compose.yml
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+</code></pre>
+
+<p>Para correr el proyecto ahora solo necesitas:</p>
+<pre><code class="language-bash">docker-compose up --build</code></pre>
+
+<h2 id="2-calidad-de-codigo-linters">2. Calidad de Código (Linters)</h2>
+<p>Para mantener el código limpio y legible, hemos integrado herramientas estándares de la industria:</p>
+
+<ul>
+    <li><strong>Black:</strong> Formateador de código automático. Se acabó discutir por dónde poner los paréntesis.</li>
+    <li><strong>Isort:</strong> Ordena las importaciones alfabéticamente y por secciones.</li>
+    <li><strong>Flake8:</strong> Busca errores de sintaxis y estilo (PEP 8).</li>
 </ul>
 
-<h2 id="instalacion-y-ejecucion">🛠️ Instalación y Ejecución</h2>
-<p>Para ejecutar el código de ejemplo en tu máquina local:</p>
-<ol>
-<li>
-<p><strong>Clonar el repositorio:</strong></p>
-<pre><code class="language-bash">git clone https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django.git
-cd Guia_de_Aprendizaje_de_Django</code></pre>
-</li>
-<li>
-<p><strong>Crear y activar un entorno virtual:</strong></p>
-<pre><code class="language-bash">python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate</code></pre>
-</li>
-<li>
-<p><strong>Instalar dependencias:</strong></p>
-<pre><code class="language-bash">pip install -r requirements.txt</code></pre>
-</li>
-<li>
-<p><strong>Ejecutar migraciones:</strong></p>
-<pre><code class="language-bash">cd src
-python manage.py migrate</code></pre>
-</li>
-<li>
-<p><strong>Correr el servidor:</strong></p>
-<pre><code class="language-bash">python manage.py runserver</code></pre>
-</li>
-</ol>
-<h2 id="validacion-del-codigo">✅ Validación del Código</h2>
-<p>Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:</p>
-<pre><code class="language-bash"># Desde la raíz del repositorio
-./validar_codigo.sh</code></pre>
+<h3 id="pre-commit-hooks">Pre-commit Hooks</h3>
+<p>Hemos configurado <code>pre-commit</code>. Esta herramienta ejecuta las comprobaciones automáticamente <em>antes</em> de que puedas hacer un commit. Si tu código está mal formateado, el commit fallará y te pedirá que lo arregles.</p>
 
-<p>Esto ejecutará la suite de pruebas de Django (<code>tests.py</code>) para asegurar que los modelos y vistas se comportan como se espera.</p>
+<pre><code class="language-yaml"># .pre-commit-config.yaml
+repos:
+-   repo: https://github.com/psf/black
+    hooks:
+    -   id: black
+</code></pre>
+
+<p>Para instalarlo en tu entorno local:</p>
+<pre><code class="language-bash">pip install pre-commit
+pre-commit install</code></pre>
+
                 <!-- Content End -->
 
             </main>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Guía Definitiva de Django</title>
-    <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
+    <title>Arquitectura Moderna - Guía Definitiva de Django</title>
+    <meta name="description" content="Guía completa sobre arquitectura profesional en Django: Custom User y Settings Modulares.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,53 +117,76 @@
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <!-- Content Start -->
-                <h1 id="guia-definitiva-de-django">Guía Definitiva de Django</h1>
-<p>Bienvenido a este repositorio diseñado para aprender Django de manera profunda y práctica. A diferencia de otras guías, este repositorio contiene <strong>código fuente validado</strong> que acompaña a cada lección, permitiéndote ver cómo funcionan los conceptos en un proyecto real.</p>
-<h2 id="como-usar-esta-guia">🚀 ¿Cómo usar esta guía?</h2>
-<p>Esta documentación se divide en lecciones que cubren desde lo básico hasta temas avanzados. Cada sección está respaldada por código funcional que puedes encontrar en la carpeta <code>src/</code> del repositorio.</p>
-<h3 id="indice-de-contenidos">📚 Índice de Contenidos</h3>
-<ul class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-    <li><a href="01_introduccion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">01. Introducción</h5><p class="font-normal text-gray-700 text-sm">Conceptos básicos y arquitectura.</p></a></li>
-    <li><a href="02_configuracion.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">02. Configuración</h5><p class="font-normal text-gray-700 text-sm">Entorno virtual y setup inicial.</p></a></li>
-    <li><a href="03_modelos.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">03. Modelos</h5><p class="font-normal text-gray-700 text-sm">Bases de datos y ORM.</p></a></li>
-    <li><a href="04_vistas_urls.html" class="block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">04. Vistas y URLs</h5><p class="font-normal text-gray-700 text-sm">Controladores y enrutamiento.</p></a></li>
-    <li><a href="10_arquitectura.html" class="block p-6 bg-white border-l-4 border-blue-500 border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">10. Arquitectura Moderna</h5><p class="font-normal text-gray-700 text-sm">Settings modulares y Custom User.</p></a></li>
-    <li><a href="11_devops.html" class="block p-6 bg-white border-l-4 border-blue-500 border-gray-200 rounded-lg shadow hover:bg-gray-50 hover:shadow-md transition-all"><h5 class="mb-2 text-lg font-bold tracking-tight text-gray-900">11. DevOps & Calidad</h5><p class="font-normal text-gray-700 text-sm">Docker, CI/CD y buenas prácticas.</p></a></li>
-</ul>
+                <h1 id="10-arquitectura-moderna-en-django">10. Arquitectura Moderna en Django</h1>
 
-<h2 id="instalacion-y-ejecucion">🛠️ Instalación y Ejecución</h2>
-<p>Para ejecutar el código de ejemplo en tu máquina local:</p>
-<ol>
-<li>
-<p><strong>Clonar el repositorio:</strong></p>
-<pre><code class="language-bash">git clone https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django.git
-cd Guia_de_Aprendizaje_de_Django</code></pre>
-</li>
-<li>
-<p><strong>Crear y activar un entorno virtual:</strong></p>
-<pre><code class="language-bash">python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate</code></pre>
-</li>
-<li>
-<p><strong>Instalar dependencias:</strong></p>
-<pre><code class="language-bash">pip install -r requirements.txt</code></pre>
-</li>
-<li>
-<p><strong>Ejecutar migraciones:</strong></p>
-<pre><code class="language-bash">cd src
-python manage.py migrate</code></pre>
-</li>
-<li>
-<p><strong>Correr el servidor:</strong></p>
-<pre><code class="language-bash">python manage.py runserver</code></pre>
-</li>
-</ol>
-<h2 id="validacion-del-codigo">✅ Validación del Código</h2>
-<p>Una característica clave de esta guía es que todo el código está validado mediante pruebas automatizadas. Puedes verificar que todo funciona correctamente ejecutando el script de validación:</p>
-<pre><code class="language-bash"># Desde la raíz del repositorio
-./validar_codigo.sh</code></pre>
+<div class="bg-blue-50 dark:bg-gray-800 border-l-4 border-blue-500 p-4 mb-6">
+    <p class="text-blue-700 dark:text-blue-300 font-medium">Ir más allá del tutorial básico es fundamental para crear aplicaciones mantenibles y escalables. Aquí explicamos cómo hemos reestructurado este proyecto para seguir estándares profesionales.</p>
+</div>
 
-<p>Esto ejecutará la suite de pruebas de Django (<code>tests.py</code>) para asegurar que los modelos y vistas se comportan como se espera.</p>
+<h2 id="1-modelo-de-usuario-personalizado-custom-user">1. Modelo de Usuario Personalizado (Custom User)</h2>
+<p>Una de las primeras recomendaciones de la documentación de Django es usar un modelo de usuario personalizado en lugar del <code>django.contrib.auth.models.User</code> por defecto. Esto permite flexibilidad futura (por ejemplo, usar email para loguearse en lugar de username).</p>
+
+<h3 id="implementacion">Implementación</h3>
+<p>Hemos creado una nueva aplicación <code>users</code> y definido un modelo <code>CustomUser</code> que hereda de <code>AbstractUser</code>.</p>
+
+<pre><code class="language-python"># src/users/models.py
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+class CustomUser(AbstractUser):
+    # Aquí podemos añadir campos extra como 'bio', 'fecha_nacimiento', etc.
+    pass
+</code></pre>
+
+<p>Y configurado en los settings:</p>
+<pre><code class="language-python"># src/curso_django/settings/base.py
+AUTH_USER_MODEL = 'users.CustomUser'
+</code></pre>
+
+<p><strong>¿Por qué hacer esto?</strong> Si empiezas un proyecto con el User por defecto y luego necesitas cambiarlo, la migración de la base de datos es extremadamente dolorosa. Hacerlo desde el día 1 es la mejor práctica.</p>
+
+<h2 id="2-configuracion-modular-settings">2. Configuración Modular (Settings)</h2>
+<p>Tener un solo archivo <code>settings.py</code> se vuelve inmanejable rápidamente. Lo ideal es separar la configuración por entornos.</p>
+
+<h3 id="estructura-de-archivos">Estructura de Archivos</h3>
+<pre><code class="language-bash">src/curso_django/settings/
+├── base.py       # Configuraciones comunes (Apps, Middleware, i18n)
+├── local.py      # Entorno de desarrollo (Debug=True, SQLite)
+└── production.py # Entorno de producción (Debug=False, Postgres, Seguridad)
+</code></pre>
+
+<h3 id="como-funciona">¿Cómo funciona?</h3>
+<p>El archivo <code>base.py</code> contiene todo lo que es común. <code>local.py</code> importa todo de base y sobreescribe lo necesario:</p>
+
+<pre><code class="language-python"># src/curso_django/settings/local.py
+from .base import *
+
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+</code></pre>
+
+<p>Para ejecutar el proyecto, Django necesita saber qué archivo usar. Esto se configura en <code>manage.py</code> y las variables de entorno:</p>
+<pre><code class="language-python"># src/manage.py
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "curso_django.settings.local")
+</code></pre>
+
+<h2 id="3-variables-de-entorno">3. Variables de Entorno</h2>
+<p>Nunca guardes secretos (API Keys, contraseñas de DB) en el código. Usamos <code>python-decouple</code> para leer un archivo <code>.env</code> que es ignorado por git.</p>
+
+<pre><code class="language-ini"># .env
+SECRET_KEY=tu-clave-secreta-super-segura
+DEBUG=True
+ALLOWED_HOSTS=.localhost,127.0.0.1
+DATABASE_URL=postgres://user:password@db:5432/dbname
+</code></pre>
+
+<p>Y en los settings:</p>
+<pre><code class="language-python">from decouple import config
+
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+</code></pre>
+
                 <!-- Content End -->
 
             </main>
