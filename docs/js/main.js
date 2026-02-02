@@ -143,7 +143,7 @@ function initDarkMode() {
 
     // Inject Fixed Toggle Button (Top Right)
     const toggleBtn = document.createElement('button');
-    toggleBtn.className = "fixed top-4 right-16 lg:right-8 z-50 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all focus:outline-none";
+    toggleBtn.className = "fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all focus:outline-none";
     toggleBtn.setAttribute('aria-label', 'Alternar modo oscuro');
 
     toggleBtn.innerHTML = isDark
