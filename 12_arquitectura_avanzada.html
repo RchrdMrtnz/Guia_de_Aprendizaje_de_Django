@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura de Software y Django - Guía Definitiva</title>
+    <meta name="description" content="Masterclass sobre Arquitectura de Software aplicada a Django: Clean Architecture, Hexagonal, DDD, Servicios y Patrones de Diseño.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        pre[class*="language-"] { border-radius: 0.5rem; margin: 1.5rem 0; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content"></div>
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+
+                <h1 id="arquitectura-software-django">Arquitectura de Software y Django: Guía Maestra</h1>
+
+                <p class="lead">Django es famoso por permitir a los desarrolladores pasar "de la idea a la producción" en tiempo récord. Sin embargo, cuando los proyectos crecen, la estructura por defecto puede convertirse en una jaula. En este ensayo técnico, exploraremos cómo evolucionar la arquitectura de Django, desde el patrón básico MTV hasta implementaciones complejas como Clean Architecture y Hexagonal, definiendo cuál es la "arquitectura ideal" para cada escenario.</p>
+
+                <hr>
+
+                <h2 id="capitulo-1-fundamentos">Capítulo 1: La Arquitectura Nativa de Django (MTV)</h2>
+
+                <p>Para romper las reglas, primero hay que conocerlas. Django implementa el patrón <strong>Model-Template-View (MTV)</strong>, que es esencialmente una variación del clásico MVC (Model-View-Controller).</p>
+
+                <ul>
+                    <li><strong>Model (Modelo):</strong> La capa de acceso a datos. En Django, esto es más que una simple interfaz de base de datos; incluye lógica de validación y comportamiento de los datos. Es un <em>Active Record</em> pattern.</li>
+                    <li><strong>Template (Plantilla):</strong> La capa de presentación. HTML con lógica de presentación.</li>
+                    <li><strong>View (Vista):</strong> La capa de lógica de negocio (en teoría). En Django, la vista selecciona qué datos mostrar y qué plantilla usar. Actúa como el <em>Controller</em> en MVC tradicional.</li>
+                </ul>
+
+                <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-500 p-4 my-6">
+                    <p class="font-bold text-yellow-700 dark:text-yellow-300 m-0">El Problema del "Framework Opinionado"</p>
+                    <p class="text-sm mt-2">Django está diseñado para aplicaciones CRUD (Create, Read, Update, Delete) rápidas. Su acoplamiento entre Modelos, Forms y Vistas es intencional para maximizar la velocidad de desarrollo. El problema surge cuando la lógica de negocio se vuelve compleja y no cabe limpiamente en un modelo o una vista.</p>
+                </div>
+
+                <h3 id="anti-patron-fat-views">El Anti-patrón: Fat Views</h3>
+                <p>El error más común de los principiantes (y no tan principiantes) es poner lógica de negocio en las Vistas.</p>
+
+<pre><code class="language-python"># ❌ MALA PRÁCTICA: Fat View
+def comprar_curso(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+    usuario = request.user
+
+    # Lógica de negocio mezclada con HTTP
+    if usuario.saldo < curso.precio:
+        return error("Saldo insuficiente")
+
+    usuario.saldo -= curso.precio
+    usuario.save()
+
+    curso.alumnos.add(usuario)
+    curso.save()
+
+    # Envío de correo (Efecto secundario bloqueante)
+    send_mail("Compra exitosa", ...)
+
+    return render(request, "exito.html")
+</code></pre>
+
+                <p>Esto es difícil de testear, difícil de reutilizar (¿qué pasa si quiero comprar desde una API o una tarea de fondo?) y viola el Principio de Responsabilidad Única.</p>
+
+                <h2 id="capitulo-2-capas-logicas">Capítulo 2: Desacoplando con la Capa de Servicios</h2>
+
+                <p>La primera y más efectiva mejora arquitectónica en Django es la introducción de una <strong>Capa de Servicios (Service Layer)</strong>. La idea es simple: Las vistas solo deben manejar HTTP (request/response), y los Servicios manejan la lógica de negocio pura.</p>
+
+                <h3 id="implementacion-servicios">Implementando Servicios</h3>
+                <p>Creamos un archivo <code>services.py</code> en nuestra app.</p>
+
+<pre><code class="language-python"># services.py (✅ BUENA PRÁCTICA)
+from django.db import transaction
+
+def realizar_compra_curso(*, usuario: User, curso: Curso) -> None:
+    """
+    Ejecuta la lógica de negocio de compra.
+    Agnóstico del contexto HTTP.
+    """
+    if usuario.saldo < curso.precio:
+        raise SaldoInsuficienteError("No tienes saldo")
+
+    with transaction.atomic():
+        usuario.saldo -= curso.precio
+        usuario.save()
+
+        curso.alumnos.add(usuario)
+
+    # Disparar evento o tarea asíncrona
+    enviar_email_confirmacion.delay(usuario.id, curso.id)
+</code></pre>
+
+                <p>Ahora la vista se convierte en un simple orquestador:</p>
+
+<pre><code class="language-python"># views.py
+def comprar_curso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    try:
+        realizar_compra_curso(usuario=request.user, curso=curso)
+    except SaldoInsuficienteError:
+        return HttpResponseBadRequest("Saldo insuficiente")
+
+    return render(request, "exito.html")
+</code></pre>
+
+                <p><strong>Ventajas:</strong></p>
+                <ul>
+                    <li><strong>Testabilidad:</strong> Puedes probar <code>realizar_compra_curso</code> sin simular objetos <code>request</code>.</li>
+                    <li><strong>Reutilización:</strong> Puedes llamar a esta función desde una API REST, un comando de administración o una tarea de Celery.</li>
+                    <li><strong>Claridad:</strong> El flujo de negocio es explícito.</li>
+                </ul>
+
+                <h2 id="capitulo-3-clean-architecture">Capítulo 3: Clean Architecture y Hexagonal en Django</h2>
+
+                <p>Cuando la aplicación escala a niveles empresariales, incluso la capa de servicios puede quedarse corta si sigue muy acoplada al ORM de Django. Aquí entran <strong>Clean Architecture</strong> (Uncle Bob) o <strong>Arquitectura Hexagonal</strong> (Ports and Adapters).</p>
+
+                <p>El objetivo es aislar el <strong>Dominio</strong> (la lógica central) de la <strong>Infraestructura</strong> (Django, Base de Datos, APIs externas).</p>
+
+                <h3 id="dominio-puro">El Dominio Puro</h3>
+                <p>En una arquitectura limpia estricta, tus entidades de dominio no heredarían de <code>models.Model</code>. Serían clases Python puras (dataclasses).</p>
+
+<pre><code class="language-python"># domain/entities.py
+from dataclasses import dataclass
+
+@dataclass
+class CursoEntity:
+    id: int
+    titulo: str
+    precio: float
+
+    def puede_ser_comprado_por(self, usuario) -> bool:
+        return usuario.saldo >= self.precio
+</code></pre>
+
+                <h3 id="repositorios">Patrón Repositorio (Repository Pattern)</h3>
+                <p>Para que el dominio no conozca la base de datos, usamos interfaces (puertos) y repositorios (adaptadores).</p>
+
+<pre><code class="language-python"># domain/repositories.py (Interfaz)
+class CursoRepository(ABC):
+    @abstractmethod
+    def get_by_id(self, id: int) -> CursoEntity: ...
+
+# infrastructure/django_repo.py (Implementación)
+class DjangoCursoRepository(CursoRepository):
+    def get_by_id(self, id: int) -> CursoEntity:
+        orm_obj = CursoORM.objects.get(id=id)
+        return self._to_entity(orm_obj)
+</code></pre>
+
+                <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 p-4 my-6">
+                    <p class="font-bold text-blue-700 dark:text-blue-300">¿Vale la pena en Django?</p>
+                    <p class="text-sm mt-2"><strong>Opinión experta:</strong> Generalmente, <strong>NO</strong>. Django es un framework fuertemente acoplado a su ORM. Intentar abstraer completamente el ORM (como requiere la Arquitectura Hexagonal pura) te hace perder el 80% de las ventajas de Django (Admin, ModelForms, Generic Views, DRF Serializers). Es luchar contra la corriente.</p>
+                </div>
+
+                <h3 id="enfoque-pragmatico">El Enfoque Pragmático: "Django Clean Style"</h3>
+                <p>La arquitectura ideal para el 95% de los proyectos Django grandes no es Hexagonal Pura, sino un híbrido:</p>
+                <ol>
+                    <li>Usa <code>models.Model</code> como tus entidades de dominio (acepta el acoplamiento al ORM).</li>
+                    <li>Usa <strong>Selectores</strong> para consultas complejas (lectura).</li>
+                    <li>Usa <strong>Servicios</strong> para mutaciones (escritura).</li>
+                    <li>Mantén las Vistas y Serializadores "tontos".</li>
+                </ol>
+
+                <h2 id="capitulo-4-modular-monolith">Capítulo 4: El Monolito Modular</h2>
+
+                <p>Antes de saltar a Microservicios, considera el <strong>Monolito Modular</strong>. Django ya fomenta esto con sus "Apps", pero a menudo los desarrolladores crean un "plato de espagueti" donde todas las apps dependen de todas.</p>
+
+                <p><strong>Reglas del Monolito Modular:</strong></p>
+                <ul>
+                    <li>Cada App debe tener una <strong>Interfaz Pública</strong> (usualmente en <code>services.py</code> o <code>interface.py</code>).</li>
+                    <li>La App A no puede importar modelos de la App B directamente. Debe usar la interfaz de la App B.</li>
+                    <li>Si necesitas compartir datos, usa IDs en lugar de ForeignKeys fuertes, o usa una tabla de enlace neutral.</li>
+                </ul>
+
+                <h2 id="capitulo-5-escalabilidad">Capítulo 5: Patrones de Rendimiento y Escalabilidad</h2>
+
+                <p>La arquitectura no es solo código limpio; es cómo el sistema soporta la carga.</p>
+
+                <h3 id="cqrs">CQRS (Command Query Responsibility Segregation)</h3>
+                <p>Separar los modelos de lectura de los de escritura. En Django, esto puede ser tan simple como tener:</p>
+                <ul>
+                    <li><strong>Write Model:</strong> Tu modelo Django normalizado (3FN) para asegurar integridad.</li>
+                    <li><strong>Read Model:</strong> Una tabla desnormalizada (o un índice de Elasticsearch) optimizada para la vista específica que requiere el usuario.</li>
+                </ul>
+
+                <h3 id="cache">Caching Estratégico</h3>
+                <p>No hagas caché de todo. Usa el patrón <em>Russian Doll Caching</em> en tus templates o caché a nivel de Vistas para endpoints de solo lectura. Redis es el compañero indispensable de una buena arquitectura Django.</p>
+
+                <h2 id="conclusion-arquitectura-ideal">Conclusión: ¿Cuál es la Arquitectura Ideal?</h2>
+
+                <p>No existe una "bala de plata", pero aquí tienes una guía de decisión:</p>
+
+                <div class="overflow-x-auto relative shadow-md sm:rounded-lg mt-6">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="py-3 px-6">Tipo de Proyecto</th>
+                                <th scope="col" class="py-3 px-6">Arquitectura Recomendada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">MVP / Prototipo</td>
+                                <td class="py-4 px-6">Django Vanilla (MTV estándar, Fat Models).</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">App Mediana / SaaS</td>
+                                <td class="py-4 px-6">Service Layer + Selectores. Lógica fuera de vistas.</td>
+                            </tr>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">Enterprise / Alta Complejidad</td>
+                                <td class="py-4 px-6">Monolito Modular + Domain Driven Design (DDD) ligero.</td>
+                            </tr>
+                            <tr class="bg-white dark:bg-gray-800">
+                                <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">Escala Masiva (Netflix, IG)</td>
+                                <td class="py-4 px-6">Microservicios (Django solo como una pieza del puzzle).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="mt-6">Recuerda: <strong>La complejidad accidental es el enemigo.</strong> No adoptes Hexagonal o Microservicios a menos que el dolor de <em>no</em> tenerlos sea mayor que el dolor de implementarlos.</p>
+
+            </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Arquitectura para profesionales.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
