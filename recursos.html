@@ -1,168 +1,464 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursos - Guía Definitiva de Django</title>
-    <meta name="description" content="Guía completa y práctica para aprender Django con código validado.">
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <title>Recursos Adicionales - Guía de Arquitectura Django</title>
+    <meta name="description" content="Colección exhaustiva de recursos para arquitectos y líderes técnicos en Django: libros, patrones, DevOps, seguridad y escalabilidad.">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
-                        }
+                        primary: '#0f4c81',
+                        secondary: '#44c8f5',
                     }
                 }
             }
         }
     </script>
-
-    <!-- PrismJS for Syntax Highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
-    <style>
-        /* Custom Scrollbar for Sidebar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
-
-        /* Prism overrides */
-        pre[class*="language-"] {
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
 
-    <!-- Mobile Header -->
-    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
-        <span class="font-bold text-lg">Django Guía</span>
-        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-    </div>
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md fixed w-full z-10 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0">
+                        <span class="text-2xl font-bold text-primary dark:text-white">Django<span class="text-secondary">Guía</span></span>
+                    </a>
+                </div>
 
-    <!-- Sidebar Overlay (Mobile) -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
-
-    <!-- Sidebar -->
-    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
-        <div class="h-full flex flex-col">
-            <div class="p-6 border-b border-gray-800">
-                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
-                </a>
-                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 w-9 h-9 flex items-center justify-center transition-colors">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
             </div>
+        </div>
+    </nav>
 
-            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
-                <!-- Javascript will inject menu here -->
-                <div class="animate-pulse flex space-x-4">
-                    <div class="flex-1 space-y-4 py-1">
-                        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
-                        <div class="space-y-2">
-                            <div class="h-4 bg-gray-700 rounded"></div>
-                            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar (Dynamic via JS) -->
+        <aside id="sidebar-container" class="hidden md:block w-64 bg-white dark:bg-gray-800 shadow-lg overflow-y-auto fixed h-full transition-colors duration-200">
+            <!-- Sidebar content injected by main.js -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-64 p-8 overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+            <div class="max-w-4xl mx-auto prose dark:prose-invert">
+
+                <h1 class="text-4xl font-extrabold mb-8 text-primary dark:text-blue-400 border-b pb-4">Recursos Adicionales</h1>
+
+                <p class="lead text-xl mb-10 text-gray-600 dark:text-gray-300">
+                    Una selección altamente curada de documentación, libros, patrones y herramientas para arquitectos de software, tech leads y desarrolladores Django de alto nivel. Este compendio abarca desde la ingeniería de software fundamental hasta estrategias avanzadas de despliegue y observabilidad.
+                </p>
+
+                <!-- 1. Documentación Oficial -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">1</span>
+                        Documentación Oficial y Recursos Fundamentales
+                    </h2>
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                            <h3 class="text-lg font-semibold mb-2">Django Official Documentation</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">La fuente de verdad absoluta. Cubre el framework completo.</p>
+                            <p class="text-xs text-gray-500"><strong>Valor Crítico:</strong> Esencial para entender el ciclo de vida de la request, middleware, y ORM internals. Ningún arquitecto puede ignorar las notas de release y deprecation.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-red-500">
+                            <h3 class="text-lg font-semibold mb-2">Django REST Framework Documentation</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Guía definitiva para APIs en Django.</p>
+                            <p class="text-xs text-gray-500"><strong>Valor Crítico:</strong> Profundiza en Serializers, ViewSets y Authentication policies, cruciales para diseñar APIs seguras y escalables.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+                            <h3 class="text-lg font-semibold mb-2">Django Security Documentation</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Protección contra XSS, CSRF, SQL Injection y Clickjacking.</p>
+                            <p class="text-xs text-gray-500"><strong>Valor Crítico:</strong> Lectura obligatoria para auditorías de seguridad y cumplimiento de estándares (OWASP).</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                            <h3 class="text-lg font-semibold mb-2">Django Performance & Scaling</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Optimización de BD, caché y asincronismo.</p>
+                            <p class="text-xs text-gray-500"><strong>Valor Crítico:</strong> Estrategias de caching y optimización de queries para sistemas de alto tráfico.</p>
+                        </div>
+                         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 md:col-span-2">
+                            <h3 class="text-lg font-semibold mb-2">Python Documentation (Dataclasses, Typing, Asyncio)</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Fundamentos modernos del lenguaje.</p>
+                            <p class="text-xs text-gray-500"><strong>Valor Crítico:</strong> El Type Hinting y las Dataclasses son vitales para el Domain-Driven Design en Python, permitiendo un código más robusto y autodocumentado.</p>
                         </div>
                     </div>
+                </section>
+
+                <!-- 2. Cursos Profesionales -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">2</span>
+                        Cursos Profesionales
+                    </h2>
+                    <ul class="space-y-4">
+                        <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold text-primary dark:text-blue-300">Introductorios (YouTube, MDN, freeCodeCamp)</h4>
+                            <p class="text-sm mt-1">Para onboardings de nuevos desarrolladores. Resuelven la barrera de entrada inicial con ejemplos prácticos y directos.</p>
+                        </li>
+                        <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold text-primary dark:text-blue-300">Intermedios (Test-Driven Development, Apps Completas)</h4>
+                            <p class="text-sm mt-1">Enfocados en el ciclo de vida del desarrollo software (SDLC) y calidad de código. Elevan al desarrollador de "coder" a "ingeniero de software".</p>
+                        </li>
+                        <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold text-primary dark:text-blue-300">Avanzados de Arquitectura Django</h4>
+                            <p class="text-sm mt-1">Diseño de sistemas grandes. Resuelven problemas de desacoplamiento y mantenibilidad a largo plazo.</p>
+                        </li>
+                        <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold text-primary dark:text-blue-300">Especializados: Seguridad, Performance, ORM Avanzado, DDD</h4>
+                            <p class="text-sm mt-1">Deep dives técnicos. Necesarios para Tech Leads que deben tomar decisiones críticas sobre infraestructura y modelado de datos.</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- 3. Libros Técnicos -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">3</span>
+                        Libros Técnicos y Arquitectura
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Two Scoops of Django</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Best Practices estándar de la industria. Indispensable para escribir código "Pythonic" y "Djangonaut".</p>
+                            </div>
+                        </div>
+                         <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Django for Professionals</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Guía hacia un entorno de producción profesional, incluyendo Docker y testing.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Django for APIs</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Manual dedicado exclusivamente a la construcción de APIs RESTful robustas con DRF.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">High Performance Django</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Análisis profundo de la capa de base de datos, caché y servidores web para maximizar el throughput.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Clean Architecture (Uncle Bob)</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Fundamental para entender la separación de capas (Dominio, Aplicación, Infraestructura) más allá del framework.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Patterns of Enterprise Application Architecture (Fowler)</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">La biblia de los patrones arquitectónicos (Active Record, Data Mapper, etc.) que inspiran a ORMs como el de Django.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Domain-Driven Design (Evans)</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Filosofía para modelar software complejo centrado en el negocio y no en la tecnología.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Architecture Patterns with Python</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Puente práctico entre DDD y Python. Explora el patrón Repositorio y Unit of Work en ecosistemas Python.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg">Building Microservices (Sam Newman)</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Guía estratégica para descomponer monolitos de forma segura y efectiva.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Patrones de Diseño -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">4</span>
+                        Patrones de Diseño y Arquitectura
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Service Layer</h4>
+                            <p class="text-xs mt-2">Aísla la lógica de negocio de las vistas y serializadores. Facilita el testing unitario puro.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Repository Pattern</h4>
+                            <p class="text-xs mt-2">Abstracción sobre el ORM. Útil para DDD puro, pero riesgoso si se pierde la potencia de Django ORM (N+1 issues).</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">CQRS (Command Query Responsibility Segregation)</h4>
+                            <p class="text-xs mt-2">Separar modelos de lectura y escritura. Ideal para sistemas con alta disparidad entre lecturas y escrituras.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Event-Driven Architecture</h4>
+                            <p class="text-xs mt-2">Desacoplamiento mediante eventos. Permite sistemas reactivos y escalabilidad horizontal asíncrona.</p>
+                        </div>
+                         <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Bounded Contexts con Apps</h4>
+                            <p class="text-xs mt-2">Alinear las Apps de Django con los subdominios del negocio para mantener fronteras claras.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Modular Monoliths</h4>
+                            <p class="text-xs mt-2">Arquitectura intermedia. Mantiene la simplicidad del despliegue monolítico pero con módulos internos fuertemente aislados.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Domain Events</h4>
+                            <p class="text-xs mt-2">Eventos significativos del negocio que disparan efectos secundarios (ej: "PedidoConfirmado").</p>
+                        </div>
+                         <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Value Objects</h4>
+                            <p class="text-xs mt-2">Objetos inmutables definidos por sus atributos (ej: Dinero, Coordenada), implementados con Dataclasses.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Facade, Adapter, Strategy, Observer</h4>
+                            <p class="text-xs mt-2">Patrones GoF clásicos. Observer es la base de Django Signals, aunque se prefieren buses de eventos explícitos en sistemas complejos.</p>
+                        </div>
+                         <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Command Pattern</h4>
+                            <p class="text-xs mt-2">Encapsular acciones como objetos. Útil para colas de tareas, undo/redo y transacciones complejas.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">Aggregate Roots</h4>
+                            <p class="text-xs mt-2">Entidades que agrupan otras entidades para garantizar consistencia transaccional.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                            <h4 class="font-bold text-primary dark:text-blue-400">API Gateways & BFF</h4>
+                            <p class="text-xs mt-2">Puntos de entrada unificados para clientes. El BFF (Backend For Frontend) optimiza respuestas para clientes específicos (móvil vs web).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Blogs y Referencias -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">5</span>
+                        Blogs y Referencias Expertas
+                    </h2>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                        <li><strong>Simple Is Better Than Complex:</strong> Tutoriales claros y directos. Excelente para resolver dudas puntuales de implementación.</li>
+                        <li><strong>Real Python – Django:</strong> Artículos de alta calidad editorial, cubriendo desde lo básico hasta integraciones complejas.</li>
+                        <li><strong>TestDriven.io:</strong> El referente en testing, Dockerización y CI/CD para ecosistemas Python/Django.</li>
+                        <li><strong>Adam Johnson:</strong> Especialista en seguridad, rendimiento y mantenimiento de Django a gran escala. Autoridad técnica.</li>
+                        <li><strong>Vinta Software:</strong> Blog enfocado en buenas prácticas empresariales y arquitecturas mantenibles en Django.</li>
+                        <li><strong>HackSoft Blog:</strong> Pioneros en aplicar capas de servicio y arquitecturas estilo DDD en Django. Referencia obligada para arquitectura avanzada.</li>
+                        <li><strong>Django Under the Hood talks:</strong> Charlas técnicas profundas sobre los internos del framework. Para entender "cómo funciona la magia".</li>
+                        <li><strong>Talk Python to Me podcast:</strong> Entrevistas con creadores de librerías y líderes de la comunidad, aportando contexto sobre el ecosistema.</li>
+                    </ul>
+                </section>
+
+                <!-- 6. DevOps y Despliegue -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">6</span>
+                        DevOps y Despliegue
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-yellow-400 pl-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-r">
+                            <h3 class="font-bold">6.1 AWS (Amazon Web Services)</h3>
+                            <ul class="list-disc ml-5 text-sm mt-2">
+                                <li><strong>Elastic Beanstalk:</strong> PaaS clásico, fácil de iniciar pero menos flexible.</li>
+                                <li><strong>ECS (Fargate):</strong> Contenedores serverless. El estándar moderno para Docker en AWS.</li>
+                                <li><strong>Lambda + API Gateway:</strong> Django Serverless (via Zappa o Mangum). Escalado a cero, pero con "cold starts".</li>
+                                <li><strong>RDS:</strong> PostgreSQL gestionado optimizado para Django.</li>
+                                <li><strong>S3 & CloudFront:</strong> Almacenamiento de estáticos/media y CDN global.</li>
+                                <li><strong>EC2 + Caddy/Nginx:</strong> Control total (IaaS), mayor carga operativa.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-blue-500 pl-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-r">
+                            <h3 class="font-bold">6.2 GCP (Google Cloud Platform)</h3>
+                            <ul class="list-disc ml-5 text-sm mt-2">
+                                <li><strong>Cloud Run:</strong> Contenedores serverless con excelente experiencia de desarrollador (DX).</li>
+                                <li><strong>App Engine:</strong> PaaS robusto, escalado automático.</li>
+                                <li><strong>Cloud SQL:</strong> PostgreSQL gestionado de alto rendimiento.</li>
+                                <li><strong>GCS (Google Cloud Storage):</strong> Equivalente a S3 para media/estáticos.</li>
+                                <li><strong>Load Balancing:</strong> Balanceo de carga global para alta disponibilidad.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-blue-700 pl-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-r">
+                            <h3 class="font-bold">6.3 Azure</h3>
+                            <ul class="list-disc ml-5 text-sm mt-2">
+                                <li><strong>App Service:</strong> PaaS para hosting de web apps.</li>
+                                <li><strong>AKS (Azure Kubernetes Service):</strong> Orquestación K8s gestionada.</li>
+                                <li><strong>Azure Database for PostgreSQL:</strong> Base de datos gestionada. SQL Server también es opción pero menos común con Django.</li>
+                            </ul>
+                        </div>
+
+                         <div class="border-l-4 border-blue-300 pl-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-r">
+                            <h3 class="font-bold">6.4 DigitalOcean</h3>
+                            <ul class="list-disc ml-5 text-sm mt-2">
+                                <li><strong>App Platform:</strong> PaaS moderno y simple.</li>
+                                <li><strong>Droplets:</strong> VPS tradicionales.</li>
+                                <li><strong>Managed Databases:</strong> PostgreSQL sin gestión de servidor.</li>
+                                <li><strong>Spaces:</strong> Object storage compatible con S3.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-gray-600 pl-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-r">
+                            <h3 class="font-bold">6.5 Contenedores y Orquestación</h3>
+                            <ul class="list-disc ml-5 text-sm mt-2">
+                                <li><strong>Docker Compose:</strong> Estándar para desarrollo local y entornos pre-productivos.</li>
+                                <li><strong>Kubernetes:</strong> Estándar de facto para orquestación empresarial masiva. Curva de aprendizaje alta.</li>
+                                <li><strong>CI/CD (GitHub Actions, GitLab CI, ArgoCD):</strong> Automatización crítica para el despliegue continuo y GitOps.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Observabilidad -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">7</span>
+                        Recursos para Observabilidad, Testing y Calidad
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">pytest-django</h4>
+                            <p class="text-xs text-gray-500 mt-1">Framework de testing moderno, más conciso y potente que el unittest estándar.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">coverage</h4>
+                            <p class="text-xs text-gray-500 mt-1">Mide qué porcentaje de tu código es ejecutado por los tests. Métrica clave de calidad.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">tox</h4>
+                            <p class="text-xs text-gray-500 mt-1">Automatización de tests en múltiples entornos (versiones de Python/Django).</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">Sentry</h4>
+                            <p class="text-xs text-gray-500 mt-1">Monitoreo de errores en tiempo real. Indispensable en producción para detectar crashes.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">Prometheus exporters</h4>
+                            <p class="text-xs text-gray-500 mt-1">Exposición de métricas internas (latencia, requests/seg) para ser consumidas por Prometheus/Grafana.</p>
+                        </div>
+                         <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <h4 class="font-bold">OpenTelemetry</h4>
+                            <p class="text-xs text-gray-500 mt-1">Estándar para Tracing distribuido. Crucial para debugear latencia en microservicios.</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded shadow md:col-span-2">
+                            <h4 class="font-bold">Profiling (django-silk, django-debug-toolbar)</h4>
+                            <p class="text-xs text-gray-500 mt-1">Herramientas de inspección profunda para detectar cuellos de botella y queries N+1 durante el desarrollo.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. Repositorios -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 text-sm font-semibold mr-3 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-900">8</span>
+                        Repositorios de Ejemplo y Blueprints
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Repositorio / Concepto</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Propósito y Nivel Técnico</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Django Cookiecutter</td>
+                                    <td class="py-3 px-4 text-sm">Estándar de facto para iniciar proyectos profesionales con Docker, CI y configuraciones listas.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Django Styleguide (HackSoft)</td>
+                                    <td class="py-3 px-4 text-sm">La mejor referencia pública sobre arquitectura de Service Layer y Selectors en Django. Nivel alto.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Django-GraphQL Boilerplates</td>
+                                    <td class="py-3 px-4 text-sm">Ejemplos de implementación de Graphene/Strawberry. Alternativa moderna a REST.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">DRF Starter Kits</td>
+                                    <td class="py-3 px-4 text-sm">Kits con autenticación JWT, OAuth2 y permisos complejos pre-configurados.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Modular Monoliths Examples</td>
+                                    <td class="py-3 px-4 text-sm">Implementaciones que demuestran cómo estructurar apps desacopladas dentro de un solo repo.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">CQRS Applied Examples</td>
+                                    <td class="py-3 px-4 text-sm">Repos que muestran la separación estricta de comandos y queries, a veces con múltiples DBs.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Event-Driven Architecture Examples</td>
+                                    <td class="py-3 px-4 text-sm">Ejemplos de integración con Kafka/RabbitMQ y uso de buses de eventos internos.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">API Gateway + Django BFF</td>
+                                    <td class="py-3 px-4 text-sm">Patrones de microservicios donde Django sirve como backend for frontend.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-semibold">Scalability Repos (Channels/Redis)</td>
+                                    <td class="py-3 px-4 text-sm">Pipelines asíncronos y WebSockets para aplicaciones en tiempo real de alta carga.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-gray-500 text-sm">
+                    <p>Guía de Aprendizaje de Django - Nivel Profesional</p>
+                    <p class="mt-2">Diseñado para la excelencia técnica.</p>
                 </div>
+
             </div>
-
-            <div class="p-4 border-t border-gray-800">
-                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="ml-3 text-sm">Ver en GitHub</span>
-                </a>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="p-4 lg:ml-64 min-h-screen">
-        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
-            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
-
-                <!-- Content Start -->
-
-                    <h1 id="recursos-adicionales">Recursos Adicionales</h1>
-<p>Esta lista recopila recursos de alta calidad para aprender y profundizar en Django.</p>
-<h2 id="documentacion-oficial">Documentación Oficial</h2>
-<ul>
-<li><a href="https://docs.djangoproject.com/en/stable/">Django Documentation</a> - La fuente más completa y actualizada.</li>
-<li><a href="https://www.django-rest-framework.org/">Django REST Framework</a> - Para construir APIs.</li>
-</ul>
-<h2 id="tutoriales-y-cursos-gratuitos">Tutoriales y Cursos (Gratuitos)</h2>
-<ul>
-<li><a href="https://tutorial.djangogirls.org/">Django Girls Tutorial</a> - Excelente para principiantes absolutos.</li>
-<li><a href="https://www.youtube.com/watch?v=F5mRW0jo-U4">Curso Completo de Django (YouTube)</a></li>
-<li><a href="https://www.youtube.com/watch?v=RbJOmgTX63M">Django Models &amp; Database Tutorial</a></li>
-<li><a href="https://www.youtube.com/watch?v=TblSa29DX6I">Django Views &amp; URL Routing Tutorial</a></li>
-</ul>
-<h2 id="blogs-y-articulos">Blogs y Artículos</h2>
-<ul>
-<li><a href="https://simpleisbetterthancomplex.com/">Simple is Better Than Complex</a> - Consejos prácticos y tutoriales claros.</li>
-<li><a href="https://realpython.com/tutorials/django/">Real Python - Django</a></li>
-<li><a href="https://wsvincent.com/django-for-beginners-32-update/">Django for Beginners - Will Vincent</a></li>
-</ul>
-<h2 id="despliegue-deployment">Despliegue (Deployment)</h2>
-<ul>
-<li><a href="https://devcenter.heroku.com/articles/deploying-python">Despliegue en Heroku</a></li>
-<li><a href="https://docs.djangoproject.com/en/stable/howto/deployment/checklist/">Deployment Checklist</a></li>
-</ul>
-<h2 id="libros-recomendados">Libros Recomendados</h2>
-<ul>
-<li>"Two Scoops of Django" - Mejores prácticas (Avanzado).</li>
-<li>"Django for Professionals" - William S. Vincent.</li>
-</ul>
-
-<!-- Content End -->
-
-            </main>
-
-            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
-                <p>&copy; 2024 Guía Definitiva de Django. Código validado y moderno.</p>
-            </footer>
-        </div>
+        </main>
     </div>
 
-    <!-- Scripts -->
     <script src="js/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+        // Inline script to handle theme toggle logic if main.js is delayed or for specific page behavior
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            lightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            darkIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
