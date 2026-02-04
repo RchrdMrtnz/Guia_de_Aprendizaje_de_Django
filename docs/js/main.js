@@ -19,6 +19,7 @@ const menu = [
         items: [
             { title: "10. Arquitectura Moderna", path: "10_arquitectura.html" },
             { title: "11. DevOps y Calidad", path: "11_devops.html" },
+            { title: "12. Arquitectura Avanzada", path: "12_arquitectura_avanzada.html" },
             { title: "Recursos", path: "recursos.html" },
         ]
     }
