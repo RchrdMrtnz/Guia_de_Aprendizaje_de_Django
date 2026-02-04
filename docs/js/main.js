@@ -18,8 +18,9 @@ const menu = [
         title: "Nivel Profesional",
         items: [
             { title: "10. Arquitectura Moderna", path: "10_arquitectura.html" },
-            { title: "11. DevOps y Calidad", path: "11_devops.html" },
+            { title: "11. Patrones de Diseño", path: "11_patrones.html" },
             { title: "12. Arquitectura Avanzada", path: "12_arquitectura_avanzada.html" },
+            { title: "13. DevOps y Calidad", path: "13_devops.html" },
             { title: "Recursos", path: "recursos.html" },
         ]
     }

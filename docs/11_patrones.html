@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrones de Diseño en Django - Guía Definitiva</title>
+    <meta name="description" content="Catálogo estratégico de patrones de diseño aplicados a Django: GoF, Patrones Enterprise y Anti-patrones.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Custom Scrollbar for Sidebar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Prism overrides */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
+
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+                <div class="animate-pulse flex space-x-4">
+                    <div class="flex-1 space-y-4 py-1">
+                        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                        <div class="space-y-2">
+                            <div class="h-4 bg-gray-700 rounded"></div>
+                            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+
+                <h1 id="patrones-de-diseno-aplicados-a-django">11. Patrones de Diseño Aplicados a Django</h1>
+
+                <div class="bg-purple-50 dark:bg-gray-800 border-l-4 border-purple-500 p-4 mb-6">
+                    <p class="text-purple-700 dark:text-purple-300 font-medium">
+                        Este documento no es un glosario teórico. Es un análisis estratégico de cómo aplicar los patrones de diseño clásicos y modernos dentro del ecosistema opinionado de Django, sin pelear contra el framework.
+                    </p>
+                </div>
+
+                <h2 id="1-patrones-clasicos-gof">1. Patrones Clásicos (GoF) en Django</h2>
+
+                <h3 id="strategy-pattern">Strategy Pattern</h3>
+                <p><strong>Problema:</strong> Múltiples algoritmos para una tarea (ej: cálculo de precios con descuentos variados).</p>
+                <p><strong>Solución Django:</strong> Definir una interfaz base (Clase Abstracta o Protocol) y pasar la estrategia concreta al servicio.</p>
+                <pre><code class="language-python"># strategies.py
+class PricingStrategy(Protocol):
+    def calculate(self, order) -> Decimal: ...
+
+class BlackFridayPricing:
+    def calculate(self, order): return order.base_total * 0.8
+
+# service.py
+def checkout(order, pricing_strategy: PricingStrategy):
+    total = pricing_strategy.calculate(order)
+    # ...
+</code></pre>
+
+                <h3 id="factory-pattern">Factory Pattern</h3>
+                <p><strong>Problema:</strong> Crear objetos complejos cuya configuración depende de inputs.</p>
+                <p><strong>Aplicación:</strong> Útil para crear diferentes tipos de usuarios o configuraciones de reportes.</p>
+
+                <h3 id="adapter-pattern">Adapter Pattern</h3>
+                <p><strong>Problema:</strong> Integrar librerías de terceros con interfaces incompatibles.</p>
+                <p><strong>Aplicación:</strong> Estandarizar pagos. Tu sistema espera <code>pay(amount)</code>, pero Stripe pide <code>create_charge()</code> y PayPal <code>execute_payment()</code>. Creas un adaptador para cada uno.</p>
+
+                <h3 id="facade-pattern">Facade Pattern</h3>
+                <p><strong>Problema:</strong> Subsistema complejo (ej: generar PDF, subirlo a S3, notificar usuario).</p>
+                <p><strong>Aplicación:</strong> Una clase <code>ReportGeneratorFacade</code> que exponga un método simple <code>generate_and_send()</code>, ocultando la complejidad.</p>
+
+                <h3 id="observer-pattern">Observer Pattern</h3>
+                <p><strong>Implementación Nativa:</strong> Django Signals (<code>post_save</code>, <code>pre_delete</code>).</p>
+                <p><strong>Advertencia:</strong> Las señales son síncronas por defecto y ocultan el flujo de ejecución. Úsalas con cautela o prefiere eventos de dominio explícitos.</p>
+
+                <h2 id="2-patrones-orientados-a-dominio">2. Patrones Orientados a Dominio</h2>
+
+                <h3 id="aggregate-root">Aggregate Root</h3>
+                <p>Un modelo principal que controla la consistencia de modelos hijos. Ej: <code>Order</code> controla sus <code>OrderItems</code>. Nunca modificas un Item directamente, lo haces a través de métodos en <code>Order</code> (ej: <code>order.add_item()</code>) para recalcular totales.</p>
+
+                <h3 id="specification-pattern">Specification Pattern</h3>
+                <p>Encapsula reglas de negocio booleanas complejas que pueden combinarse.</p>
+                <pre><code class="language-python">class IsEligibleForPremium:
+    def is_satisfied_by(self, user) -> bool:
+        return user.age > 18 and user.score > 500
+</code></pre>
+                <p>Se puede adaptar para generar Q objects del ORM: <code>PremiumUserSpec().to_q()</code>.</p>
+
+                <h2 id="3-patrones-de-infraestructura">3. Patrones de Infraestructura</h2>
+
+                <h3 id="gateway-pattern">Gateway Pattern</h3>
+                <p>Encapsula el acceso a sistemas externos (APIs REST, SOAP). Si la API externa cambia, solo modificas el Gateway, no tu lógica de negocio.</p>
+
+                <h3 id="repository-pattern">Repository Pattern (¿Cuándo sí?)</h3>
+                <p><strong>Cuándo NO:</strong> Para el 90% de los casos. El ORM de Django ya es un Repositorio.</p>
+                <p><strong>Cuándo SÍ:</strong> Cuando necesitas cambiar la fuente de datos dinámicamente (ej: leer de DB en local, pero de una API externa en producción) o para testeo unitario puro (in-memory repo).</p>
+
+                <h3 id="circuit-breaker">Circuit Breaker</h3>
+                <p>Protege tu sistema de fallos en cascada. Si un servicio externo (ej: servicio de SMS) falla repetidamente, el Circuit Breaker "abre el circuito" y falla rápido sin esperar timeout, recuperándose después de un tiempo.</p>
+
+                <h2 id="4-patrones-avanzados-api">4. Patrones Avanzados de API</h2>
+
+                <h3 id="dto-mapper">DTOs (Data Transfer Objects)</h3>
+                <p>Objetos planos para transferir datos entre capas, evitando pasar instancias de Modelos a serializadores o plantillas en arquitecturas complejas.</p>
+
+                <h3 id="validation-layers">Validación en 3 Capas</h3>
+                <ol>
+                    <li><strong>Entrada:</strong> Serializers/Forms (Tipos de datos, formatos).</li>
+                    <li><strong>Dominio:</strong> Services/Models (Reglas de negocio, estado actual).</li>
+                    <li><strong>Persistencia:</strong> Constraints de DB (Integridad referencial, Uniqueness).</li>
+                </ol>
+
+                <h2 id="5-patrones-internos">5. Patrones Arquitectónicos Internos</h2>
+
+                <h3 id="command-pattern">Command Pattern</h3>
+                <p>Encapsula una solicitud como un objeto. Útil para colas de tareas, deshacer operaciones (undo) o logging transaccional.</p>
+
+                <h3 id="query-object">Query Object Pattern</h3>
+                <p>Clases especializadas en construir consultas complejas, similar a los Selectores pero orientados a objetos con métodos encadenables (Builder).</p>
+
+                <h2 id="6-patrones-a-evitar">6. Patrones que NO deben implementarse en Django</h2>
+
+                <div class="bg-red-50 dark:bg-gray-800 border-l-4 border-red-500 p-4 mb-6">
+                    <h4 class="font-bold text-red-700 dark:text-red-400">Anti-patrones Comunes</h4>
+                    <ul class="list-disc list-inside mt-2 text-red-800 dark:text-red-300">
+                        <li><strong>Repositorios Genéricos sobre ORM:</strong> <code>Repo(Model).find(id)</code> es redundante sobre <code>Model.objects.get(id)</code>. Añade capas sin valor.</li>
+                        <li><strong>Pure Domain Models aislados:</strong> Intentar ignorar que Django usa Active Record lleva a escribir miles de líneas de código "pegamento" innecesario.</li>
+                        <li><strong>Service Locator:</strong> Oculta dependencias. Prefiere Inyección de Dependencias (aunque sea manual en Python).</li>
+                    </ul>
+                </div>
+
+                <h2 id="conclusion">7. Conclusión</h2>
+                <p>Los patrones son herramientas, no dogmas. Implementar un patrón Factory para algo que se resuelve con un <code>if</code> es sobre-ingeniería.</p>
+                <p class="font-bold">Regla del Arquitecto: Aplica un patrón solo cuando el dolor de NO tenerlo sea mayor que la complejidad de implementarlo.</p>
+
+            </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Código validado y moderno.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
