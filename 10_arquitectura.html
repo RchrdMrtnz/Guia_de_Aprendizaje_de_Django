@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arquitectura Empresarial en Django - Guía Definitiva</title>
-    <meta name="description" content="Guía avanzada sobre arquitectura en Django: Patrones, Servicios, Selectores, DDD Pragmático y Escalabilidad.">
+    <title>Arquitectura Moderna - Guía Definitiva de Django</title>
+    <meta name="description" content="Guía de referencia para arquitectura moderna en Django: MTV, Service Layer, Selectors y Modularidad.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -116,237 +116,160 @@
         <div class="p-4 lg:p-8 max-w-4xl mx-auto">
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
-                <h1 id="arquitectura-empresarial-en-django">Arquitectura Empresarial en Django</h1>
+                <h1 id="arquitectura-moderna-en-django">10. Arquitectura Moderna (Nivel Profesional)</h1>
 
                 <div class="bg-blue-50 dark:bg-gray-800 border-l-4 border-blue-500 p-4 mb-6">
                     <p class="text-blue-700 dark:text-blue-300 font-medium">
-                        Esta guía está diseñada para líderes técnicos y arquitectos. Cubre cómo escalar Django desde un MVP hasta un sistema de nivel empresarial, enfocándose en mantenibilidad, desacoplamiento y rendimiento.
+                        Este capítulo es el blueprint para equipos medianos que buscan construir sistemas Django mantenibles y escalables. Aquí transformamos Django de un framework "rápido para prototipos" a una herramienta de ingeniería robusta.
                     </p>
                 </div>
 
-                <h2 id="1-clarificacion-del-patron-mtv">1. Clarificación del patrón MTV</h2>
-                <p>Django sigue el patrón <strong>Model-Template-View (MTV)</strong>, que es esencialmente una variante de MVC, pero con matices críticos que afectan la arquitectura:</p>
+                <h2 id="mtv-a-fondo">1. MTV a Fondo y su Relación con MVC</h2>
+                <p>Para construir sistemas complejos, debemos diseccionar el patrón <strong>Model-Template-View</strong> (MTV) con precisión quirúrgica.</p>
+
+                <h3 id="precision-tecnica">Precisión Técnica</h3>
                 <ul>
-                    <li><strong>Model (Modelo):</strong> No es solo un esquema de base de datos. En Django, el modelo es un híbrido que mezcla <strong>Active Record</strong> (acceso a datos) con <strong>Domain Model</strong> (reglas de negocio básicas y validación). Esto facilita el desarrollo rápido pero acopla fuertemente la lógica de negocio a la base de datos.</li>
-                    <li><strong>Template (Plantilla):</strong> Es la capa de presentación (equivalente a la "View" en MVC tradicional).</li>
-                    <li><strong>View (Vista):</strong> En Django, la Vista es el <strong>Orquestador</strong> (equivalente al "Controller" en MVC). Su única responsabilidad debería ser recibir la petición HTTP, llamar a la lógica adecuada y retornar una respuesta HTTP.</li>
-                </ul>
-                <p><strong>El problema arquitectónico:</strong> Como Django es "baterías incluidas", incentiva poner lógica en las Vistas o en los Modelos. Al crecer, este acoplamiento natural se convierte en el mayor cuello de botella para la mantenibilidad.</p>
-
-                <h2 id="2-fat-views-y-fat-models">2. Problema de las Fat Views y Fat Models</h2>
-                <p>Dos anti-patrones dominan los proyectos legacy de Django:</p>
-
-                <h3 id="fat-views-vistas-obesas">Fat Views (Vistas Obesas)</h3>
-                <p>Ocurre cuando la vista maneja validación, llamadas a terceros, lógica de negocio compleja y respuestas. Esto rompe el <strong>Principio de Responsabilidad Única (SRP)</strong>.</p>
-                <div class="not-prose relative">
-                    <div class="absolute top-0 right-0 p-2 text-xs text-red-400 font-bold">ANTI-PATRÓN</div>
-                    <pre><code class="language-python"># Mal ejemplo: Toda la lógica en la vista
-def comprar_curso(request, curso_id):
-    curso = Curso.objects.get(id=curso_id)
-    # Lógica de negocio mezclada con HTTP
-    if request.user.saldo < curso.precio:
-        return JsonResponse({'error': 'Saldo insuficiente'}, status=400)
-
-    # Side effects directos
-    request.user.saldo -= curso.precio
-    request.user.save()
-    send_email_confirmacion(request.user) # Bloquea el request
-
-    return JsonResponse({'status': 'ok'})</code></pre>
-                </div>
-
-                <h3 id="fat-models-modelos-obesos">Fat Models (Modelos Obesos)</h3>
-                <p>La reacción común a las Fat Views es mover la lógica al modelo (<code>model.comprar_curso()</code>). Aunque mejor, esto trae problemas graves:</p>
-                <ul>
-                    <li><strong>Exceso de Responsabilidad:</strong> El modelo sabe validar, guardar, enviar emails y calcular impuestos.</li>
-                    <li><strong>Dificultad de Testeo:</strong> Para probar la lógica, necesitas instanciar el modelo y a menudo golpear la base de datos.</li>
-                    <li><strong>Acoplamiento:</strong> Es difícil reutilizar esa lógica si mañana necesitas una API REST o una tarea asíncrona que no opera sobre una instancia HTTP.</li>
+                    <li><strong>View (Vista) como Orquestador:</strong> En arquitectura moderna, la Vista NO contiene lógica de negocio. Su única responsabilidad es traducir HTTP: recibir una petición, extraer datos, llamar a la capa correcta y devolver una respuesta (HTML/JSON). Es un adaptador de entrada.</li>
+                    <li><strong>Model (Modelo) como Híbrido:</strong> Los modelos de Django mezclan el patrón <strong>Active Record</strong> (persistencia y queries) con <strong>Domain Model</strong> (reglas de negocio). Esto es poderoso pero peligroso.</li>
                 </ul>
 
-                <h2 id="3-capa-de-servicios-service-layer">3. Capa de Servicios (Service Layer)</h2>
-                <p>La solución estándar en Django moderno es introducir una <strong>Capa de Servicios</strong>. Un servicio es una función o clase que encapsula una <strong>operación de negocio</strong> (Caso de Uso).</p>
+                <p><strong>Riesgos del Acoplamiento Natural:</strong> Django incentiva poner lógica en <code>save()</code> o en métodos del modelo. Esto acopla tu lógica de negocio a la base de datos, dificultando el testeo unitario puro y la migración a arquitecturas distribuidas.</p>
 
-                <p><strong>Reglas de Oro:</strong></p>
-                <ol>
-                    <li>La capa de servicios <strong>puede</strong> depender del ORM y modelos.</li>
-                    <li>La capa de servicios <strong>NUNCA</strong> debe depender de <code>request</code>, <code>forms</code>, <code>serializers</code> o Vistas.</li>
-                    <li>Debe manejar transacciones atómicas explícitamente.</li>
-                </ol>
+                <h2 id="anti-patrones">2. Anti-patrones: Fat Views y Fat Models</h2>
+                <p>Corregir estos vicios es el primer paso hacia una arquitectura profesional.</p>
 
-                <div class="not-prose">
-                    <pre><code class="language-python"># services/cursos.py
+                <h3 id="fat-views">Fat Views (Vistas Obesas)</h3>
+                <p>Definición: Vistas que validan formularios, calculan precios, envían correos y llaman a APIs externas.</p>
+                <ul>
+                    <li><strong>Rompe SRP:</strong> La vista cambia por razones de UI y por razones de negocio.</li>
+                    <li><strong>Bloqueo:</strong> Testing lento (requiere RequestFactory) y refactor imposible.</li>
+                </ul>
+
+                <h3 id="fat-models">Fat Models (Modelos Obesos)</h3>
+                <p>Definición: Mover toda la lógica de la vista al modelo (<code>model.calcular_impuesto()</code>).</p>
+                <ul>
+                    <li><strong>Consecuencias Operativas:</strong> Los modelos se vuelven "God Objects" de miles de líneas.</li>
+                    <li><strong>Violación de Capas:</strong> Un modelo no debería saber sobre envío de correos o serialización JSON.</li>
+                </ul>
+
+                <h2 id="service-layer">3. Service Layer Totalmente Formalizado</h2>
+                <p>La <strong>Capa de Servicios</strong> es la solución canónica para la lógica de negocio en Django.</p>
+
+                <h3 id="principios-rectores">Principios Rectores</h3>
+                <ul>
+                    <li>Son funciones simples o clases sin estado (Stateless).</li>
+                    <li>Reciben tipos de dominio o primitivos, NUNCA objetos <code>request</code>.</li>
+                    <li>Declaran explícitamente las transacciones de base de datos.</li>
+                </ul>
+
+                <h3 id="ejemplo-servicio">Ejemplo: Trabajo Transaccional Real</h3>
+                <pre><code class="language-python"># services/orders.py
 from django.db import transaction
-from .models import Curso, Inscripcion
-from .tasks import send_email_async
+from .models import Order, Payment
+from .tasks import send_confirmation_email
 
-def inscribir_estudiante(*, estudiante, curso_slug: str) -> Inscripcion:
+def create_order(*, user, items: list[dict]) -> Order:
     """
-    Servicio puro: No sabe nada de HTTP. Recibe entidades de dominio o tipos primitivos.
+    Caso de Uso: Crear Orden.
+    Maneja consistencia, errores y side-effects.
     """
     with transaction.atomic():
-        curso = Curso.objects.select_for_update().get(slug=curso_slug)
+        order = Order.objects.create(user=user)
 
-        if not estudiante.tiene_saldo(curso.precio):
-            raise ValueError("Saldo insuficiente")
+        # Lógica de dominio compleja
+        total = calculate_total(items)
+        if user.balance < total:
+            raise InsufficientFundsError()
 
-        inscripcion = Inscripcion.objects.create(estudiante=estudiante, curso=curso)
-        estudiante.descontar_saldo(curso.precio)
+        for item in items:
+            order.items.add(item['product'], quantity=item['qty'])
 
-        # Side-effect movido a tarea asíncrona
-        transaction.on_commit(lambda: send_email_async.delay(estudiante.id))
+        # Side effects asíncronos (Consistencia Eventual)
+        transaction.on_commit(lambda: send_confirmation_email.delay(order.id))
 
-    return inscripcion</code></pre>
-                </div>
-                <p>Esto permite que la misma lógica sea usada desde una View de Django, una API de DRF, una tarea de Celery o la consola de comandos sin duplicar código.</p>
+    return order
+</code></pre>
+                <p><strong>Por qué la Vista debe ser un "Thin Controller":</strong> Al delegar todo a <code>create_order</code>, la vista se reduce a 3 líneas. Si mañana cambias de API REST a GraphQL o CLI, reutilizas el servicio intacto.</p>
 
-                <h2 id="4-selectores-query-layer">4. Selectores (Query Layer)</h2>
-                <p>Igual que separamos la lógica de escritura (Servicios), debemos separar la lógica de lectura compleja. Los <strong>Selectores</strong> son funciones encargadas de hacer queries optimizadas.</p>
+                <h2 id="selector-layer">4. Selector Layer (Query Layer) Profesional</h2>
+                <p>Separar las lecturas (Queries) de las escrituras (Commands) es vital. Los <strong>Selectores</strong> encapsulan consultas complejas.</p>
 
-                <p><strong>Beneficios:</strong></p>
+                <h3 id="diseno-sistematico">Diseño Sistemático</h3>
                 <ul>
-                    <li>Centralizan optimizaciones como <code>select_related</code> y <code>prefetch_related</code>.</li>
-                    <li>Evitan filtrar datos en las vistas.</li>
-                    <li>Permiten cambiar la estructura de la DB sin romper las vistas (solo actualizas el selector).</li>
+                    <li><strong>Optimización Centralizada:</strong> Uso estricto de <code>select_related</code> (JOINs) y <code>prefetch_related</code> para evitar problemas N+1.</li>
+                    <li><strong>Proyecciones:</strong> Uso de <code>only()</code> y <code>defer()</code> para no cargar campos pesados innecesarios.</li>
+                    <li><strong>Desacoplamiento:</strong> La vista pide datos a un selector, no sabe si vienen de una tabla SQL, una vista materializada o cache.</li>
                 </ul>
 
-                <pre><code class="language-python"># selectors/cursos.py
-def get_cursos_destacados() -> list[dict]:
+                <pre><code class="language-python"># selectors/products.py
+def get_catalog_products() -> list[dict]:
     """
-    Retorna una estructura de datos lista para consumir, desacoplando
-    la vista del modelo interno.
+    Selector optimizado por proyección.
+    Retorna diccionarios, no modelos (opcional, para mayor rendimiento).
     """
-    return Curso.objects.filter(
-        activo=True,
-        destacado=True
-    ).select_related('instructor').only('titulo', 'slug', 'precio', 'instructor__nombre')
+    return Product.objects.filter(active=True)\
+        .select_related('category')\
+        .only('id', 'name', 'price', 'category__name')\
+        .values('id', 'name', 'price', 'category_name')
 </code></pre>
 
-                <h2 id="5-arquitectura-limpia-y-ddd-pragmatico">5. Arquitectura Limpia, Hexagonal y DDD Pragmático</h2>
+                <h2 id="bounded-contexts">5. Bounded Contexts usando Apps Django</h2>
+                <p>Las Apps de Django no son carpetas para organizar archivos; son <strong>Contextos Delimitados</strong> del dominio.</p>
 
-                <h3 id="5-1-el-problema-de-la-pureza">5.1 Por qué la "Clean Architecture pura" falla en Django</h3>
-                <p>Intentar aplicar Clean Architecture "de libro" (desacoplar totalmente el ORM del dominio) en Django suele ser contraproducente. Django asume que el Modelo es el centro. Si ocultas los modelos detrás de repositorios genéricos, pierdes:</p>
                 <ul>
-                    <li>Django Admin</li>
-                    <li>ModelForms y Validaciones automáticas</li>
-                    <li>Optimizaciones del ORM (lazy loading, filtering)</li>
-                    <li>Ecosistema de terceros (DRF, Filters, etc.)</li>
+                    <li><strong>Mapeo de Dominios Reales:</strong> <code>users</code>, <code>payments</code>, <code>logistics</code>, <code>reporting</code>.</li>
+                    <li><strong>Interfaz Pública:</strong> Una App debe exponer una interfaz clara (ej: <code>services.py</code>, <code>selectors.py</code>). Otras apps NO deberían importar modelos internos directamente.</li>
                 </ul>
 
-                <h3 id="5-2-ddd-pragmatico">5.2 DDD Pragmático</h3>
-                <p>En su lugar, aplicamos un DDD pragmático:</p>
-                <ul>
-                    <li><strong>Bounded Contexts:</strong> Usamos las Django Apps para definir límites claros del dominio.</li>
-                    <li><strong>Entities:</strong> Los <code>models.Model</code> actúan como entidades. No creamos clases "espejo" innecesarias.</li>
-                    <li><strong>Value Objects:</strong> Usamos <code>dataclasses</code> para estructuras inmutables complejas que no requieren identidad de DB.</li>
-                    <li><strong>Interfaces/Adaptadores:</strong> Abstraemos solo lo que está fuera de nuestro control (APIs de pagos, almacenamiento en S3, servicios de email), no la base de datos local.</li>
-                </ul>
+                <h2 id="configuracion-modular">6. Configuración Modular de Settings</h2>
+                <p>Un solo <code>settings.py</code> es inmanejable. La estructura estándar profesional es:</p>
 
-                <h2 id="6-monolito-modular">6. Monolito Modular: El punto óptimo</h2>
-                <p>Antes de saltar a microservicios, la arquitectura ideal para el 95% de los proyectos Django es el <strong>Monolito Modular</strong>.</p>
+                <pre><code class="language-text">src/curso_django/settings/
+├── __init__.py
+├── base.py       # Configuración común (Apps, Middleware)
+├── local.py      # Entorno desarrollo (Debug=True, Console Email)
+└── production.py # Entorno prod (S3, Redis, Sentry, Strict DB)
+</code></pre>
 
-                <h3 id="reglas-del-monolito-modular">Reglas estrictas:</h3>
+                <p><strong>Aislamiento de Infraestructura:</strong> Usar variables de entorno (<code>python-decouple</code> o <code>django-environ</code>) para credenciales. Nunca commitear <code>SECRET_KEY</code>.</p>
+
+                <h2 id="deuda-tecnica">7. Reglas de Oro para Evitar Deuda Técnica</h2>
                 <ol>
-                    <li><strong>Alta Cohesión:</strong> Cada App encapsula un dominio (ej: <code>billing</code>, <code>lms</code>, <code>users</code>).</li>
-                    <li><strong>Bajo Acoplamiento:</strong> Una App NO debe importar modelos de otra App directamente para escribir datos. Debe usar la <strong>API Pública</strong> (Servicios) de la otra App.</li>
-                    <li><strong>Infraestructura Compartida:</strong> La autenticación y configuración base son transversales.</li>
+                    <li><strong>No mezclar Dominio con HTTP:</strong> Si tu lógica de negocio recibe <code>request</code>, estás acoplado al framework web.</li>
+                    <li><strong>No mezclar Dominio con Serialización:</strong> <code>to_representation</code> en un Serializer no es el lugar para cálculos de negocio.</li>
+                    <li><strong>No introducir Complejidad Accidental:</strong> No crees Repositorios Genéricos sobre el ORM si no los necesitas. El ORM de Django ya es una implementación del patrón Repository/UnitOfWork.</li>
                 </ol>
 
-                <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 border-l-4 border-green-500">
-                    <h4 class="font-bold text-green-700 dark:text-green-400">Ejemplo de Configuración Modular</h4>
-                    <p class="text-sm">Para soportar esta modularidad desde la infraestructura, abandonamos el <code>settings.py</code> único:</p>
-                    <pre><code class="language-text">settings/
-├── base.py       # Configuración común
-├── local.py      # Dev: Debug=True, ConsoleEmailBackend
-└── production.py # Prod: S3, Sentry, Redis, PostgreSQL strict</code></pre>
-                </div>
+                <h2 id="cierre-capitulo">8. Cierre del Capítulo</h2>
 
-                <h2 id="7-rendimiento-y-escalabilidad">7. Rendimiento y Escalabilidad Avanzada</h2>
-
-                <h3 id="7-1-cqrs-pragmatico">7.1 CQRS (Command Query Responsibility Segregation)</h3>
-                <p>Separamos los modelos de escritura (altamente normalizados) de los de lectura. Para reportes pesados, podemos tener tablas desnormalizadas o vistas materializadas que se actualizan vía señales o tareas en segundo plano.</p>
-
-                <h3 id="7-2-caching-estrategico">7.2 Caching Estratégico (Redis)</h3>
-                <p>No caches todo. Usa patrones:</p>
-                <ul>
-                    <li><strong>Cache-aside:</strong> La aplicación busca en cache, si falla busca en DB y guarda en cache.</li>
-                    <li><strong>Russian Doll Caching:</strong> Cachear fragmentos de templates anidados.</li>
-                    <li><strong>Invalidación:</strong> El problema más difícil. Prefiere tiempos de expiración cortos (TTL) a invalidación manual compleja.</li>
-                </ul>
-
-                <h3 id="7-3-indexing-query-optimization">7.3 Indexing y Query Optimization</h3>
-                <p>El rendimiento de la base de datos suele ser el primer cuello de botella. Estrategias clave:</p>
-                <ul>
-                    <li><strong>Índices Compuestos:</strong> No basta con indexar campos individuales. Si filtras por <code>status</code> y ordenas por <code>created_at</code>, necesitas un <code>Index(['status', 'created_at'])</code>.</li>
-                    <li><strong>Select Related & Prefetch Related:</strong> Usa <code>select_related</code> para FKs (JOINs) y <code>prefetch_related</code> para M2M (query adicional) para evitar el problema N+1.</li>
-                    <li><strong>Defer & Only:</strong> No traigas columnas pesadas (Text, Blob) si no las vas a usar.</li>
-                </ul>
-                <div class="not-prose relative">
-                   <div class="absolute top-0 right-0 p-2 text-xs text-green-600 font-bold">OPTIMIZADO</div>
-                   <pre><code class="language-python"># Evitando N+1 Queries en DRF
-queryset = Curso.objects.select_related('categoria', 'instructor') \
-                        .prefetch_related('estudiantes') \
-                        .only('id', 'titulo', 'categoria__nombre', 'instructor__nombre')</code></pre>
-                </div>
-
-                <h3 id="7-4-tareas-asincronas">7.4 Tareas Asíncronas (Celery/RQ)</h3>
-                <p><strong>Regla:</strong> El ciclo Request-Response HTTP debe ser menor a 200ms. Todo lo que tarde más (enviar emails, procesar imágenes, reportes, pagos) debe ir a una cola (Queue).</p>
-
-                <h2 id="8-integracion-con-microservicios">8. Integración con Microservicios</h2>
-                <p>Solo divide el monolito cuando:</p>
-                <ol>
-                    <li>Una parte del dominio requiere escalar de forma independiente (ej: procesamiento de video intensivo).</li>
-                    <li>Necesitas tecnología distinta (ej: un servicio de IA en Python/FastAPI vs Core en Django).</li>
-                    <li>Equipos organizacionales distintos (Ley de Conway).</li>
-                </ol>
-                <p>En este caso, Django puede actuar como el orquestador o "Backend for Frontend" (BFF), comunicándose vía REST o gRPC con servicios especializados.</p>
-
-                <h2 id="9-testing-estrategico">9. Testing Estratégico</h2>
-                <p>Con la arquitectura de servicios, el testing se simplifica:</p>
-                <ul>
-                    <li><strong>Tests de Servicios:</strong> Son el núcleo. Prueban la lógica de negocio pura. Mockeran llamadas externas pero usan la DB real (Django test DB es rápida).</li>
-                    <li><strong>Tests de Selectores:</strong> Verifican que las queries traigan los datos correctos.</li>
-                    <li><strong>Tests de Vistas (End-to-End):</strong> Se reducen a verificar que la vista llame al servicio correcto y retorne el status code adecuado (Happy Path + Error Handling básico).</li>
-                </ul>
-
-                <h2 id="10-migraciones-evolucion-y-mantenimiento">10. Migraciones y Mantenimiento</h2>
-
-                <h3 id="custom-user-model">El Modelo de Usuario Personalizado</h3>
-                <p>Parte vital del mantenimiento a largo plazo es iniciar siempre con un <code>AUTH_USER_MODEL</code> personalizado (heredando de <code>AbstractUser</code>). Esto permite evolucionar la identidad del usuario (añadir UUIDs, cambiar email por username) sin romper las ForeignKeys de todo el sistema en el futuro.</p>
-
-                <h3 id="rolling-updates">Rolling Updates</h3>
-                <p>Para sistemas de alta disponibilidad, las migraciones de base de datos no deben romper el código anterior.
-                Estrategia: 1. Añadir columna nueva (nullable). 2. Desplegar código que escribe en ambas. 3. Migrar datos antiguos. 4. Desplegar código que solo usa la nueva. 5. Borrar columna vieja.</p>
-
-                <h2 id="11-conclusion-estrategica">11. Conclusión Estratégica</h2>
-                <p>La arquitectura no es un destino, es una serie de decisiones de compromiso (trade-offs).</p>
-
-                <div class="overflow-x-auto">
+                <h3 id="matriz-decision">Matriz de Decisión para Proyectos Medianos</h3>
+                <div class="overflow-x-auto my-6">
                     <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th class="px-6 py-3">Escenario</th>
-                                <th class="px-6 py-3">Arquitectura Recomendada</th>
+                                <th class="px-6 py-3">Característica</th>
+                                <th class="px-6 py-3">Enfoque Moderno</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">MVP / Prototipo</td>
-                                <td class="px-6 py-4">Django Vainilla (MTV puro + Fat Models moderados).</td>
+                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Lógica de Negocio</td>
+                                <td class="px-6 py-4">Services Layer (Funciones puras o Clases de Servicio).</td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Producto en Crecimiento</td>
-                                <td class="px-6 py-4">Capas de Servicios y Selectores + Monolito Modular.</td>
+                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Consultas Complejas</td>
+                                <td class="px-6 py-4">Selector Layer (Funciones especializadas).</td>
                             </tr>
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Escala Masiva / Equipos Múltiples</td>
-                                <td class="px-6 py-4">Monolito Modular estricto + Microservicios satélite para tareas intensivas.</td>
+                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Tareas Lentas</td>
+                                <td class="px-6 py-4">Asíncronas obligatorias (Celery/RQ) invocadas desde Servicios.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <p class="mt-4 font-bold text-gray-900 dark:text-gray-100">
-                    Premisa final: La arquitectura correcta es la mínima que elimina el dolor presente sin introducir complejidad innecesaria.
+                    Criterio de Ascenso: Cuando la complejidad del dominio supera la capacidad de organización de las Apps y Servicios, es momento de pasar a la <strong>Arquitectura Avanzada (Cap. 12)</strong>.
                 </p>
 
             </main>
