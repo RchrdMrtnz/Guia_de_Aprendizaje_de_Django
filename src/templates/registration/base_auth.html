@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Autenticación{% endblock %} | Django Curso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1d4ed8',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">{% block header %}Bienvenido{% endblock %}</h1>
+            <p class="text-sm text-gray-600">{% block subheader %}Ingresa tus credenciales{% endblock %}</p>
+        </div>
+
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-sm {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
