@@ -1,24 +1,40 @@
-{% extends "base.html" %}
+{% extends "registration/base_auth.html" %}
 
 {% block title %}Iniciar Sesión{% endblock %}
+{% block header %}Iniciar Sesión{% endblock %}
+{% block subheader %}Accede a tu cuenta de estudiante{% endblock %}
 
 {% block content %}
-<div class="grid">
-    <div></div> <!-- Spacer para centrar -->
-    <article>
-        <header><h1>Iniciar Sesión</h1></header>
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
+    {% if form.errors %}
+        <div class="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">
+            Usuario o contraseña incorrectos.
+        </div>
+    {% endif %}
 
-            <button type="submit">Entrar</button>
-        </form>
+    <div class="mb-4">
+        <label for="id_username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+        <input type="text" name="username" autofocus required id="id_username"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+    </div>
 
-        <footer>
-            <small>¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a>.</small>
-        </footer>
-    </article>
-    <div></div> <!-- Spacer -->
+    <div class="mb-6">
+        <div class="flex justify-between items-center mb-1">
+            <label for="id_password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+            <a href="{% url 'password_reset' %}" class="text-xs text-primary hover:text-secondary">¿Olvidaste tu contraseña?</a>
+        </div>
+        <input type="password" name="password" required id="id_password"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+    </div>
+
+    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+        Entrar
+    </button>
+</form>
+
+<div class="mt-6 text-center text-sm">
+    <p class="text-gray-600">¿No tienes cuenta? <a href="#" class="text-primary hover:text-secondary font-medium">Regístrate</a></p>
 </div>
 {% endblock %}
