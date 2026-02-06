@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>16. Gestión de Usuarios, Roles y Permisos (RBAC) - Guía Django</title>
-    <meta name="description" content="Guía maestra sobre Control de Acceso Basado en Roles (RBAC) en Django. Implementación de roles personalizados, grupos, permisos, mixins y decorators para aplicaciones multi-usuario.">
+    <meta name="description" content="Guía maestra sobre Control de Acceso Basado en Roles (RBAC) en Django. Auditoría arquitectónica: roles vs permisos, uso correcto de groups y tests robustos.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,7 +46,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
         pre[class*="language-"] { border-radius: 0.5rem; margin: 1.5rem 0; }
 
-        /* Deep Dive Sections */
+        /* Custom Panels */
         .deep-dive { border-left: 4px solid #8b5cf6; padding-left: 1.5rem; margin-top: 2rem; margin-bottom: 2rem; background-color: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; }
         .security-alert { border-left: 4px solid #ef4444; background-color: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 0.5rem; }
         .pro-tip { border-left: 4px solid #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 0.5rem; }
@@ -99,144 +99,91 @@
                 </h1>
 
                 <p class="lead text-xl text-gray-600 dark:text-gray-400">
-                    En una aplicación real, no todos los usuarios son iguales. Aprenderemos a implementar un sistema de Control de Acceso Basado en Roles (RBAC) escalable, diferenciando entre Profesores, Estudiantes y Administradores, utilizando lo mejor de las herramientas nativas de Django extendidas con patrones profesionales.
+                    En este capítulo transformaremos una implementación ingenua de roles en una arquitectura de seguridad profesional (RBAC) apta para producción, evitando vulnerabilidades comunes como Race Conditions y Signals destructivos.
                 </p>
 
                 <!-- INDICE RAPIDO -->
                 <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
                     <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Módulo</h3>
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <li><a href="#teoria-rbac" class="no-underline hover:text-blue-600">🔹 1. Teoría: RBAC vs ABAC</a></li>
-                        <li><a href="#diseno-modelo" class="no-underline hover:text-blue-600">🔹 2. Diseño del Modelo de Datos</a></li>
-                        <li><a href="#grupos-permisos" class="no-underline hover:text-blue-600">🔹 3. Sincronización de Grupos</a></li>
-                        <li><a href="#proteccion-vistas" class="no-underline hover:text-blue-600">🔹 4. Mixins y Decoradores</a></li>
-                        <li><a href="#admin-custom" class="no-underline hover:text-blue-600">🔹 5. Personalización del Admin</a></li>
+                        <li><a href="#auditoria" class="no-underline hover:text-blue-600">🔹 1. Auditoría: Roles vs Permissions</a></li>
+                        <li><a href="#implementacion-core" class="no-underline hover:text-blue-600">🔹 2. Implementación Segura</a></li>
+                        <li><a href="#migraciones" class="no-underline hover:text-blue-600">🔹 3. Migraciones de Datos</a></li>
+                        <li><a href="#vistas-templates" class="no-underline hover:text-blue-600">🔹 4. Protección de Vistas y Templates</a></li>
+                        <li><a href="#obj-perms" class="no-underline hover:text-blue-600">🔹 5. Permisos a Nivel de Objeto</a></li>
                     </ul>
                 </div>
 
-                <!-- SECCION 1: TEORIA RBAC -->
-                <h2 id="teoria-rbac" class="text-3xl border-b pb-2">1. Teoría: Roles, Grupos y Permisos</h2>
+                <!-- SECCION 1: AUDITORIA -->
+                <h2 id="auditoria" class="text-3xl border-b pb-2">1. Auditoría: La Falacia del Enfoque Híbrido</h2>
 
-                <p>Antes de escribir código, debemos definir nuestra estrategia de autorización. Existen dos enfoques principales en la industria:</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow border-l-4 border-blue-500">
-                        <h4 class="font-bold text-lg mt-0">RBAC (Role-Based Access Control)</h4>
-                        <p class="text-sm">Los permisos se asignan a <strong>Roles</strong> (o Grupos), y los usuarios reciben esos Roles. Es fácil de gestionar: "Todos los Profesores pueden editar cursos".</p>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow border-l-4 border-purple-500">
-                        <h4 class="font-bold text-lg mt-0">ABAC (Attribute-Based Access Control)</h4>
-                        <p class="text-sm">El acceso depende de atributos dinámicos: "El usuario puede editar ESTE curso solo si es el creador Y es día laborable". Es más flexible pero complejo.</p>
-                    </div>
+                <div class="security-alert">
+                    <h4 class="font-bold mt-0">¡Cuidado con las malas prácticas!</h4>
+                    <p>Muchos tutoriales sugieren crear un campo <code>role</code> en el usuario y luego usar Mixins que hacen <code>if user.role == 'TEACHER'</code>. Esto es un error arquitectónico grave.</p>
                 </div>
 
-                <p><strong>En Django:</strong>
-                <ul class="list-disc list-inside">
-                    <li><strong>Grupos (Groups):</strong> Implementación nativa de Roles.</li>
-                    <li><strong>Permisos (Permissions):</strong> Granularidad fina ("puede_editar_curso").</li>
-                </ul>
-                </p>
-
-                <div class="architecture-note">
-                    <h4 class="font-bold mt-0">Patrón Recomendado</h4>
-                    <p>Usaremos un enfoque híbrido: Definimos el <strong>Rol</strong> en el modelo de usuario (para lógica de negocio rápida) y usamos <strong>Grupos</strong> de Django para la gestión de permisos (para integración con Admin y seguridad).</p>
-                </div>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 2: DISENO MODELO -->
-                <h2 id="diseno-modelo" class="text-3xl border-b pb-2">2. Diseño del Modelo de Usuario</h2>
-
-                <p>Evita usar booleanos como <code>is_teacher</code> o <code>is_student</code>. ¿Qué pasa si mañana necesitas un <code>is_assistant</code> o <code>is_auditor</code>? Terminarás con una tabla llena de flags booleanos. La solución elegante es un campo <code>Enum</code>.</p>
-
-                <h3 class="text-2xl mt-6">Implementación en <code>users/models.py</code></h3>
-
-                <pre><code class="language-python">from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-class CustomUser(AbstractUser):
-    # Definimos los roles como una clase interna TextChoices
-    class Role(models.TextChoices):
-        ADMIN = 'ADMIN', _('Administrador')
-        TEACHER = 'TEACHER', _('Profesor')
-        STUDENT = 'STUDENT', _('Estudiante')
-
-    # Campo de rol único
-    role = models.CharField(
-        max_length=50,
-        choices=Role.choices,
-        default=Role.STUDENT,
-        verbose_name=_('Rol')
-    )
-
-    # Métodos helpers para usar en templates/vistas
-    @property
-    def is_teacher(self):
-        return self.role == self.Role.TEACHER
-
-    @property
-    def is_student(self):
-        return self.role == self.Role.STUDENT</code></pre>
-
-                <p>Esta estructura nos da tres ventajas inmediatas:</p>
+                <p><strong>¿Por qué es incorrecto?</strong></p>
                 <ol>
-                    <li><strong>Validación automática:</strong> Django asegura que solo se guarden valores válidos.</li>
-                    <li><strong>Extensibilidad:</strong> Agregar un rol nuevo es solo una línea de código.</li>
-                    <li><strong>Claridad:</strong> El código es autodocumentado.</li>
+                    <li><strong>Inutiliza el sistema de Django:</strong> Si verificas strings manualmente, ignoras la tabla <code>auth_permission</code>. Un admin no podrá revocar permisos temporalmente desde el panel de administración sin cambiar el rol del usuario.</li>
+                    <li><strong>Signals Destructivos:</strong> Usar <code>instance.groups.clear()</code> en un signal <code>post_save</code> (como sugieren algunos guías) borrará cualquier grupo extra que hayas asignado manualmente (ej: "Newsletter Subscribers").</li>
+                    <li><strong>Race Conditions:</strong> Las migraciones que dependen de permisos a menudo fallan en despliegues frescos (CI/CD) porque los permisos se crean <em>después</em> de todas las migraciones (signal <code>post_migrate</code>).</li>
                 </ol>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 3: GRUPOS Y PERMISOS -->
-                <h2 id="grupos-permisos" class="text-3xl border-b pb-2">3. Sincronización Automática con Grupos</h2>
+                <!-- SECCION 2: IMPLEMENTACION -->
+                <h2 id="implementacion-core" class="text-3xl border-b pb-2">2. Implementación Segura: Override save()</h2>
 
-                <p>Tener un campo <code>role</code> está bien, pero el sistema de permisos de Django funciona con <code>Groups</code>. Si queremos usar decoradores como <code>@permission_required</code>, necesitamos mapear nuestros roles a grupos.</p>
+                <p>En lugar de usar signals impredecibles, sobrescribimos el método <code>save()</code> del modelo. Esto es explícito, fácil de debuguear y evita problemas con <code>bulk_create</code> (ya que somos conscientes de que save no corre en bulk).</p>
 
-                <h3 class="text-2xl mt-6">Estrategia de Signals</h3>
-                <p>Usaremos una señal <code>post_save</code> para que cada vez que se cree o edite un usuario, se le asigne automáticamente al Grupo de Django correspondiente.</p>
+                <pre><code class="language-python"># src/users/models.py
+class CustomUser(AbstractUser):
+    # ... campos de rol ...
 
-                <pre><code class="language-python"># users/signals.py
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.auth.models import Group
-from .models import CustomUser
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
 
-@receiver(post_save, sender=CustomUser)
-def assign_role_group(sender, instance, created, **kwargs):
-    if instance.role:
-        # Buscamos o creamos el grupo con el nombre del rol (ej: "TEACHER")
-        group, _ = Group.objects.get_or_create(name=instance.role)
+        # Solo asignamos grupo al crear el usuario
+        if is_new and self.role:
+            from django.contrib.auth.models import Group
+            # Usamos first() para evitar crash si el grupo no existe (bootstrapping)
+            group = Group.objects.filter(name=self.role).first()
+            if group:
+                # Add es seguro, no borra otros grupos
+                self.groups.add(group)</code></pre>
 
-        # Limpiamos grupos anteriores para evitar inconsistencias
-        instance.groups.clear()
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-        # Asignamos el nuevo grupo
-        instance.groups.add(group)</code></pre>
+                <!-- SECCION 3: MIGRACIONES -->
+                <h2 id="migraciones" class="text-3xl border-b pb-2">3. Migraciones de Datos Robustas</h2>
 
-                <div class="pro-tip">
-                    <strong>Nota:</strong> No olvides conectar tus señales en el método <code>ready()</code> de <code>users/apps.py</code>.
-                </div>
+                <p>Para evitar la "Race Condition" donde los permisos no existen cuando corre tu migración, debemos forzar la señal <code>emit_post_migrate_signal</code>.</p>
 
-                <h3 class="text-2xl mt-6">Asignación de Permisos a Grupos</h3>
-                <p>Lo ideal es hacer esto mediante una <strong>Migración de Datos</strong>, para que al desplegar en producción, los permisos se configuren solos.</p>
-
-                <pre><code class="language-python"># Ejemplo de Data Migration
+                <pre><code class="language-python"># src/users/migrations/0003_setup_roles_groups.py
 from django.db import migrations
+from django.core.management.sql import emit_post_migrate_signal
 
 def create_groups(apps, schema_editor):
+    # Truco Pro: Forzar creación de permisos antes de usarlos
+    emit_post_migrate_signal(2, False, 'default')
+
     Group = apps.get_model('auth', 'Group')
     Permission = apps.get_model('auth', 'Permission')
 
-    # Grupo Profesores
     teacher_group, _ = Group.objects.get_or_create(name='TEACHER')
-    # Buscar permisos específicos (ej: add_course)
-    permissions = Permission.objects.filter(codename__in=['add_curso', 'change_curso', 'delete_curso'])
-    teacher_group.permissions.set(permissions)
+
+    # Ahora es seguro buscar el permiso
+    try:
+        perm = Permission.objects.get(codename='add_curso', content_type__app_label='conceptos_basicos')
+        teacher_group.permissions.add(perm)
+    except Permission.DoesNotExist:
+        pass
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('users', '0002_customuser_role'),
+        ("users", "0002_customuser_role"),
+        ("conceptos_basicos", "0001_initial"), # Dependencia clave
     ]
     operations = [
         migrations.RunPython(create_groups),
@@ -244,128 +191,63 @@ class Migration(migrations.Migration):
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 4: PROTECCION VISTAS -->
-                <h2 id="proteccion-vistas" class="text-3xl border-b pb-2">4. Protección de Vistas: Mixins y Decoradores</h2>
+                <!-- SECCION 4: VISTAS Y TEMPLATES -->
+                <h2 id="vistas-templates" class="text-3xl border-b pb-2">4. Protección Real con Permisos</h2>
 
-                <p>Ahora que tenemos la infraestructura, ¿cómo restringimos el acceso a las vistas?</p>
+                <h3 class="text-2xl mt-6">El Mixin Correcto</h3>
+                <p>No crees un mixin que chequee <code>role == 'TEACHER'</code>. Crea uno que chequee el permiso.</p>
 
-                <h3 class="text-2xl mt-6">Para Class-Based Views (CBV)</h3>
-                <p>La forma más limpia es crear Mixins reutilizables. Esto mantiene tus vistas limpias y legibles.</p>
+                <pre><code class="language-python"># src/users/mixins.py
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-                <pre><code class="language-python"># users/mixins.py
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import redirect
+class TeacherRequiredMixin(PermissionRequiredMixin):
+    permission_required = 'conceptos_basicos.add_curso'
+    # Redirige a login si es anónimo, o 403 si está logueado sin permiso
+    raise_exception = False </code></pre>
 
-class TeacherRequiredMixin(UserPassesTestMixin):
-    """Verifica que el usuario sea Profesor"""
+                <h3 class="text-2xl mt-6">En los Templates</h3>
+                <p>Nunca uses <code>{% if user.role == 'TEACHER' %}</code>. Si mañana cambias el nombre del rol, tendrás que editar 50 templates.</p>
+                <div class="pro-tip">
+                    <strong>Usa esto:</strong> <code>{% if perms.conceptos_basicos.add_curso %}</code>
+                </div>
 
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.role == 'TEACHER'
-
-    def handle_no_permission(self):
-        # Redirigir a una página de error o al home si no tiene permisos
-        return redirect('home')
-
-class StudentRequiredMixin(UserPassesTestMixin):
-    """Verifica que el usuario sea Estudiante"""
-    def test_func(self):
-        return self.request.user.is_authenticated and self.request.user.role == 'STUDENT'
-</code></pre>
-
-                <p><strong>Uso en Vistas:</strong></p>
-                <pre><code class="language-python"># views.py
-from django.views.generic import CreateView
-from .mixins import TeacherRequiredMixin
-
-class CrearCursoView(TeacherRequiredMixin, CreateView):
-    model = Curso
-    template_name = "cursos/crear.html"
-    # ...
-</code></pre>
-
-                <h3 class="text-2xl mt-6">Para Function-Based Views (FBV)</h3>
-                <p>Usamos decoradores personalizados.</p>
-
-                <pre><code class="language-python"># users/decorators.py
-from django.contrib.auth.decorators import user_passes_test
-
-def teacher_required(function=None):
-    actual_decorator = user_passes_test(
-        lambda u: u.is_active and u.role == 'TEACHER',
-        login_url='/login/',
-        redirect_field_name=None
-    )
-    if function:
-        return actual_decorator(function)
-    return actual_decorator
-</code></pre>
+                <pre><code class="language-html">&lt;nav&gt;
+  &lt;a href="/"&gt;Inicio&lt;/a&gt;
+  {% if perms.conceptos_basicos.add_curso %}
+    &lt;a href="{% url 'crear_curso' %}"&gt;Crear Nuevo Curso&lt;/a&gt;
+  {% endif %}
+&lt;/nav&gt;</code></pre>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 5: ADMIN CUSTOM -->
-                <h2 id="admin-custom" class="text-3xl border-b pb-2">5. Personalización del Admin Panel</h2>
+                <!-- SECCION 5: OBJECT LEVEL PERMISSIONS -->
+                <h2 id="obj-perms" class="text-3xl border-b pb-2">5. Reto Experto: Permisos a Nivel de Objeto</h2>
 
-                <p>El admin de Django es poderoso, pero por defecto no muestra nuestros campos personalizados de manera óptima. Vamos a mejorarlo en <code>users/admin.py</code>.</p>
+                <p>Hasta ahora tenemos permisos globales: "Un profesor puede editar cursos". Pero, ¿puede el Profesor A editar el curso del Profesor B?</p>
+                <p><strong>El problema:</strong> Los permisos de Django (<code>add</code>, <code>change</code>) son a nivel de Tabla, no de Fila.</p>
 
-                <pre><code class="language-python">from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+                <h3 class="text-2xl mt-6">Solución Nativa: get_queryset</h3>
+                <p>Filtra los objetos que el usuario puede ver/editar.</p>
 
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    # Campos a mostrar en la lista de usuarios
-    list_display = UserAdmin.list_display + ('role', 'is_staff')
-
-    # Filtros laterales
-    list_filter = UserAdmin.list_filter + ('role',)
-
-    # Edición del campo en el formulario de detalle
-    fieldsets = UserAdmin.fieldsets + (
-        ('Información de Rol', {'fields': ('role',)}),
-    )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Información de Rol', {'fields': ('role',)}),
-    )
-</code></pre>
+                <pre><code class="language-python">class CursoUpdateView(TeacherRequiredMixin, UpdateView):
+    def get_queryset(self):
+        # Solo permite editar cursos creados por el usuario actual
+        # (Asumiendo que agregamos un campo 'autor' al modelo Curso)
+        return Curso.objects.filter(autor=self.request.user)</code></pre>
 
                 <div class="deep-dive">
-                    <h4 class="mt-0">Reto Avanzado: Admin Dinámico</h4>
-                    <p>¿Qué tal si queremos que un administrador vea ciertos campos pero no pueda editarlos? Podemos sobrescribir <code>get_readonly_fields</code>.</p>
-                    <pre><code class="language-python">    def get_readonly_fields(self, request, obj=None):
-        if not request.user.is_superuser:
-            # Si no es superusuario, no puede cambiar el rol de nadie
-            return self.readonly_fields + ('role', 'is_superuser', 'user_permissions')
-        return self.readonly_fields</code></pre>
+                    <h4 class="mt-0">Librerías Avanzadas</h4>
+                    <p>Para casos complejos (ej: "compartir" un documento con un usuario específico), utiliza <strong>django-guardian</strong>, que permite asignar permisos por instancia: <code>assign_perm('change_curso', user, curso_instance)</code>.</p>
                 </div>
 
-                <h2 id="testing" class="text-3xl border-b pb-2 mt-12">6. Testing de Permisos</h2>
+                <h2 id="testing" class="text-3xl border-b pb-2 mt-12">6. Testing Robusto</h2>
 
-                <p>Nunca confíes en que tus permisos funcionan solo probándolos manualmente. Escribe tests.</p>
+                <p>Asegúrate de probar los casos de fallo (403 Forbidden).</p>
 
-                <pre><code class="language-python">from django.test import TestCase
-from django.urls import reverse
-from users.models import CustomUser
-
-class PermisosTests(TestCase):
-    def setUp(self):
-        self.teacher = CustomUser.objects.create_user(
-            username='profe1', password='pw', role='TEACHER'
-        )
-        self.student = CustomUser.objects.create_user(
-            username='alum1', password='pw', role='STUDENT'
-        )
-
-    def test_teacher_can_access_create_course(self):
-        self.client.force_login(self.teacher)
-        response = self.client.get(reverse('curso_create'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_student_cannot_access_create_course(self):
+                <pre><code class="language-python">    def test_student_cannot_access_create_view(self):
         self.client.force_login(self.student)
         response = self.client.get(reverse('curso_create'))
-        # Debería ser 403 Forbidden o 302 Redirect dependiendo de tu config
-        self.assertNotEqual(response.status_code, 200)
-</code></pre>
+        self.assertEqual(response.status_code, 403)</code></pre>
 
             </main>
 

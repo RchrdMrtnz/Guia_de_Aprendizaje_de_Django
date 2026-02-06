@@ -45,7 +45,12 @@ class VistasTest(TestCase):
         )
         # Crear usuario para pruebas de autenticación
         User = get_user_model()
-        self.user = User.objects.create_user(username='testuser', password='password123')
+        # Asignamos rol TEACHER para que tenga permisos de crear cursos
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='password123',
+            role='TEACHER'
+        )
 
     def test_lista_cursos_view(self):
         """Prueba que la vista de lista devuelve 200 y contiene el conteo de cursos."""
