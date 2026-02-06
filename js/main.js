@@ -29,6 +29,7 @@ const menu = [
         items: [
             { title: "14. Setup del Proyecto", path: "14_proyecto_setup.html" },
             { title: "15. Autenticación y Login", path: "15_proyecto_auth.html" },
+            { title: "16. Roles y Permisos", path: "16_proyecto_roles.html" },
         ]
     }
 ];
