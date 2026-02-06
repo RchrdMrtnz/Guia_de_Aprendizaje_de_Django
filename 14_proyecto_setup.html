@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup del Proyecto - Guía Definitiva de Django</title>
+    <meta name="description" content="Guía paso a paso para levantar el proyecto Django, configurar el entorno y realizar migraciones.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Custom Scrollbar for Sidebar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Prism overrides */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
+
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+                <div class="animate-pulse flex space-x-4">
+                    <div class="flex-1 space-y-4 py-1">
+                        <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                        <div class="space-y-2">
+                            <div class="h-4 bg-gray-700 rounded"></div>
+                            <div class="h-4 bg-gray-700 rounded w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-4xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+
+                <!-- Content Start -->
+
+                <h1 id="setup-del-proyecto">14. Setup del Proyecto y Configuración Inicial</h1>
+
+                <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-500 p-4 mb-6">
+                    <p class="text-yellow-700 dark:text-yellow-300 font-medium">Esta sección cubre los pasos necesarios para levantar el proyecto desde cero en un entorno local, algo fundamental para empezar a trabajar.</p>
+                </div>
+
+                <p>Para trabajar con este proyecto profesional de Django, es necesario configurar correctamente el entorno de desarrollo. A continuación, detallamos el proceso paso a paso.</p>
+
+                <h2 id="prerrequisitos">Prerrequisitos</h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Python 3.12+</strong> instalado en tu sistema.</li>
+                    <li><strong>Git</strong> para el control de versiones.</li>
+                    <li>Un editor de código como <strong>VS Code</strong>.</li>
+                </ul>
+
+                <h2 id="paso-1-clonar-repositorio">Paso 1: Clonar el Repositorio</h2>
+                <p>Primero, obtén una copia del código fuente en tu máquina local:</p>
+                <pre><code class="language-bash">git clone https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django.git
+cd Guia_de_Aprendizaje_de_Django</code></pre>
+
+                <h2 id="paso-2-entorno-virtual">Paso 2: Crear y Activar Entorno Virtual</h2>
+                <p>Es una buena práctica aislar las dependencias del proyecto.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-bold">Windows</h4>
+                        <pre><code class="language-bash">python -m venv venv
+.\venv\Scripts\activate</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">macOS / Linux</h4>
+                        <pre><code class="language-bash">python3 -m venv venv
+source venv/bin/activate</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="paso-3-instalar-dependencias">Paso 3: Instalar Dependencias</h2>
+                <p>Con el entorno virtual activado, instala las librerías necesarias listadas en <code>requirements.txt</code>:</p>
+                <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
+
+                <h2 id="paso-4-variables-entorno">Paso 4: Variables de Entorno</h2>
+                <p>El proyecto utiliza <code>python-decouple</code> para gestionar configuraciones sensibles. Debes crear un archivo <code>.env</code> en la raíz del proyecto (al mismo nivel que <code>requirements.txt</code>).</p>
+
+                <p>Puedes copiar el archivo de ejemplo:</p>
+                <pre><code class="language-bash">cp .env.example .env</code></pre>
+
+                <p>O crear uno manualmente con el siguiente contenido mínimo para desarrollo:</p>
+                <pre><code class="language-bash"># .env
+DEBUG=True
+SECRET_KEY=tu-clave-secreta-para-desarrollo-12345
+ALLOWED_HOSTS=127.0.0.1,localhost
+DATABASE_URL=sqlite:///db.sqlite3</code></pre>
+
+                <h2 id="paso-5-migraciones">Paso 5: Aplicar Migraciones</h2>
+                <p>Django necesita crear las tablas en la base de datos. Ejecuta las migraciones:</p>
+                <pre><code class="language-bash">python src/manage.py migrate</code></pre>
+                <p class="text-sm text-gray-500 italic">Nota: El comando se ejecuta apuntando a <code>src/manage.py</code> porque el proyecto está dentro de la carpeta <code>src</code>.</p>
+
+                <h2 id="paso-6-superuser">Paso 6: Crear Superusuario</h2>
+                <p>Para acceder al panel de administración, necesitas un usuario con permisos:</p>
+                <pre><code class="language-bash">python src/manage.py createsuperuser</code></pre>
+                <p>Sigue las instrucciones en pantalla para definir usuario, email y contraseña.</p>
+
+                <h2 id="paso-7-ejecutar">Paso 7: Ejecutar el Servidor</h2>
+                <p>Finalmente, levanta el servidor de desarrollo:</p>
+                <pre><code class="language-bash">python src/manage.py runserver</code></pre>
+
+                <p>Ahora puedes acceder a:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>Web: <a href="http://127.0.0.1:8000" target="_blank">http://127.0.0.1:8000</a></li>
+                    <li>Admin: <a href="http://127.0.0.1:8000/admin/" target="_blank">http://127.0.0.1:8000/admin/</a></li>
+                </ul>
+
+                <!-- Content End -->
+
+            </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Código validado y moderno.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

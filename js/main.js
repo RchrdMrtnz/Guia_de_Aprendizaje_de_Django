@@ -23,6 +23,13 @@ const menu = [
             { title: "13. DevOps y Calidad", path: "13_devops.html" },
             { title: "Recursos", path: "recursos.html" },
         ]
+    },
+    {
+        title: "Proyectos Reales",
+        items: [
+            { title: "14. Setup del Proyecto", path: "14_proyecto_setup.html" },
+            { title: "15. Autenticación y Login", path: "15_proyecto_auth.html" },
+        ]
     }
 ];
 
