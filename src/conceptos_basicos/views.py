@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets
+from users.mixins import TeacherRequiredMixin
 from .models import Curso
 from .forms import CursoForm
 from .serializers import CursoSerializer
@@ -37,7 +38,7 @@ class CursoDetailView(DetailView):
     template_name = "conceptos_basicos/curso_detail.html"
     context_object_name = "curso"
 
-class CursoCreateView(LoginRequiredMixin, CreateView):
+class CursoCreateView(TeacherRequiredMixin, CreateView):
     model = Curso
     form_class = CursoForm
     template_name = "conceptos_basicos/curso_form.html"
