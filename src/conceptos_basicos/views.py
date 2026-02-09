@@ -13,7 +13,7 @@ from .serializers import CursoSerializer
 # --- FUNCTION BASED VIEWS (FBV) ---
 
 def lista_cursos(request):
-    cursos = Curso.objects.all()
+    cursos = Curso.objects.with_es_reciente().all()
     # Versión simple sin templates (para demos)
     return HttpResponse(f"<h1>Listado de Cursos (FBV)</h1><p>Cursos encontrados: {cursos.count()}</p>")
 
@@ -31,7 +31,7 @@ class CursoListView(ListView):
 
     def get_queryset(self):
         # Ejemplo de filtro personalizado: solo cursos recientes o todos
-        return Curso.objects.select_related('categoria').all()
+        return Curso.objects.select_related('categoria').with_es_reciente().all()
 
 class CursoDetailView(DetailView):
     model = Curso
@@ -53,5 +53,7 @@ class RegistroView(CreateView):
 # --- DRF VIEWSETS ---
 
 class CursoViewSet(viewsets.ModelViewSet):
-    queryset = Curso.objects.all()
     serializer_class = CursoSerializer
+
+    def get_queryset(self):
+        return Curso.objects.with_es_reciente().all()

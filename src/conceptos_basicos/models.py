@@ -1,7 +1,27 @@
 from django.db import models
+from django.db.models import Case, When, Value, BooleanField
 from django.utils.text import slugify
 from django.utils import timezone
 import datetime
+
+class CursoQuerySet(models.QuerySet):
+    def with_es_reciente(self):
+        """Annotates the queryset with _es_reciente boolean."""
+        threshold = timezone.now() - datetime.timedelta(days=30)
+        return self.annotate(
+            _es_reciente=Case(
+                When(creado_en__gte=threshold, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+
+class CursoManager(models.Manager):
+    def get_queryset(self):
+        return CursoQuerySet(self.model, using=self._db)
+
+    def with_es_reciente(self):
+        return self.get_queryset().with_es_reciente()
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=50)
@@ -20,6 +40,8 @@ class Curso(models.Model):
         ('INTERMEDIO', 'Intermedio'),
         ('AVANZADO', 'Avanzado'),
     ]
+
+    objects = CursoManager()
 
     titulo = models.CharField(max_length=200, verbose_name="Título")
     slug = models.SlugField(unique=True, blank=True, null=True, verbose_name="Slug URL")
@@ -52,6 +74,10 @@ class Curso(models.Model):
 
     @property
     def es_reciente(self):
+        # Optimización: si ya viene anotado de la BD, usamos ese valor
+        if hasattr(self, '_es_reciente'):
+            return self._es_reciente
+        # Fallback para casos donde no se usó with_es_reciente()
         return self.creado_en >= timezone.now() - datetime.timedelta(days=30)
 
 class Estudiante(models.Model):
