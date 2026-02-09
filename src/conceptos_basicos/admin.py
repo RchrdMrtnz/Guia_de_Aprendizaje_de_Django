@@ -10,6 +10,9 @@ class CursoAdmin(admin.ModelAdmin):
     date_hierarchy = 'fecha_inicio'
     actions = ['marcar_como_archivado']
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_es_reciente()
+
     @admin.display(boolean=True, description='¿Es reciente?')
     def es_reciente_display(self, obj):
         return obj.es_reciente
