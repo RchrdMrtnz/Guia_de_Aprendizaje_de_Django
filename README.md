@@ -24,6 +24,27 @@ El repositorio está organizado en dos componentes principales:
 
 ---
 
+## 🌟 Proyectos Reales Implementados
+
+La guía incluye una sección dedicada a **Proyectos Reales**, donde se construyen módulos de nivel empresarial paso a paso:
+
+### 1. Setup Profesional (Módulo 14)
+Configuración de un entorno de desarrollo robusto utilizando **Docker**, variables de entorno (`python-decouple`) y gestión de dependencias.
+
+### 2. Sistema de Autenticación Avanzado (Módulo 15)
+Implementación profunda de seguridad y autenticación:
+- **Hardening**: Hashing con **Argon2** y protección de sesiones.
+- **Infraestructura de Email**: Configuración de SMTP real (SendGrid, AWS SES) y envíos asíncronos.
+- **Estrategias Modernas**: JWT, OAuth2 y autenticación por Token.
+
+### 3. Roles y Permisos - RBAC (Módulo 16)
+Arquitectura de permisos escalable y segura:
+- Auditoría de seguridad (evitando *Race Conditions*).
+- Implementación de **RBAC** (Role-Based Access Control) nativo.
+- Protección a nivel de Vistas, Templates y Objetos.
+
+---
+
 ## 🛠️ Tecnologías
 
 Este proyecto utiliza un stack moderno y profesional:
