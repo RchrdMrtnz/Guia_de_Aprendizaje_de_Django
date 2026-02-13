@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>17. Dashboard ERP y UI Moderna - Guía Django</title>
-    <meta name="description" content="Guía maestra sobre cómo integrar un Dashboard moderno en Django usando Tailwind CSS, Alpine.js y una arquitectura limpia de templates.">
+    <title>17. Dashboard ERP & Plantillas Avanzadas - Guía Django</title>
+    <meta name="description" content="Domina las plantillas de Django (similar a Jinja2) creando un Dashboard ERP profesional con Tailwind CSS. Herencia, bloques y componentes reutilizables.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,6 +50,7 @@
         .deep-dive { border-left: 4px solid #8b5cf6; padding-left: 1.5rem; margin-top: 2rem; margin-bottom: 2rem; background-color: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; }
         .security-alert { border-left: 4px solid #ef4444; background-color: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 0.5rem; }
         .pro-tip { border-left: 4px solid #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 0.5rem; }
+        .architecture-note { border-left: 4px solid #f59e0b; background-color: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 0.5rem; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
@@ -93,114 +94,150 @@
         <div class="p-4 lg:p-8 max-w-5xl mx-auto">
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
-                <h1 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                    17. Creando un Dashboard ERP Moderno
+                <h1 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
+                    17. Dashboard ERP & Plantillas Avanzadas
                 </h1>
 
                 <p class="lead text-xl text-gray-600 dark:text-gray-400">
-                    En este capítulo final, implementaremos una interfaz de administración tipo "ERP" (Enterprise Resource Planning) para nuestro proyecto, separando la interfaz pública de la privada y utilizando un stack de frontend ligero pero poderoso.
+                    En este capítulo analizaremos cómo construimos el Dashboard de ERP utilizando <strong>Django Templates</strong> y <strong>Tailwind CSS</strong>. Aprenderás a estructurar plantillas profesionales usando herencia y bloques, una técnica similar a Jinja2.
                 </p>
 
                 <!-- INDICE RAPIDO -->
                 <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
                     <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Módulo</h3>
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <li><a href="#estrategia-ui" class="no-underline hover:text-blue-600">🔹 1. Estrategia de UI/UX</a></li>
-                        <li><a href="#arquitectura-templates" class="no-underline hover:text-blue-600">🔹 2. Arquitectura de Templates Base</a></li>
-                        <li><a href="#tailwind-alpine" class="no-underline hover:text-blue-600">🔹 3. Integración Tailwind + Alpine</a></li>
-                        <li><a href="#dashboard-implementation" class="no-underline hover:text-blue-600">🔹 4. Implementación del Dashboard</a></li>
+                        <li><a href="#dtl-jinja" class="no-underline hover:text-blue-600">🔹 1. Django Templates vs Jinja2</a></li>
+                        <li><a href="#herencia" class="no-underline hover:text-blue-600">🔹 2. El Poder de la Herencia</a></li>
+                        <li><a href="#dashboard-base" class="no-underline hover:text-blue-600">🔹 3. Arquitectura del Dashboard</a></li>
+                        <li><a href="#componentes" class="no-underline hover:text-blue-600">🔹 4. Componentes UI con Tailwind</a></li>
                     </ul>
                 </div>
 
-                <!-- SECCION 1: ESTRATEGIA -->
-                <h2 id="estrategia-ui" class="text-3xl border-b pb-2">1. Estrategia de UI: Público vs Privado</h2>
+                <!-- SECCION 1: DTL vs Jinja -->
+                <h2 id="dtl-jinja" class="text-3xl border-b pb-2">1. Django Templates vs Jinja2</h2>
 
-                <p>Una aplicación profesional típica tiene dos "mundos" visuales muy distintos:</p>
-                <ul>
-                    <li><strong>Marketing Site (Público):</strong> Enfocado en SEO, branding, tipografías grandes. Suele usar layouts tipo "Landing Page".</li>
-                    <li><strong>Dashboard (Privado):</strong> Enfocado en densidad de información, tablas, formularios complejos y navegación lateral.</li>
-                </ul>
+                <p>Aunque Django utiliza por defecto su propio motor (Django Template Language - DTL), la sintaxis es intencionalmente muy similar a <strong>Jinja2</strong> (utilizado en Flask y FastAPI). Si vienes de otro ecosistema, te sentirás en casa.</p>
 
-                <p>En nuestro proyecto <code>src/proyectos_reales</code>, hemos decidido usar <strong>Tailwind CSS</strong> para el Dashboard por su flexibilidad para construir interfaces complejas, a diferencia de Pico.css que usamos para las secciones básicas.</p>
+                <div class="architecture-note">
+                    <strong>Nota Arquitectónica:</strong> DTL es deliberadamente limitado. No permite ejecutar lógica compleja (llamadas a funciones con argumentos arbitrarios) para forzar al desarrollador a mantener la lógica de negocio en las Vistas (Python) y no en la presentación (HTML).
+                </div>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 2: ARQUITECTURA -->
-                <h2 id="arquitectura-templates" class="text-3xl border-b pb-2">2. Arquitectura de Templates Base</h2>
+                <!-- SECCION 2: HERENCIA -->
+                <h2 id="herencia" class="text-3xl border-b pb-2">2. El Poder de la Herencia (DRY)</h2>
 
-                <p>Creamos un <code>base_dashboard.html</code> independiente. Este template define la estructura de "App Shell": Sidebar fijo, Topbar de navegación y área de contenido principal.</p>
+                <p>El principio más importante en plantillas es <strong>DRY (Don't Repeat Yourself)</strong>. En lugar de copiar el encabezado y el pie de página en cada archivo HTML, creamos una plantilla "Base" y la extendemos.</p>
 
-                <pre><code class="language-html">&lt;!-- src/proyectos_reales/templates/proyectos_reales/base_dashboard.html --&gt;
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><code>{% extends 'base.html' %}</code>: Hereda la estructura de otro archivo.</li>
+                    <li><code>{% block content %}{% endblock %}</code>: Define zonas donde las plantillas hijas pueden inyectar contenido.</li>
+                    <li><code>{% include 'sidebar.html' %}</code>: Inserta un fragmento de código reutilizable.</li>
+                </ul>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 3: DASHBOARD BASE -->
+                <h2 id="dashboard-base" class="text-3xl border-b pb-2">3. Arquitectura del Dashboard</h2>
+
+                <p>Para nuestro ERP, hemos creado una estructura base específica en <code>src/proyectos_reales/templates/proyectos_reales/base_dashboard.html</code>. Esta plantilla define el Sidebar fijo, el Topbar y el área de contenido dinámica.</p>
+
+                <h3 class="text-2xl mt-6">La Plantilla Base (Skeleton)</h3>
+
+                <pre><code class="language-html">&lt;!-- base_dashboard.html --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html lang="es"&gt;
 &lt;head&gt;
-    &lt;!-- CDN de Tailwind para prototipado rápido --&gt;
+    &lt;!-- Metadatos y Tailwind CDN --&gt;
     &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-    &lt;!-- Alpine.js para interactividad ligera (dropdowns, mobile menu) --&gt;
-    &lt;script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;body class="bg-gray-50"&gt;
-    &lt;div class="flex h-screen overflow-hidden"&gt;
-        &lt;!-- Sidebar (Navigation) --&gt;
-        &lt;aside class="w-64 bg-white border-r hidden md:flex"&gt;
-            ...
-        &lt;/aside&gt;
+&lt;body class="bg-gray-50 flex h-screen overflow-hidden"&gt;
 
-        &lt;!-- Main Content --&gt;
-        &lt;main class="flex-1 overflow-y-auto"&gt;
-            &lt;header&gt;...&lt;/header&gt;
-            &lt;div class="p-6"&gt;
-                {% block content %}{% endblock %}
-            &lt;/div&gt;
-        &lt;/main&gt;
-    &lt;/div&gt;
+    &lt;!-- 1. SIDEBAR (Fijo) --&gt;
+    &lt;aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col"&gt;
+        &lt;!-- Logo, Menú de Navegación --&gt;
+        &lt;nav class="flex-1 px-4 space-y-1 overflow-y-auto"&gt;
+            &lt;a href="#" class="flex items-center gap-3 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg"&gt;
+                Dashboard
+            &lt;/a&gt;
+            &lt;!-- Más enlaces --&gt;
+        &lt;/nav&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- 2. MAIN CONTENT AREA --&gt;
+    &lt;main class="flex-1 overflow-y-auto flex flex-col"&gt;
+
+        &lt;!-- Topbar (Buscador, Perfil) --&gt;
+        &lt;header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10"&gt;
+            &lt;h1 class="text-xl font-bold"&gt;{% block header_title %}Overview{% endblock %}&lt;/h1&gt;
+            &lt;div&gt;{{ user.username }}&lt;/div&gt;
+        &lt;/header&gt;
+
+        &lt;!-- 3. INYECCIÓN DE CONTENIDO --&gt;
+        &lt;div class="p-6"&gt;
+            {% block content %}
+            &lt;!-- Aquí se renderizará el dashboard específico --&gt;
+            {% endblock %}
+        &lt;/div&gt;
+
+    &lt;/main&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                <div class="pro-tip">
-                    <strong>¿Por qué Alpine.js?</strong> En lugar de traer React o Vue para cosas simples como abrir/cerrar un menú o un dropdown, Alpine.js nos permite agregar esa interactividad directamente en el HTML con clases como <code>x-data="{ open: false }"</code>, manteniendo el stack simple y Django-first.
-                </div>
+                <h3 class="text-2xl mt-6">La Plantilla Hija (Implementación)</h3>
+                <p>El archivo <code>dashboard.html</code> es sorprendentemente limpio. Solo define el contenido específico, heredando todo el layout visual.</p>
+
+                <pre><code class="language-html">&lt;!-- dashboard.html --&gt;
+{% extends 'proyectos_reales/base_dashboard.html' %}
+
+{% block header_title %}Resumen Ejecutivo{% endblock %}
+
+{% block content %}
+    &lt;!-- Grid de Tarjetas --&gt;
+    &lt;div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"&gt;
+
+        &lt;!-- Tarjeta de Ingresos --&gt;
+        &lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"&gt;
+            &lt;div class="text-gray-500 text-sm mb-1"&gt;Ingresos Totales&lt;/div&gt;
+            &lt;div class="text-2xl font-bold text-gray-900"&gt;$24,500&lt;/div&gt;
+            &lt;div class="text-green-500 text-xs font-medium mt-2"&gt;+15% vs mes anterior&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Más tarjetas... --&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Gráficos y Tablas --&gt;
+    &lt;div class="grid grid-cols-1 lg:grid-cols-3 gap-6"&gt;
+        &lt;!-- Chart Component --&gt;
+        &lt;div class="col-span-2 bg-white p-6 rounded-xl shadow-sm"&gt;
+             &lt;h3 class="font-bold mb-4"&gt;Ventas Anuales&lt;/h3&gt;
+             &lt;!-- ... --&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+{% endblock %}</code></pre>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 3: DASHBOARD -->
-                <h2 id="dashboard-implementation" class="text-3xl border-b pb-2">3. El Dashboard de Administración</h2>
+                <!-- SECCION 4: COMPONENTES UI -->
+                <h2 id="componentes" class="text-3xl border-b pb-2">4. Componentes UI con Tailwind</h2>
 
-                <p>Hemos transformado la vista principal en un ERP de gestión empresarial. En lugar de una simple lista de objetos, mostramos métricas clave (KPIs) y resúmenes de actividad.</p>
+                <p>Una de las ventajas de usar Tailwind CSS en Django es que podemos construir componentes visuales complejos directamente en el HTML sin necesidad de archivos CSS externos masivos.</p>
 
-                <h3 class="text-2xl mt-6">Componentes Clave</h3>
-
-                <ol>
-                    <li><strong>Tarjetas de Métricas (KPI Cards):</strong> Usamos Grid Layout de CSS para mostrar 4 tarjetas con métricas como "Proyectos Activos", "Ingresos Mensuales", etc.</li>
-                    <li><strong>Gráficos (Charts):</strong> Aunque en este ejemplo usamos CSS puro para dibujar barras simples, en producción usaríamos Chart.js o ApexCharts.</li>
-                    <li><strong>Tablas de Datos:</strong> Listas de "Órdenes Recientes" y "Actividad del Equipo" para dar contexto inmediato al administrador.</li>
-                </ol>
-
-                <pre><code class="language-html">&lt;!-- Ejemplo de KPI Card con Tailwind --&gt;
-&lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"&gt;
-    &lt;div class="flex justify-between items-center"&gt;
-        &lt;span class="text-gray-500 text-sm"&gt;Monthly Revenue&lt;/span&gt;
-        &lt;span class="text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-bold"&gt;+15%&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="text-3xl font-bold text-gray-900 mt-2"&gt;$45,231&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-
-                <div class="deep-dive">
-                    <h4 class="mt-0">Reto de Arquitectura</h4>
-                    <p>Un error común es calcular estas métricas en la vista (View) en tiempo real.
-                    <code>Curso.objects.count()</code> es rápido, pero <code>Order.objects.filter(...).aggregate(Sum('total'))</code> puede ser lento.</p>
-                    <p><strong>Solución Profesional:</strong> Usar una capa de caché (Redis) o una tabla de "Estadísticas" que se actualice periódicamente (cron job) o mediante Signals, para que el Dashboard cargue instantáneamente.</p>
+                <div class="pro-tip">
+                    <strong>Tip Pro:</strong> Para componentes muy repetitivos (como un botón o una tarjeta), puedes usar la etiqueta <code>{% include 'components/card.html' with title="Ventas" value="100" %}</code> para pasar variables a sub-plantillas.
                 </div>
 
-                <h2 id="conclusion" class="text-3xl border-b pb-2 mt-12">4. Conclusión del Curso</h2>
+                <h3 class="text-xl mt-4">Ejemplo: Donut Chart (CSS Puro)</h3>
+                <p>En el dashboard implementamos un gráfico de dona usando solo CSS y Tailwind, demostrando que no siempre necesitas librerías de JS pesadas.</p>
 
-                <p>¡Felicidades! Has completado la guía de Arquitectura Django Profesional. Hemos recorrido desde los fundamentos hasta patrones avanzados, seguridad, autenticación y construcción de interfaces modernas.</p>
-                <p>Tu siguiente paso es aplicar estos conceptos en tus propios proyectos, explorar la sección de <a href="recursos.html">Recursos</a> y profundizar en temas como Celery (tareas asíncronas) y Django Channels (WebSockets).</p>
+                <pre><code class="language-html">&lt;div class="w-32 h-32 rounded-full border-8 border-blue-100 border-t-blue-600 border-r-purple-400 transform -rotate-45"&gt;
+    &lt;!-- Contenido central --&gt;
+&lt;/div&gt;</code></pre>
 
             </main>
 
             <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
-                <p>&copy; 2024 Guía Definitiva de Django. Construido con pasión por la arquitectura de software.</p>
+                <p>&copy; 2024 Guía Definitiva de Django. Proyectos Reales.</p>
             </footer>
         </div>
     </div>
