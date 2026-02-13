@@ -30,6 +30,7 @@ const menu = [
             { title: "14. Setup del Proyecto", path: "14_proyecto_setup.html" },
             { title: "15. Autenticación y Login", path: "15_proyecto_auth.html" },
             { title: "16. Roles y Permisos", path: "16_proyecto_roles.html" },
+            { title: "17. Dashboard ERP", path: "17_proyecto_erp.html" },
         ]
     }
 ];
