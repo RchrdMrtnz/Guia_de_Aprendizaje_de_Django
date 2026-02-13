@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17. Dashboard ERP y UI Moderna - Guía Django</title>
+    <meta name="description" content="Guía maestra sobre cómo integrar un Dashboard moderno en Django usando Tailwind CSS, Alpine.js y una arquitectura limpia de templates.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        pre[class*="language-"] { border-radius: 0.5rem; margin: 1.5rem 0; }
+
+        /* Custom Panels */
+        .deep-dive { border-left: 4px solid #8b5cf6; padding-left: 1.5rem; margin-top: 2rem; margin-bottom: 2rem; background-color: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; }
+        .security-alert { border-left: 4px solid #ef4444; background-color: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 0.5rem; }
+        .pro-tip { border-left: 4px solid #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+            </div>
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-5xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+
+                <h1 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                    17. Creando un Dashboard ERP Moderno
+                </h1>
+
+                <p class="lead text-xl text-gray-600 dark:text-gray-400">
+                    En este capítulo final, implementaremos una interfaz de administración tipo "ERP" (Enterprise Resource Planning) para nuestro proyecto, separando la interfaz pública de la privada y utilizando un stack de frontend ligero pero poderoso.
+                </p>
+
+                <!-- INDICE RAPIDO -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
+                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Módulo</h3>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <li><a href="#estrategia-ui" class="no-underline hover:text-blue-600">🔹 1. Estrategia de UI/UX</a></li>
+                        <li><a href="#arquitectura-templates" class="no-underline hover:text-blue-600">🔹 2. Arquitectura de Templates Base</a></li>
+                        <li><a href="#tailwind-alpine" class="no-underline hover:text-blue-600">🔹 3. Integración Tailwind + Alpine</a></li>
+                        <li><a href="#dashboard-implementation" class="no-underline hover:text-blue-600">🔹 4. Implementación del Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <!-- SECCION 1: ESTRATEGIA -->
+                <h2 id="estrategia-ui" class="text-3xl border-b pb-2">1. Estrategia de UI: Público vs Privado</h2>
+
+                <p>Una aplicación profesional típica tiene dos "mundos" visuales muy distintos:</p>
+                <ul>
+                    <li><strong>Marketing Site (Público):</strong> Enfocado en SEO, branding, tipografías grandes. Suele usar layouts tipo "Landing Page".</li>
+                    <li><strong>Dashboard (Privado):</strong> Enfocado en densidad de información, tablas, formularios complejos y navegación lateral.</li>
+                </ul>
+
+                <p>En nuestro proyecto <code>src/proyectos_reales</code>, hemos decidido usar <strong>Tailwind CSS</strong> para el Dashboard por su flexibilidad para construir interfaces complejas, a diferencia de Pico.css que usamos para las secciones básicas.</p>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 2: ARQUITECTURA -->
+                <h2 id="arquitectura-templates" class="text-3xl border-b pb-2">2. Arquitectura de Templates Base</h2>
+
+                <p>Creamos un <code>base_dashboard.html</code> independiente. Este template define la estructura de "App Shell": Sidebar fijo, Topbar de navegación y área de contenido principal.</p>
+
+                <pre><code class="language-html">&lt;!-- src/proyectos_reales/templates/proyectos_reales/base_dashboard.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;!-- CDN de Tailwind para prototipado rápido --&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+    &lt;!-- Alpine.js para interactividad ligera (dropdowns, mobile menu) --&gt;
+    &lt;script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-gray-50"&gt;
+    &lt;div class="flex h-screen overflow-hidden"&gt;
+        &lt;!-- Sidebar (Navigation) --&gt;
+        &lt;aside class="w-64 bg-white border-r hidden md:flex"&gt;
+            ...
+        &lt;/aside&gt;
+
+        &lt;!-- Main Content --&gt;
+        &lt;main class="flex-1 overflow-y-auto"&gt;
+            &lt;header&gt;...&lt;/header&gt;
+            &lt;div class="p-6"&gt;
+                {% block content %}{% endblock %}
+            &lt;/div&gt;
+        &lt;/main&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <div class="pro-tip">
+                    <strong>¿Por qué Alpine.js?</strong> En lugar de traer React o Vue para cosas simples como abrir/cerrar un menú o un dropdown, Alpine.js nos permite agregar esa interactividad directamente en el HTML con clases como <code>x-data="{ open: false }"</code>, manteniendo el stack simple y Django-first.
+                </div>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 3: DASHBOARD -->
+                <h2 id="dashboard-implementation" class="text-3xl border-b pb-2">3. El Dashboard de Administración</h2>
+
+                <p>Hemos transformado la vista principal en un ERP de gestión empresarial. En lugar de una simple lista de objetos, mostramos métricas clave (KPIs) y resúmenes de actividad.</p>
+
+                <h3 class="text-2xl mt-6">Componentes Clave</h3>
+
+                <ol>
+                    <li><strong>Tarjetas de Métricas (KPI Cards):</strong> Usamos Grid Layout de CSS para mostrar 4 tarjetas con métricas como "Proyectos Activos", "Ingresos Mensuales", etc.</li>
+                    <li><strong>Gráficos (Charts):</strong> Aunque en este ejemplo usamos CSS puro para dibujar barras simples, en producción usaríamos Chart.js o ApexCharts.</li>
+                    <li><strong>Tablas de Datos:</strong> Listas de "Órdenes Recientes" y "Actividad del Equipo" para dar contexto inmediato al administrador.</li>
+                </ol>
+
+                <pre><code class="language-html">&lt;!-- Ejemplo de KPI Card con Tailwind --&gt;
+&lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"&gt;
+    &lt;div class="flex justify-between items-center"&gt;
+        &lt;span class="text-gray-500 text-sm"&gt;Monthly Revenue&lt;/span&gt;
+        &lt;span class="text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-bold"&gt;+15%&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="text-3xl font-bold text-gray-900 mt-2"&gt;$45,231&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+                <div class="deep-dive">
+                    <h4 class="mt-0">Reto de Arquitectura</h4>
+                    <p>Un error común es calcular estas métricas en la vista (View) en tiempo real.
+                    <code>Curso.objects.count()</code> es rápido, pero <code>Order.objects.filter(...).aggregate(Sum('total'))</code> puede ser lento.</p>
+                    <p><strong>Solución Profesional:</strong> Usar una capa de caché (Redis) o una tabla de "Estadísticas" que se actualice periódicamente (cron job) o mediante Signals, para que el Dashboard cargue instantáneamente.</p>
+                </div>
+
+                <h2 id="conclusion" class="text-3xl border-b pb-2 mt-12">4. Conclusión del Curso</h2>
+
+                <p>¡Felicidades! Has completado la guía de Arquitectura Django Profesional. Hemos recorrido desde los fundamentos hasta patrones avanzados, seguridad, autenticación y construcción de interfaces modernas.</p>
+                <p>Tu siguiente paso es aplicar estos conceptos en tus propios proyectos, explorar la sección de <a href="recursos.html">Recursos</a> y profundizar en temas como Celery (tareas asíncronas) y Django Channels (WebSockets).</p>
+
+            </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Construido con pasión por la arquitectura de software.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>
