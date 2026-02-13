@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "conceptos_basicos",
     "users",
+    "proyectos_reales",
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
@@ -130,5 +131,5 @@ STATICFILES_DIRS = [
 ]
 
 # Redirección tras login/logout
-LOGIN_REDIRECT_URL = "curso_list_cbv"
+LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "curso_list_cbv"
