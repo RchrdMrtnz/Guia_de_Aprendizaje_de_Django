@@ -31,7 +31,7 @@ class CursoListView(ListView):
 
     def get_queryset(self):
         # Ejemplo de filtro personalizado: solo cursos recientes o todos
-        return Curso.objects.select_related('categoria').with_es_reciente().all()
+        return Curso.objects.with_es_reciente().all()
 
 class CursoDetailView(DetailView):
     model = Curso
