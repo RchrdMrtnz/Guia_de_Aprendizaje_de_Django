@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.utils.html import format_html
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,11 +16,11 @@ from .serializers import CursoSerializer
 def lista_cursos(request):
     cursos = Curso.objects.with_es_reciente().all()
     # Versión simple sin templates (para demos)
-    return HttpResponse(f"<h1>Listado de Cursos (FBV)</h1><p>Cursos encontrados: {cursos.count()}</p>")
+    return HttpResponse(format_html("<h1>Listado de Cursos (FBV)</h1><p>Cursos encontrados: {}</p>", cursos.count()))
 
 def detalle_curso(request, curso_id):
     curso = get_object_or_404(Curso, pk=curso_id)
-    return HttpResponse(f"<h1>{curso.titulo} (FBV)</h1><p>{curso.descripcion}</p>")
+    return HttpResponse(format_html("<h1>{} (FBV)</h1><p>{}</p>", curso.titulo, curso.descripcion))
 
 
 # --- CLASS BASED VIEWS (CBV) ---
