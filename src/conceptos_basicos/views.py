@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from users.mixins import TeacherRequiredMixin
 from .models import Curso
 from .forms import CursoForm
@@ -54,6 +54,7 @@ class RegistroView(CreateView):
 
 class CursoViewSet(viewsets.ModelViewSet):
     serializer_class = CursoSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Curso.objects.with_es_reciente().all()
