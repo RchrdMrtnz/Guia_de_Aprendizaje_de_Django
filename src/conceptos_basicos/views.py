@@ -2,10 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets
 from users.mixins import TeacherRequiredMixin
+from users.forms import CustomUserCreationForm
 from .models import Curso
 from .forms import CursoForm
 from .serializers import CursoSerializer
@@ -45,7 +45,7 @@ class CursoCreateView(TeacherRequiredMixin, CreateView):
     success_url = reverse_lazy('curso_list_cbv')
 
 class RegistroView(CreateView):
-    form_class = UserCreationForm
+    form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = "registration/signup.html"
 
