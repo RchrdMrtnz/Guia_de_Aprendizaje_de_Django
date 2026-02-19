@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18. Plantillas Avanzadas - Guía Django</title>
+    <meta name="description" content="Domina el Motor de Plantillas de Django (DTL): Herencia avanzada, Tags personalizados, Integración con Alpine.js, i18n y Accesibilidad.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography,forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        pre[class*="language-"] { border-radius: 0.5rem; margin: 1.5rem 0; }
+
+        /* Custom Panels */
+        .deep-dive { border-left: 4px solid #8b5cf6; padding-left: 1.5rem; margin-top: 2rem; margin-bottom: 2rem; background-color: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; }
+        .security-alert { border-left: 4px solid #ef4444; background-color: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 0.5rem; }
+        .pro-tip { border-left: 4px solid #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 0.5rem; }
+        .architecture-note { border-left: 4px solid #f59e0b; background-color: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-gray-900 text-white sticky top-0 z-50 shadow-md">
+        <span class="font-bold text-lg">Django Guía</span>
+        <button id="mobile-menu-toggle" class="p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 bg-gray-900 border-r border-gray-800" aria-label="Sidebar">
+        <div class="h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800">
+                <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span class="self-center text-xl font-bold whitespace-nowrap text-white">Django Guía</span>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">Dominando el framework web para perfeccionistas.</p>
+            </div>
+            <div class="px-3 py-4 overflow-y-auto flex-1 custom-scrollbar" id="sidebar-content">
+                <!-- Javascript will inject menu here -->
+            </div>
+            <div class="p-4 border-t border-gray-800">
+                <a href="https://github.com/RchrdMrtnz/Guia_de_Aprendizaje_de_Django" target="_blank" class="flex items-center p-2 text-gray-400 rounded-lg hover:text-white hover:bg-gray-800 group transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-3 text-sm">Ver en GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="p-4 lg:ml-64 min-h-screen">
+        <div class="p-4 lg:p-8 max-w-5xl mx-auto">
+            <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
+
+                <h1 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
+                    18. Plantillas Avanzadas: Dominando el Frontend en Django
+                </h1>
+
+                <p class="lead text-xl text-gray-600 dark:text-gray-400">
+                    El sistema de plantillas de Django (DTL) es mucho más poderoso de lo que parece a primera vista. Lejos de ser un simple reemplazo de strings, es un motor extensible que te permite construir interfaces complejas, reutilizables y altamente mantenibles. En este capítulo exploraremos cómo llevar tus templates al siguiente nivel, integrando interactividad moderna sin abandonar la filosofía "Batteries Included" de Django.
+                </p>
+
+                <!-- INDICE RAPIDO -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
+                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Capítulo</h3>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <li><a href="#herencia" class="no-underline hover:text-blue-600">🔹 1. Herencia Profunda (Extends)</a></li>
+                        <li><a href="#componentes" class="no-underline hover:text-blue-600">🔹 2. Componentes Reutilizables (Include)</a></li>
+                        <li><a href="#custom-tags" class="no-underline hover:text-blue-600">🔹 3. Custom Template Tags</a></li>
+                        <li><a href="#custom-filters" class="no-underline hover:text-blue-600">🔹 4. Custom Filters (Formato)</a></li>
+                        <li><a href="#context-processors" class="no-underline hover:text-blue-600">🔹 5. Context Processors Globales</a></li>
+                        <li><a href="#alpinejs" class="no-underline hover:text-blue-600">🔹 6. Integración con Alpine.js</a></li>
+                        <li><a href="#formularios" class="no-underline hover:text-blue-600">🔹 7. Manejo Avanzado de Formularios</a></li>
+                        <li><a href="#i18n" class="no-underline hover:text-blue-600">🔹 8. Internacionalización (i18n)</a></li>
+                        <li><a href="#debug" class="no-underline hover:text-blue-600">🔹 9. Depuración y Optimización</a></li>
+                        <li><a href="#a11y" class="no-underline hover:text-blue-600">🔹 10. Accesibilidad (A11y)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 1. HERENCIA -->
+                <h2 id="herencia" class="text-3xl border-b pb-2">1. Herencia de Plantillas (Extends/Blocks)</h2>
+                <p>
+                    La herencia es la piedra angular del diseño DRY (Don't Repeat Yourself) en Django. Sin embargo, muchos desarrolladores se limitan a un simple `base.html`. En proyectos grandes, es común tener múltiples niveles de herencia: `base.html` (estructura global), `dashboard_base.html` (layout específico para admin con sidebar), y finalmente `analytics.html` (contenido específico). Es fundamental dominar el uso de `{{ block.super }}`. Esta variable permite inyectar contenido en un bloque definido en el padre sin sobrescribirlo completamente, ideal para añadir hojas de estilo CSS o scripts JS específicos de una página sin perder los assets globales cargados en la plantilla base. Planificar correctamente tus bloques (`{% block title %}`, `{% block content %}`, `{% block extra_js %}`) desde el inicio te ahorrará horas de refactorización.
+                </p>
+
+                <!-- 2. COMPONENTES -->
+                <h2 id="componentes" class="text-3xl border-b pb-2">2. Componentes Reutilizables (Include/With)</h2>
+                <p>
+                    Antes de que React popularizara el concepto de componentes, Django ya lo permitía con la etiqueta `{% include %}`. Para evitar repetir código HTML como tarjetas de producto, alertas o modales, extrae ese código a un archivo parcial (ej. `_product_card.html`). Lo que hace esta técnica verdaderamente poderosa es el uso de `with`. Puedes pasar variables locales al componente, aislándolo del contexto global y haciéndolo más robusto. Por ejemplo: `{% include "components/alert.html" with type="danger" message="Error crítico" %}`. Esto transforma tus templates en un sistema de ensamblaje de piezas prefabricadas, mejorando la consistencia visual y facilitando el mantenimiento. Si necesitas slots o contenido transclusivo, librerías como `django-components` o `slippers` pueden extender esta funcionalidad nativa.
+                </p>
+
+                <!-- 3. CUSTOM TAGS -->
+                <h2 id="custom-tags" class="text-3xl border-b pb-2">3. Custom Template Tags (Simple Tag)</h2>
+                <p>
+                    A veces necesitas lógica de presentación que es demasiado compleja para la vista pero que no pertenece al modelo. Los **Custom Template Tags** son la solución. Un `simple_tag` es una función Python que retorna un string para ser inyectado en el HTML. Son perfectos para generar URLs dinámicas complejas, calcular estados visuales (como insignias de "Nuevo" basadas en fechas), o inyectar configuraciones de frontend. Se almacenan en el directorio `templatetags` de tu aplicación y se cargan con `{% load mi_tag %}`. A diferencia de los filtros, los tags pueden recibir múltiples argumentos y acceder al contexto de la plantilla si se define `takes_context=True`, lo que les da acceso al objeto `request` o al usuario actual sin pasarlos explícitamente.
+                </p>
+                <pre><code class="language-python">@register.simple_tag(takes_context=True)
+def user_theme(context):
+    request = context['request']
+    return request.COOKIES.get('theme', 'light')
+</code></pre>
+
+                <!-- 4. CUSTOM FILTERS -->
+                <h2 id="custom-filters" class="text-3xl border-b pb-2">4. Custom Filters (Formato de Datos)</h2>
+                <p>
+                    Los filtros modifican la visualización de una variable: `{{ fecha|date:"Y-m-d" }}`. Crear tus propios filtros es esencial para formatear datos específicos de tu dominio. Por ejemplo, un filtro `|phone_number` que formatea un string crudo "5551234567" a "(555) 123-4567", o un filtro `|markdown` que convierte texto plano en HTML seguro. Los filtros deben ser idempotentes y libres de efectos secundarios. Es una buena práctica manejar excepciones silenciosamente dentro del filtro para evitar que un error de formato rompa toda la página (Error 500). Recuerda siempre usar `mark_safe` con extrema precaución si tu filtro retorna HTML, para evitar vulnerabilidades XSS.
+                </p>
+
+                <!-- 5. CONTEXT PROCESSORS -->
+                <h2 id="context-processors" class="text-3xl border-b pb-2">5. Context Processors (Variables Globales)</h2>
+                <p>
+                    ¿Te encuentras pasando la misma variable (como el año actual para el footer, o el número de notificaciones no leídas) en cada vista usando `render`? Los **Context Processors** resuelven esto inyectando variables en el contexto de <em>todas</em> las plantillas automáticamente. Son simples funciones que reciben el objeto `request` y retornan un diccionario. Se configuran en `settings.py` bajo la clave `context_processors`. Son ideales para exponer configuraciones del sitio (`SITE_NAME`, `SUPPORT_EMAIL`), menús de navegación dinámicos o información del carrito de compras en un e-commerce. Sin embargo, úsalos con moderación: ejecutar consultas pesadas de base de datos en un context processor ralentizará cada página de tu sitio.
+                </p>
+
+                <!-- 6. ALPINE.JS -->
+                <h2 id="alpinejs" class="text-3xl border-b pb-2">6. Integración Frontend Ligera (Alpine.js)</h2>
+                <p>
+                    Django es fantástico en el backend, pero el HTML estático a veces no es suficiente para la UX moderna. **Alpine.js** se ha convertido en el compañero perfecto para Django Templates. Ofrece la reactividad de Vue/React (mostrar/ocultar elementos, two-way binding) pero directamente en el HTML, sin necesidad de compilación (npm/webpack). Puedes usar variables de plantilla de Django para inicializar el estado de Alpine: `<div x-data="{ open: {{ is_open|yesno:'true,false' }} }">`. Esto permite crear dropdowns, modales, tabs y validaciones de formulario en tiempo real manteniendo la simplicidad de tu stack tecnológico y evitando la complejidad de una Single Page Application (SPA) completa cuando no es necesaria.
+                </p>
+
+                <!-- 7. FORMULARIOS WIDGETS -->
+                <h2 id="formularios" class="text-3xl border-b pb-2">7. Manejo Avanzado de Formularios y Widgets</h2>
+                <p>
+                    Renderizar formularios con `{{ form.as_p }}` es rápido pero raramente produce el diseño deseado. Para tener control total, puedes iterar sobre los campos del formulario manualmente: `{% for field in form %}`. Aún mejor es usar la librería `django-widget-tweaks`, que permite añadir clases CSS y atributos HTML directamente en la plantilla sin modificar el código Python del formulario. `{% render_field form.email class="form-input border-red-500" placeholder="tu@email.com" %}`. Esto es crucial para integrar frameworks CSS como Tailwind o Bootstrap, donde las clases de utilidad deben aplicarse directamente a los inputs. Además, manejar correctamente la visualización de errores (`field.errors`) y la ayuda (`field.help_text`) es vital para una buena experiencia de usuario.
+                </p>
+
+                <!-- 8. I18N -->
+                <h2 id="i18n" class="text-3xl border-b pb-2">8. Internacionalización (i18n) en Templates</h2>
+                <p>
+                    Si tu aplicación apunta a una audiencia global, no puedes "quemar" (hardcode) los textos en el HTML. Django posee un robusto sistema de internacionalización. En las plantillas, utiliza el tag `{% trans "Bienvenido" %}` para textos simples y `{% blocktrans %}...{% endblocktrans %}` para oraciones complejas que incluyen variables interpoladas. Django extraerá estos textos a archivos `.po` donde traductores pueden trabajar. Es importante recordar que el formato de fechas, números y monedas también varía por región; utiliza los filtros `|localize` y tags como `{% get_current_language %}` para adaptar la interfaz. Un sitio verdaderamente profesional respeta la configuración regional del usuario automáticamente.
+                </p>
+
+                <!-- 9. DEBUG Y OPTIMIZACION -->
+                <h2 id="debug" class="text-3xl border-b pb-2">9. Depuración y Optimización (Debug Toolbar)</h2>
+                <p>
+                    Cuando una página carga lento, a menudo el culpable es la renderización de la plantilla, no solo la consulta SQL. **Django Debug Toolbar** es la herramienta estándar para diagnosticar esto. Su panel "Templates" muestra exactamente qué plantillas se cargaron, la jerarquía de herencia y los valores del contexto. Más importante aún, el panel "SQL" te permite detectar consultas duplicadas generadas dentro de bucles en la plantilla (el problema N+1). Optimizar implica mover lógica pesada fuera de los tags, usar `{% cache %}` para fragmentos estáticos y asegurarse de que los filtros personalizados sean eficientes. Nunca asumas dónde está el cuello de botella; mídelo con herramientas de perfilado.
+                </p>
+
+                <!-- 10. ACCESIBILIDAD A11Y -->
+                <h2 id="a11y" class="text-3xl border-b pb-2">10. Accesibilidad (A11y) y Semántica HTML</h2>
+                <p>
+                    Una plantilla avanzada no es solo visualmente atractiva, es accesible para todos, incluyendo usuarios que utilizan lectores de pantalla. Esto comienza con HTML semántico: usar `<nav>`, `<main>`, `<article>`, `<aside>` en lugar de `<div>` genéricos. En Django, asegúrate de que tus formularios rendericen etiquetas `<label>` correctamente asociadas a sus inputs mediante `for="{{ field.id_for_label }}"`. Utiliza atributos ARIA dinámicos cuando integres JavaScript (ej. `aria-expanded="true/false"` en menús desplegables). La accesibilidad no es una "feature" extra, es un requerimiento legal en muchos países y una mejor práctica ética. Validar tus plantillas con herramientas como Lighthouse o WAVE debe ser parte de tu flujo de trabajo de desarrollo frontend.
+                </p>
+
+            </main>
+
+            <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 Guía Definitiva de Django. Plantillas Avanzadas.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

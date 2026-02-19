@@ -1,0 +1,6 @@
+127.0.0.1 - - [19/Feb/2026 19:34:03] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 19:34:04] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 19:34:23] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 19:34:23] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 19:34:24] "GET /17_proyecto_erp.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 19:34:26] "GET /18_plantillas_avanzadas.html HTTP/1.1" 200 -
