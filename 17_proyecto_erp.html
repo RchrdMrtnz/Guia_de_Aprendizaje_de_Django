@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>17. Dashboard ERP & Plantillas Avanzadas - Guía Django</title>
-    <meta name="description" content="Domina las plantillas de Django (similar a Jinja2) creando un Dashboard ERP profesional con Tailwind CSS. Herencia, bloques y componentes reutilizables.">
+    <meta name="description" content="Domina las plantillas de Django (DTL) creando un Dashboard ERP profesional con Tailwind CSS, HTMX, Alpine.js y generación de reportes PDF.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography,forms"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -99,140 +99,260 @@
                 </h1>
 
                 <p class="lead text-xl text-gray-600 dark:text-gray-400">
-                    En este capítulo analizaremos cómo construimos el Dashboard de ERP utilizando <strong>Django Templates</strong> y <strong>Tailwind CSS</strong>. Aprenderás a estructurar plantillas profesionales usando herencia y bloques, una técnica similar a Jinja2.
+                    Construir un Dashboard ERP moderno requiere más que HTML estático. En este capítulo profundizaremos en el <strong>Motor de Plantillas de Django (DTL)</strong> para optimizar rendimiento, integrar librerías de Frontend modernas como <strong>HTMX</strong> y <strong>Alpine.js</strong>, y generar reportes profesionales (PDF/Excel) utilizando todo el poder de Python.
                 </p>
 
                 <!-- INDICE RAPIDO -->
                 <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
-                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Módulo</h3>
+                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido Avanzado</h3>
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <li><a href="#dtl-jinja" class="no-underline hover:text-blue-600">🔹 1. Django Templates vs Jinja2</a></li>
-                        <li><a href="#herencia" class="no-underline hover:text-blue-600">🔹 2. El Poder de la Herencia</a></li>
-                        <li><a href="#dashboard-base" class="no-underline hover:text-blue-600">🔹 3. Arquitectura del Dashboard</a></li>
-                        <li><a href="#componentes" class="no-underline hover:text-blue-600">🔹 4. Componentes UI con Tailwind</a></li>
+                        <li><a href="#dtl-avanzado" class="no-underline hover:text-blue-600">🔹 1. DTL: Tags y Filtros Personalizados</a></li>
+                        <li><a href="#context-processors" class="no-underline hover:text-blue-600">🔹 2. Context Processors Globales</a></li>
+                        <li><a href="#frontend-moderno" class="no-underline hover:text-blue-600">🔹 3. Frontend Moderno: HTMX & Alpine.js</a></li>
+                        <li><a href="#componentes" class="no-underline hover:text-blue-600">🔹 4. Componentes UI Reutilizables</a></li>
+                        <li><a href="#graficos" class="no-underline hover:text-blue-600">🔹 5. Visualización de Datos (Charts)</a></li>
+                        <li><a href="#reportes" class="no-underline hover:text-blue-600">🔹 6. Generación de Reportes PDF (WeasyPrint)</a></li>
+                        <li><a href="#rendimiento" class="no-underline hover:text-blue-600">🔹 7. Optimización y Caché</a></li>
                     </ul>
                 </div>
 
-                <!-- SECCION 1: DTL vs Jinja -->
-                <h2 id="dtl-jinja" class="text-3xl border-b pb-2">1. Django Templates vs Jinja2</h2>
+                <!-- SECCION 1: DTL AVANZADO -->
+                <h2 id="dtl-avanzado" class="text-3xl border-b pb-2">1. DTL: Tags y Filtros Personalizados</h2>
 
-                <p>Aunque Django utiliza por defecto su propio motor (Django Template Language - DTL), la sintaxis es intencionalmente muy similar a <strong>Jinja2</strong> (utilizado en Flask y FastAPI). Si vienes de otro ecosistema, te sentirás en casa.</p>
+                <p>El motor de plantillas de Django es extensible. Cuando la lógica de presentación se vuelve compleja, evita ensuciar la vista o el modelo; crea tus propios <strong>Template Tags</strong>.</p>
 
                 <div class="architecture-note">
-                    <strong>Nota Arquitectónica:</strong> DTL es deliberadamente limitado. No permite ejecutar lógica compleja (llamadas a funciones con argumentos arbitrarios) para forzar al desarrollador a mantener la lógica de negocio en las Vistas (Python) y no en la presentación (HTML).
+                    <strong>Patrón de Diseño:</strong> Mantén la lógica de negocio en el modelo/servicio, pero la lógica de <em>presentación</em> (formato de moneda, insignias de estado) pertenece a los filtros y tags.
                 </div>
 
+                <h3 class="text-2xl mt-6">Estructura del Directorio</h3>
+                <pre><code class="language-bash">mi_app/
+├── templatetags/
+│   ├── __init__.py
+│   ├── dashboard_extras.py  <-- Tu archivo de tags
+</code></pre>
+
+                <h3 class="text-2xl mt-6">Ejemplo: Filtro de Formato de Moneda y Badge de Estado</h3>
+                <pre><code class="language-python"># mi_app/templatetags/dashboard_extras.py
+from django import template
+from django.utils.safestring import mark_safe
+
+register = template.Library()
+
+@register.filter(name='currency')
+def currency(value):
+    """Formatea un número como moneda local (ej. $1,200.50)"""
+    try:
+        return f"${float(value):,.2f}"
+    except (ValueError, TypeError):
+        return value
+
+@register.simple_tag
+def status_badge(status):
+    """Renderiza un badge Tailwind según el estado"""
+    colors = {
+        'active': 'bg-green-100 text-green-800',
+        'pending': 'bg-yellow-100 text-yellow-800',
+        'danger': 'bg-red-100 text-red-800',
+    }
+    color_class = colors.get(status, 'bg-gray-100 text-gray-800')
+    html = f'<span class="px-2 py-1 text-xs font-bold rounded-full {color_class}">{status.upper()}</span>'
+    return mark_safe(html)
+</code></pre>
+
+                <p>Uso en la plantilla:</p>
+                <pre><code class="language-html">{% load dashboard_extras %}
+
+&lt;td&gt;{{ invoice.total|currency }}&lt;/td&gt;
+&lt;td&gt;{% status_badge invoice.status %}&lt;/td&gt;
+</code></pre>
+
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 2: HERENCIA -->
-                <h2 id="herencia" class="text-3xl border-b pb-2">2. El Poder de la Herencia (DRY)</h2>
+                <!-- SECCION 2: CONTEXT PROCESSORS -->
+                <h2 id="context-processors" class="text-3xl border-b pb-2">2. Context Processors Globales</h2>
 
-                <p>El principio más importante en plantillas es <strong>DRY (Don't Repeat Yourself)</strong>. En lugar de copiar el encabezado y el pie de página en cada archivo HTML, creamos una plantilla "Base" y la extendemos.</p>
+                <p>Si necesitas una variable disponible en <strong>todas</strong> las plantillas (como el nombre de la empresa, el año actual, o notificaciones no leídas), usa un Context Processor.</p>
 
-                <ul class="list-disc pl-5 space-y-2">
-                    <li><code>{% extends 'base.html' %}</code>: Hereda la estructura de otro archivo.</li>
-                    <li><code>{% block content %}{% endblock %}</code>: Define zonas donde las plantillas hijas pueden inyectar contenido.</li>
-                    <li><code>{% include 'sidebar.html' %}</code>: Inserta un fragmento de código reutilizable.</li>
-                </ul>
+                <pre><code class="language-python"># context_processors.py
+def global_settings(request):
+    return {
+        'SITE_NAME': 'Mi ERP Corporativo',
+        'SUPPORT_EMAIL': 'soporte@mierp.com',
+        'IS_PRODUCTION': not settings.DEBUG
+    }
+</code></pre>
+
+                <p>Regístralo en <code>settings.py</code>:</p>
+                <pre><code class="language-python">TEMPLATES = [{
+    'OPTIONS': {
+        'context_processors': [
+            # ...
+            'mi_app.context_processors.global_settings',
+        ],
+    },
+}]
+</code></pre>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
-                <!-- SECCION 3: DASHBOARD BASE -->
-                <h2 id="dashboard-base" class="text-3xl border-b pb-2">3. Arquitectura del Dashboard</h2>
+                <!-- SECCION 3: FRONTEND MODERNO -->
+                <h2 id="frontend-moderno" class="text-3xl border-b pb-2">3. Frontend Moderno: HTMX & Alpine.js</h2>
 
-                <p>Para nuestro ERP, hemos creado una estructura base específica en <code>src/proyectos_reales/templates/proyectos_reales/base_dashboard.html</code>. Esta plantilla define el Sidebar fijo, el Topbar y el área de contenido dinámica.</p>
+                <p>Para aplicaciones modernas, ya no es necesario convertir todo a React/Vue. Podemos mantener el renderizado en Django y añadir interactividad con <strong>HTMX</strong> y <strong>Alpine.js</strong>.</p>
 
-                <h3 class="text-2xl mt-6">La Plantilla Base (Skeleton)</h3>
+                <h3 class="text-2xl mt-6">HTMX: AJAX Declarativo</h3>
+                <p>Permite actualizar partes de la página sin recargarla. Ideal para búsquedas en tiempo real o formularios modales.</p>
 
-                <pre><code class="language-html">&lt;!-- base_dashboard.html --&gt;
-&lt;!DOCTYPE html&gt;
-&lt;html lang="es"&gt;
-&lt;head&gt;
-    &lt;!-- Metadatos y Tailwind CDN --&gt;
-    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body class="bg-gray-50 flex h-screen overflow-hidden"&gt;
+                <pre><code class="language-html">&lt;!-- Input de Búsqueda --&gt;
+&lt;input type="text"
+       name="q"
+       hx-get="/buscar-clientes/"
+       hx-trigger="keyup changed delay:500ms"
+       hx-target="#resultados"
+       placeholder="Buscar cliente..."
+       class="border p-2 rounded"&gt;
 
-    &lt;!-- 1. SIDEBAR (Fijo) --&gt;
-    &lt;aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col"&gt;
-        &lt;!-- Logo, Menú de Navegación --&gt;
-        &lt;nav class="flex-1 px-4 space-y-1 overflow-y-auto"&gt;
-            &lt;a href="#" class="flex items-center gap-3 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg"&gt;
-                Dashboard
-            &lt;/a&gt;
-            &lt;!-- Más enlaces --&gt;
-        &lt;/nav&gt;
-    &lt;/aside&gt;
+&lt;!-- Área de Resultados --&gt;
+&lt;div id="resultados"&gt;
+    {% include 'partials/lista_clientes.html' %}
+&lt;/div&gt;
+</code></pre>
 
-    &lt;!-- 2. MAIN CONTENT AREA --&gt;
-    &lt;main class="flex-1 overflow-y-auto flex flex-col"&gt;
+                <h3 class="text-2xl mt-6">Alpine.js: Interactividad Ligera</h3>
+                <p>Maneja el estado del UI (abrir/cerrar dropdowns, modales) directamente en el HTML.</p>
 
-        &lt;!-- Topbar (Buscador, Perfil) --&gt;
-        &lt;header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10"&gt;
-            &lt;h1 class="text-xl font-bold"&gt;{% block header_title %}Overview{% endblock %}&lt;/h1&gt;
-            &lt;div&gt;{{ user.username }}&lt;/div&gt;
-        &lt;/header&gt;
+                <pre><code class="language-html">&lt;div x-data="{ open: false }" class="relative"&gt;
+    &lt;button @click="open = !open" class="btn-primary"&gt;Opciones&lt;/button&gt;
 
-        &lt;!-- 3. INYECCIÓN DE CONTENIDO --&gt;
-        &lt;div class="p-6"&gt;
-            {% block content %}
-            &lt;!-- Aquí se renderizará el dashboard específico --&gt;
-            {% endblock %}
-        &lt;/div&gt;
-
-    &lt;/main&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-
-                <h3 class="text-2xl mt-6">La Plantilla Hija (Implementación)</h3>
-                <p>El archivo <code>dashboard.html</code> es sorprendentemente limpio. Solo define el contenido específico, heredando todo el layout visual.</p>
-
-                <pre><code class="language-html">&lt;!-- dashboard.html --&gt;
-{% extends 'proyectos_reales/base_dashboard.html' %}
-
-{% block header_title %}Resumen Ejecutivo{% endblock %}
-
-{% block content %}
-    &lt;!-- Grid de Tarjetas --&gt;
-    &lt;div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"&gt;
-
-        &lt;!-- Tarjeta de Ingresos --&gt;
-        &lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"&gt;
-            &lt;div class="text-gray-500 text-sm mb-1"&gt;Ingresos Totales&lt;/div&gt;
-            &lt;div class="text-2xl font-bold text-gray-900"&gt;$24,500&lt;/div&gt;
-            &lt;div class="text-green-500 text-xs font-medium mt-2"&gt;+15% vs mes anterior&lt;/div&gt;
-        &lt;/div&gt;
-
-        &lt;!-- Más tarjetas... --&gt;
+    &lt;div x-show="open"
+         @click.away="open = false"
+         class="absolute bg-white shadow-lg p-4 mt-2"&gt;
+        &lt;a href="#"&gt;Editar Perfil&lt;/a&gt;
+        &lt;a href="#"&gt;Cerrar Sesión&lt;/a&gt;
     &lt;/div&gt;
-
-    &lt;!-- Gráficos y Tablas --&gt;
-    &lt;div class="grid grid-cols-1 lg:grid-cols-3 gap-6"&gt;
-        &lt;!-- Chart Component --&gt;
-        &lt;div class="col-span-2 bg-white p-6 rounded-xl shadow-sm"&gt;
-             &lt;h3 class="font-bold mb-4"&gt;Ventas Anuales&lt;/h3&gt;
-             &lt;!-- ... --&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-{% endblock %}</code></pre>
+&lt;/div&gt;
+</code></pre>
 
                 <hr class="my-12 border-gray-200 dark:border-gray-700">
 
                 <!-- SECCION 4: COMPONENTES UI -->
-                <h2 id="componentes" class="text-3xl border-b pb-2">4. Componentes UI con Tailwind</h2>
+                <h2 id="componentes" class="text-3xl border-b pb-2">4. Componentes UI Reutilizables</h2>
 
-                <p>Una de las ventajas de usar Tailwind CSS en Django es que podemos construir componentes visuales complejos directamente en el HTML sin necesidad de archivos CSS externos masivos.</p>
+                <p>Para evitar repetir código HTML/Tailwind, utiliza el tag <code>{% include %}</code> con parámetros. Para casos más complejos, considera librerías como <strong>django-components</strong> o <strong>slippers</strong>.</p>
 
                 <div class="pro-tip">
-                    <strong>Tip Pro:</strong> Para componentes muy repetitivos (como un botón o una tarjeta), puedes usar la etiqueta <code>{% include 'components/card.html' with title="Ventas" value="100" %}</code> para pasar variables a sub-plantillas.
+                    <strong>Tip Pro:</strong> Usa <code>with</code> para pasar variables locales al componente sin contaminar el contexto global.
                 </div>
 
-                <h3 class="text-xl mt-4">Ejemplo: Donut Chart (CSS Puro)</h3>
-                <p>En el dashboard implementamos un gráfico de dona usando solo CSS y Tailwind, demostrando que no siempre necesitas librerías de JS pesadas.</p>
+                <pre><code class="language-html">&lt;!-- components/card.html --&gt;
+&lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 {{ extra_classes }}"&gt;
+    &lt;h3 class="text-gray-500 text-sm mb-1"&gt;{{ title }}&lt;/h3&gt;
+    &lt;div class="text-2xl font-bold text-gray-900"&gt;{{ value }}&lt;/div&gt;
+    {% if trend %}
+        &lt;div class="text-{{ trend_color }}-500 text-xs mt-2"&gt;
+            {{ trend }} vs mes anterior
+        &lt;/div&gt;
+    {% endif %}
+&lt;/div&gt;
 
-                <pre><code class="language-html">&lt;div class="w-32 h-32 rounded-full border-8 border-blue-100 border-t-blue-600 border-r-purple-400 transform -rotate-45"&gt;
-    &lt;!-- Contenido central --&gt;
-&lt;/div&gt;</code></pre>
+&lt;!-- Uso --&gt;
+{% include 'components/card.html' with title="Ventas" value="$50,000" trend="+12%" trend_color="green" %}
+</code></pre>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 5: GRAFICOS -->
+                <h2 id="graficos" class="text-3xl border-b pb-2">5. Visualización de Datos (Charts)</h2>
+
+                <p>Para gráficos profesionales, integra librerías como <strong>Chart.js</strong> o <strong>Apache ECharts</strong>. El truco es pasar los datos de Python a JS de forma segura usando <code>json_script</code>.</p>
+
+                <pre><code class="language-python"># views.py
+def dashboard_view(request):
+    context = {
+        'chart_labels': ['Ene', 'Feb', 'Mar'],
+        'chart_data': [100, 200, 150],
+    }
+    return render(request, 'dashboard.html', context)
+</code></pre>
+
+                <pre><code class="language-html">&lt;!-- dashboard.html --&gt;
+&lt;canvas id="myChart"&gt;&lt;/canvas&gt;
+
+&lt;!-- Inyectar datos de forma segura --&gt;
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_data|json_script:"chart-data" }}
+
+&lt;script&gt;
+    const labels = JSON.parse(document.getElementById('chart-labels').textContent);
+    const data = JSON.parse(document.getElementById('chart-data').textContent);
+
+    new Chart(document.getElementById('myChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{ label: 'Ventas', data: data }]
+        }
+    });
+&lt;/script&gt;
+</code></pre>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 6: REPORTES -->
+                <h2 id="reportes" class="text-3xl border-b pb-2">6. Generación de Reportes PDF (WeasyPrint)</h2>
+
+                <p>Un ERP necesita generar Facturas y Reportes. <strong>WeasyPrint</strong> es la mejor herramienta en Python para esto porque permite diseñar el PDF usando HTML y CSS estándar.</p>
+
+                <h3 class="text-2xl mt-6">Instalación</h3>
+                <pre><code class="language-bash">pip install weasyprint</code></pre>
+
+                <h3 class="text-2xl mt-6">Vista para Generar PDF</h3>
+                <pre><code class="language-python"># views.py
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+
+def invoice_pdf_view(request, invoice_id):
+    invoice = Invoice.objects.get(id=invoice_id)
+
+    # 1. Renderizar HTML a string
+    html_string = render_to_string('reports/invoice.html', {'invoice': invoice})
+
+    # 2. Generar PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename="invoice_{invoice.id}.pdf"'
+
+    HTML(string=html_string).write_pdf(response)
+    return response
+</code></pre>
+
+                <div class="pro-tip">
+                    <strong>Tip CSS para Impresión:</strong> Usa unidades absolutas (cm, mm, in) y la regla <code>@page</code> para definir márgenes y tamaño de papel en tu CSS.
+                </div>
+
+                <hr class="my-12 border-gray-200 dark:border-gray-700">
+
+                <!-- SECCION 7: RENDIMIENTO -->
+                <h2 id="rendimiento" class="text-3xl border-b pb-2">7. Optimización y Caché</h2>
+
+                <p>Cuando tienes dashboards complejos con muchas consultas, el tiempo de renderizado es crítico. Usa el tag <code>cache</code> para fragmentos costosos.</p>
+
+                <pre><code class="language-html">{% load cache %}
+
+&lt;!-- Caché del Sidebar por 10 minutos (600s) --&gt;
+{% cache 600 sidebar request.user.username %}
+    &lt;aside&gt;
+        &lt;!-- Consultas costosas para contar notificaciones, etc --&gt;
+        ...
+    &lt;/aside&gt;
+{% endcache %}
+</code></pre>
+
+                <p>Además, nunca olvides optimizar tus consultas en la vista antes de enviarlas al template:</p>
+                <pre><code class="language-python"># Evita el problema N+1 en loops
+queryset = Order.objects.select_related('customer').prefetch_related('items')
+</code></pre>
 
             </main>
 
@@ -247,5 +367,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
 </body>
 </html>
