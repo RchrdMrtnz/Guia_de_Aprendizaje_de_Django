@@ -18,8 +18,8 @@ class RegistroViewTest(TestCase):
         """Prueba que un usuario puede registrarse exitosamente con datos válidos."""
         datos = {
             'username': 'nuevousuario',
-            'password1': 'password123',
-            'password2': 'password123',
+            'password1': 'Str0ngP@ssw0rd!',
+            'password2': 'Str0ngP@ssw0rd!',
         }
         response = self.client.post(reverse('registro'), datos)
 
