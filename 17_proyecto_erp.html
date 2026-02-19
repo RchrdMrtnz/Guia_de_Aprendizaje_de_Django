@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>17. Dashboard ERP & Plantillas Avanzadas - Guía Django</title>
-    <meta name="description" content="Domina las plantillas de Django (DTL) creando un Dashboard ERP profesional con Tailwind CSS, HTMX, Alpine.js y generación de reportes PDF.">
+    <title>17. Dashboard ERP - Guía Django</title>
+    <meta name="description" content="Aprende a construir Dashboards ERP profesionales con Django: Analytics, Reportes PDF, Gráficos, Exportación de Datos y Optimización de Consultas.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -95,269 +95,102 @@
             <main class="prose prose-slate prose-lg max-w-none prose-headings:text-gray-900 dark:prose-headings:text-gray-100 dark:prose-p:text-gray-300 dark:prose-strong:text-white dark:prose-li:text-gray-300 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-pre:bg-gray-800 prose-pre:shadow-lg rounded-xl">
 
                 <h1 class="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-                    17. Dashboard ERP & Plantillas Avanzadas
+                    17. Dashboard ERP: Construyendo Sistemas de Gestión
                 </h1>
 
                 <p class="lead text-xl text-gray-600 dark:text-gray-400">
-                    Construir un Dashboard ERP moderno requiere más que HTML estático. En este capítulo profundizaremos en el <strong>Motor de Plantillas de Django (DTL)</strong> para optimizar rendimiento, integrar librerías de Frontend modernas como <strong>HTMX</strong> y <strong>Alpine.js</strong>, y generar reportes profesionales (PDF/Excel) utilizando todo el poder de Python.
+                    Desarrollar un Dashboard ERP (Enterprise Resource Planning) implica mucho más que simplemente mostrar datos en pantalla. Se trata de crear una herramienta de toma de decisiones que sea rápida, segura y capaz de manejar grandes volúmenes de información. En este capítulo, nos centraremos en la arquitectura de backend, la optimización de bases de datos para análisis, y la integración de herramientas de reporte profesional.
                 </p>
 
                 <!-- INDICE RAPIDO -->
                 <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg my-8 border border-gray-200 dark:border-gray-700">
-                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido Avanzado</h3>
+                    <h3 class="mt-0 mb-4 text-sm font-bold uppercase tracking-wide text-gray-500">Contenido del Capítulo</h3>
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <li><a href="#dtl-avanzado" class="no-underline hover:text-blue-600">🔹 1. DTL: Tags y Filtros Personalizados</a></li>
-                        <li><a href="#context-processors" class="no-underline hover:text-blue-600">🔹 2. Context Processors Globales</a></li>
-                        <li><a href="#frontend-moderno" class="no-underline hover:text-blue-600">🔹 3. Frontend Moderno: HTMX & Alpine.js</a></li>
-                        <li><a href="#componentes" class="no-underline hover:text-blue-600">🔹 4. Componentes UI Reutilizables</a></li>
-                        <li><a href="#graficos" class="no-underline hover:text-blue-600">🔹 5. Visualización de Datos (Charts)</a></li>
-                        <li><a href="#reportes" class="no-underline hover:text-blue-600">🔹 6. Generación de Reportes PDF (WeasyPrint)</a></li>
-                        <li><a href="#rendimiento" class="no-underline hover:text-blue-600">🔹 7. Optimización y Caché</a></li>
+                        <li><a href="#arquitectura" class="no-underline hover:text-blue-600">🔹 1. Arquitectura de Dashboards</a></li>
+                        <li><a href="#analytics-db" class="no-underline hover:text-blue-600">🔹 2. Diseño de DB para Analytics</a></li>
+                        <li><a href="#optimizacion" class="no-underline hover:text-blue-600">🔹 3. Optimización de Consultas</a></li>
+                        <li><a href="#chartjs" class="no-underline hover:text-blue-600">🔹 4. Visualización con Chart.js</a></li>
+                        <li><a href="#htmx-tables" class="no-underline hover:text-blue-600">🔹 5. Tablas Dinámicas (HTMX)</a></li>
+                        <li><a href="#pdf-weasyprint" class="no-underline hover:text-blue-600">🔹 6. Reportes PDF (WeasyPrint)</a></li>
+                        <li><a href="#exportacion" class="no-underline hover:text-blue-600">🔹 7. Exportación Masiva (Excel/CSV)</a></li>
+                        <li><a href="#cache" class="no-underline hover:text-blue-600">🔹 8. Estrategias de Caché</a></li>
+                        <li><a href="#seguridad" class="no-underline hover:text-blue-600">🔹 9. Seguridad Multitenant</a></li>
+                        <li><a href="#ui-ux" class="no-underline hover:text-blue-600">🔹 10. UI/UX para Alta Densidad</a></li>
                     </ul>
                 </div>
 
-                <!-- SECCION 1: DTL AVANZADO -->
-                <h2 id="dtl-avanzado" class="text-3xl border-b pb-2">1. DTL: Tags y Filtros Personalizados</h2>
+                <!-- 1. ARQUITECTURA -->
+                <h2 id="arquitectura" class="text-3xl border-b pb-2">1. Arquitectura de Dashboards (MVC & Servicios)</h2>
+                <p>
+                    Un error común al construir dashboards en Django es colocar lógica compleja de agregación directamente en las Vistas o, peor aún, en los Templates. La arquitectura ideal para un ERP separa claramente las responsabilidades. Las Vistas deben actuar estrictamente como controladores que orquestan la petición, delegan el procesamiento de datos a una <strong>Capa de Servicios</strong> o a <strong>Selectores</strong> especializados, y retornan un contexto limpio. Para un Dashboard, esto significa tener clases de servicio como `SalesAnalyticsService` o `InventoryReportService` que encapsulen métodos como `get_monthly_revenue()` o `calculate_churn_rate()`. Esto no solo hace que el código sea testeable de forma aislada (sin necesidad de mocks complejos de request/response), sino que permite reutilizar estas métricas en tareas asíncronas (Celery) o comandos de gestión sin duplicar la lógica de negocio.
+                </p>
 
-                <p>El motor de plantillas de Django es extensible. Cuando la lógica de presentación se vuelve compleja, evita ensuciar la vista o el modelo; crea tus propios <strong>Template Tags</strong>.</p>
+                <!-- 2. DISEÑO DB ANALYTICS -->
+                <h2 id="analytics-db" class="text-3xl border-b pb-2">2. Diseño de Bases de Datos para Analytics</h2>
+                <p>
+                    Los modelos relacionales normalizados (3NF) son excelentes para la integridad transaccional (OLTP), pero pueden ser ineficientes para consultas analíticas (OLAP) que requieren sumarizar millones de registros. En un entorno ERP, a menudo es necesario implementar estrategias híbridas. Esto puede incluir la creación de <strong>Vistas Materializadas</strong> (soportadas nativamente por PostgreSQL) que pre-calculan agregaciones complejas y se refrescan periódicamente. Otra técnica es la desnormalización controlada, donde se almacenan totales calculados en el modelo padre (ej. `total_ventas` en el modelo `Cliente`) y se actualizan mediante señales o transacciones atómicas. Entender cuándo romper la normalización para ganar rendimiento en lectura es una habilidad crítica para el arquitecto de software que diseña sistemas de alto tráfico.
+                </p>
 
-                <div class="architecture-note">
-                    <strong>Patrón de Diseño:</strong> Mantén la lógica de negocio en el modelo/servicio, pero la lógica de <em>presentación</em> (formato de moneda, insignias de estado) pertenece a los filtros y tags.
-                </div>
+                <!-- 3. OPTIMIZACION CONSULTAS -->
+                <h2 id="optimizacion" class="text-3xl border-b pb-2">3. Optimización de Consultas (ORM Avanzado)</h2>
+                <p>
+                    El problema "N+1" es el enemigo número uno del rendimiento en dashboards. Ocurre cuando Django ejecuta una consulta SQL adicional por cada objeto en un bucle (por ejemplo, acceder a `venta.cliente.nombre` dentro de un loop de ventas). Para evitar esto, es obligatorio dominar `select_related()` (para relaciones ForeignKey/OneToOne) y `prefetch_related()` (para ManyToMany/Reverse FK). Además, para métricas, el uso de `.annotate()` y `.aggregate()` permite realizar cálculos de suma, promedio y conteo directamente en la base de datos, lo cual es órdenes de magnitud más rápido que traer todos los objetos a Python y sumarlos en memoria. Herramientas como `django-debug-toolbar` o `silk` son indispensables para auditar y perfilar estas consultas durante el desarrollo.
+                </p>
+                <pre><code class="language-python"># Malo: N+1 queries, cálculo en Python
+ventas = Venta.objects.all()
+total = sum(v.monto for v in ventas)
 
-                <h3 class="text-2xl mt-6">Estructura del Directorio</h3>
-                <pre><code class="language-bash">mi_app/
-├── templatetags/
-│   ├── __init__.py
-│   ├── dashboard_extras.py  <-- Tu archivo de tags
+# Bueno: 1 query, cálculo en DB
+from django.db.models import Sum
+total = Venta.objects.aggregate(Sum('monto'))['monto__sum']
 </code></pre>
 
-                <h3 class="text-2xl mt-6">Ejemplo: Filtro de Formato de Moneda y Badge de Estado</h3>
-                <pre><code class="language-python"># mi_app/templatetags/dashboard_extras.py
-from django import template
-from django.utils.safestring import mark_safe
+                <!-- 4. VISUALIZACION CHART.JS -->
+                <h2 id="chartjs" class="text-3xl border-b pb-2">4. Visualización de Datos con Chart.js</h2>
+                <p>
+                    Renderizar gráficos interactivos requiere pasar datos del backend (Python) al frontend (JavaScript) de manera segura. Chart.js es el estándar de la industria por su flexibilidad y rendimiento en canvas HTML5. La forma correcta de integrar esto en Django no es concatenando strings en el template, lo cual es vulnerable a XSS, sino utilizando el filtro `json_script`. Este filtro serializa los datos de Python a JSON y los coloca en una etiqueta `<script>` con un ID específico. Luego, en tu archivo JavaScript, puedes parsear este contenido de forma segura. Esto desacopla la lógica de obtención de datos de la lógica de renderizado visual, permitiendo que diseñadores frontend trabajen en la configuración del gráfico sin tocar el código Python.
+                </p>
 
-register = template.Library()
+                <!-- 5. TABLAS DINAMICAS HTMX -->
+                <h2 id="htmx-tables" class="text-3xl border-b pb-2">5. Tablas Dinámicas con HTMX</h2>
+                <p>
+                    Las tablas de datos en un ERP moderno deben permitir filtrado, ordenamiento y paginación sin recargar la página completa. Tradicionalmente, esto requería construir una API REST completa y un frontend complejo en React/Vue. Con <strong>HTMX</strong>, podemos lograr esto manteniendo el renderizado en el servidor. Al interceptar los eventos de clic en los encabezados de columna o en la paginación, HTMX solicita al servidor solo el HTML parcial de las nuevas filas de la tabla y reemplaza el contenido del cuerpo de la tabla (`<tbody>`). Esto reduce drásticamente la complejidad del desarrollo, elimina la necesidad de sincronizar estado entre cliente y servidor, y mejora el tiempo de primera pintura (First Contentful Paint) al enviar HTML listo para ser visualizado.
+                </p>
 
-@register.filter(name='currency')
-def currency(value):
-    """Formatea un número como moneda local (ej. $1,200.50)"""
-    try:
-        return f"${float(value):,.2f}"
-    except (ValueError, TypeError):
-        return value
+                <!-- 6. REPORTES PDF WEASYPRINT -->
+                <h2 id="pdf-weasyprint" class="text-3xl border-b pb-2">6. Reportes PDF Profesionales (WeasyPrint)</h2>
+                <p>
+                    La generación de documentos inmutables como facturas, órdenes de compra y reportes fiscales es un requisito no negociable en sistemas ERP. <strong>WeasyPrint</strong> es la herramienta predilecta en el ecosistema Python porque permite diseñar estos documentos utilizando HTML y CSS estándar, incluyendo soporte para Paged Media (paginación, encabezados y pies de página repetidos). A diferencia de librerías antiguas como ReportLab que requerían "dibujar" el PDF programáticamente coordenada por coordenada, WeasyPrint renderiza un template de Django directamente a PDF. Esto permite reutilizar los estilos de tu marca y la lógica de tus templates existentes, asegurando consistencia visual entre la versión web y la versión impresa de tus documentos.
+                </p>
 
-@register.simple_tag
-def status_badge(status):
-    """Renderiza un badge Tailwind según el estado"""
-    colors = {
-        'active': 'bg-green-100 text-green-800',
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'danger': 'bg-red-100 text-red-800',
-    }
-    color_class = colors.get(status, 'bg-gray-100 text-gray-800')
-    html = f'<span class="px-2 py-1 text-xs font-bold rounded-full {color_class}">{status.upper()}</span>'
-    return mark_safe(html)
-</code></pre>
+                <!-- 7. EXPORTACION DATOS -->
+                <h2 id="exportacion" class="text-3xl border-b pb-2">7. Exportación Masiva (Excel/CSV)</h2>
+                <p>
+                    Los analistas de negocio frecuentemente necesitan exportar datos crudos para manipularlos en Excel. Cuando la base de datos crece, generar un archivo con 100,000 filas puede consumir toda la memoria RAM del servidor y causar un error de "Timeout". La solución es utilizar `StreamingHttpResponse`. Esta clase especial de respuesta HTTP permite a Django enviar los datos al navegador en pequeños "chunks" o fragmentos a medida que se generan, en lugar de esperar a que todo el archivo se construya en memoria. Utilizando la librería `csv` de Python o generadores personalizados, podemos iterar sobre un QuerySet masivo y escribir línea por línea en el stream de respuesta, manteniendo el uso de memoria bajo y constante, independientemente del tamaño del dataset.
+                </p>
 
-                <p>Uso en la plantilla:</p>
-                <pre><code class="language-html">{% load dashboard_extras %}
+                <!-- 8. CACHE -->
+                <h2 id="cache" class="text-3xl border-b pb-2">8. Estrategias de Caché de Vistas y Fragmentos</h2>
+                <p>
+                    Un dashboard en tiempo real es ideal, pero costoso. Calcular métricas financieras complejas cada vez que un usuario recarga la página puede tumbar la base de datos. La estrategia de caché es vital. Django ofrece caché a varios niveles: caché de sitio completo, caché por vista y, lo más útil para dashboards, <strong>caché de fragmentos</strong>. Usando el template tag `{% cache 600 'nombre_widget' %}`, podemos almacenar el resultado HTML de un widget costoso (ej. "Ventas por Región") en Redis o Memcached por 10 minutos. El resto de la página se renderiza dinámicamente, pero esa sección pesada se sirve desde la memoria RAM instantáneamente. Es crucial definir estrategias de invalidación de caché correctas para que los usuarios no vean datos obsoletos cuando realmente importa.
+                </p>
 
-&lt;td&gt;{{ invoice.total|currency }}&lt;/td&gt;
-&lt;td&gt;{% status_badge invoice.status %}&lt;/td&gt;
-</code></pre>
+                <!-- 9. SEGURIDAD MULTITENANT -->
+                <h2 id="seguridad" class="text-3xl border-b pb-2">9. Seguridad y Permisos a Nivel de Objeto</h2>
+                <p>
+                    En sistemas ERP SaaS (Software as a Service) o grandes corporaciones, es imperativo que un gerente de ventas de la "Región Norte" no vea los datos de la "Región Sur". El decorador `@login_required` no es suficiente. Necesitamos implementar seguridad a nivel de fila (Row-Level Security). Esto se logra a menudo sobrescribiendo el método `get_queryset` en las vistas genéricas para filtrar automáticamente los datos según el usuario autenticado (`return Venta.objects.filter(region=self.request.user.region)`). Además, librerías como `django-guardian` permiten asignar permisos específicos ("puede_ver_reporte_financiero") a usuarios o grupos sobre instancias concretas de modelos, ofreciendo una granularidad de control de acceso mucho más fina que el sistema de permisos por defecto de Django.
+                </p>
 
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 2: CONTEXT PROCESSORS -->
-                <h2 id="context-processors" class="text-3xl border-b pb-2">2. Context Processors Globales</h2>
-
-                <p>Si necesitas una variable disponible en <strong>todas</strong> las plantillas (como el nombre de la empresa, el año actual, o notificaciones no leídas), usa un Context Processor.</p>
-
-                <pre><code class="language-python"># context_processors.py
-def global_settings(request):
-    return {
-        'SITE_NAME': 'Mi ERP Corporativo',
-        'SUPPORT_EMAIL': 'soporte@mierp.com',
-        'IS_PRODUCTION': not settings.DEBUG
-    }
-</code></pre>
-
-                <p>Regístralo en <code>settings.py</code>:</p>
-                <pre><code class="language-python">TEMPLATES = [{
-    'OPTIONS': {
-        'context_processors': [
-            # ...
-            'mi_app.context_processors.global_settings',
-        ],
-    },
-}]
-</code></pre>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 3: FRONTEND MODERNO -->
-                <h2 id="frontend-moderno" class="text-3xl border-b pb-2">3. Frontend Moderno: HTMX & Alpine.js</h2>
-
-                <p>Para aplicaciones modernas, ya no es necesario convertir todo a React/Vue. Podemos mantener el renderizado en Django y añadir interactividad con <strong>HTMX</strong> y <strong>Alpine.js</strong>.</p>
-
-                <h3 class="text-2xl mt-6">HTMX: AJAX Declarativo</h3>
-                <p>Permite actualizar partes de la página sin recargarla. Ideal para búsquedas en tiempo real o formularios modales.</p>
-
-                <pre><code class="language-html">&lt;!-- Input de Búsqueda --&gt;
-&lt;input type="text"
-       name="q"
-       hx-get="/buscar-clientes/"
-       hx-trigger="keyup changed delay:500ms"
-       hx-target="#resultados"
-       placeholder="Buscar cliente..."
-       class="border p-2 rounded"&gt;
-
-&lt;!-- Área de Resultados --&gt;
-&lt;div id="resultados"&gt;
-    {% include 'partials/lista_clientes.html' %}
-&lt;/div&gt;
-</code></pre>
-
-                <h3 class="text-2xl mt-6">Alpine.js: Interactividad Ligera</h3>
-                <p>Maneja el estado del UI (abrir/cerrar dropdowns, modales) directamente en el HTML.</p>
-
-                <pre><code class="language-html">&lt;div x-data="{ open: false }" class="relative"&gt;
-    &lt;button @click="open = !open" class="btn-primary"&gt;Opciones&lt;/button&gt;
-
-    &lt;div x-show="open"
-         @click.away="open = false"
-         class="absolute bg-white shadow-lg p-4 mt-2"&gt;
-        &lt;a href="#"&gt;Editar Perfil&lt;/a&gt;
-        &lt;a href="#"&gt;Cerrar Sesión&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 4: COMPONENTES UI -->
-                <h2 id="componentes" class="text-3xl border-b pb-2">4. Componentes UI Reutilizables</h2>
-
-                <p>Para evitar repetir código HTML/Tailwind, utiliza el tag <code>{% include %}</code> con parámetros. Para casos más complejos, considera librerías como <strong>django-components</strong> o <strong>slippers</strong>.</p>
-
-                <div class="pro-tip">
-                    <strong>Tip Pro:</strong> Usa <code>with</code> para pasar variables locales al componente sin contaminar el contexto global.
-                </div>
-
-                <pre><code class="language-html">&lt;!-- components/card.html --&gt;
-&lt;div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 {{ extra_classes }}"&gt;
-    &lt;h3 class="text-gray-500 text-sm mb-1"&gt;{{ title }}&lt;/h3&gt;
-    &lt;div class="text-2xl font-bold text-gray-900"&gt;{{ value }}&lt;/div&gt;
-    {% if trend %}
-        &lt;div class="text-{{ trend_color }}-500 text-xs mt-2"&gt;
-            {{ trend }} vs mes anterior
-        &lt;/div&gt;
-    {% endif %}
-&lt;/div&gt;
-
-&lt;!-- Uso --&gt;
-{% include 'components/card.html' with title="Ventas" value="$50,000" trend="+12%" trend_color="green" %}
-</code></pre>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 5: GRAFICOS -->
-                <h2 id="graficos" class="text-3xl border-b pb-2">5. Visualización de Datos (Charts)</h2>
-
-                <p>Para gráficos profesionales, integra librerías como <strong>Chart.js</strong> o <strong>Apache ECharts</strong>. El truco es pasar los datos de Python a JS de forma segura usando <code>json_script</code>.</p>
-
-                <pre><code class="language-python"># views.py
-def dashboard_view(request):
-    context = {
-        'chart_labels': ['Ene', 'Feb', 'Mar'],
-        'chart_data': [100, 200, 150],
-    }
-    return render(request, 'dashboard.html', context)
-</code></pre>
-
-                <pre><code class="language-html">&lt;!-- dashboard.html --&gt;
-&lt;canvas id="myChart"&gt;&lt;/canvas&gt;
-
-&lt;!-- Inyectar datos de forma segura --&gt;
-{{ chart_labels|json_script:"chart-labels" }}
-{{ chart_data|json_script:"chart-data" }}
-
-&lt;script&gt;
-    const labels = JSON.parse(document.getElementById('chart-labels').textContent);
-    const data = JSON.parse(document.getElementById('chart-data').textContent);
-
-    new Chart(document.getElementById('myChart'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{ label: 'Ventas', data: data }]
-        }
-    });
-&lt;/script&gt;
-</code></pre>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 6: REPORTES -->
-                <h2 id="reportes" class="text-3xl border-b pb-2">6. Generación de Reportes PDF (WeasyPrint)</h2>
-
-                <p>Un ERP necesita generar Facturas y Reportes. <strong>WeasyPrint</strong> es la mejor herramienta en Python para esto porque permite diseñar el PDF usando HTML y CSS estándar.</p>
-
-                <h3 class="text-2xl mt-6">Instalación</h3>
-                <pre><code class="language-bash">pip install weasyprint</code></pre>
-
-                <h3 class="text-2xl mt-6">Vista para Generar PDF</h3>
-                <pre><code class="language-python"># views.py
-from django.template.loader import render_to_string
-from django.http import HttpResponse
-from weasyprint import HTML
-
-def invoice_pdf_view(request, invoice_id):
-    invoice = Invoice.objects.get(id=invoice_id)
-
-    # 1. Renderizar HTML a string
-    html_string = render_to_string('reports/invoice.html', {'invoice': invoice})
-
-    # 2. Generar PDF
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'filename="invoice_{invoice.id}.pdf"'
-
-    HTML(string=html_string).write_pdf(response)
-    return response
-</code></pre>
-
-                <div class="pro-tip">
-                    <strong>Tip CSS para Impresión:</strong> Usa unidades absolutas (cm, mm, in) y la regla <code>@page</code> para definir márgenes y tamaño de papel en tu CSS.
-                </div>
-
-                <hr class="my-12 border-gray-200 dark:border-gray-700">
-
-                <!-- SECCION 7: RENDIMIENTO -->
-                <h2 id="rendimiento" class="text-3xl border-b pb-2">7. Optimización y Caché</h2>
-
-                <p>Cuando tienes dashboards complejos con muchas consultas, el tiempo de renderizado es crítico. Usa el tag <code>cache</code> para fragmentos costosos.</p>
-
-                <pre><code class="language-html">{% load cache %}
-
-&lt;!-- Caché del Sidebar por 10 minutos (600s) --&gt;
-{% cache 600 sidebar request.user.username %}
-    &lt;aside&gt;
-        &lt;!-- Consultas costosas para contar notificaciones, etc --&gt;
-        ...
-    &lt;/aside&gt;
-{% endcache %}
-</code></pre>
-
-                <p>Además, nunca olvides optimizar tus consultas en la vista antes de enviarlas al template:</p>
-                <pre><code class="language-python"># Evita el problema N+1 en loops
-queryset = Order.objects.select_related('customer').prefetch_related('items')
-</code></pre>
+                <!-- 10. UI/UX HIGH DENSITY -->
+                <h2 id="ui-ux" class="text-3xl border-b pb-2">10. Diseño UI/UX para Alta Densidad de Datos</h2>
+                <p>
+                    El diseño de interfaces para aplicaciones empresariales difiere radicalmente del diseño de sitios de marketing. El objetivo es la eficiencia y la densidad de información. Utilizar frameworks CSS como <strong>Tailwind CSS</strong> facilita la creación de layouts complejos con CSS Grid que se adaptan a diferentes tamaños de pantalla. Es importante priorizar la legibilidad: usar fuentes monoespaciadas para tablas numéricas (para alinear decimales), colores semánticos (rojo para pérdidas, verde para ganancias) y evitar el "ruido visual" innecesario. Un buen dashboard debe permitir al usuario escanear rápidamente los KPIs principales en la parte superior y profundizar en los detalles mediante tablas y filtros en la parte inferior, siguiendo el patrón de diseño "Overview first, zoom and filter, then details-on-demand".
+                </p>
 
             </main>
 
             <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
-                <p>&copy; 2024 Guía Definitiva de Django. Proyectos Reales.</p>
+                <p>&copy; 2024 Guía Definitiva de Django. Dashboard ERP.</p>
             </footer>
         </div>
     </div>
@@ -367,7 +200,5 @@ queryset = Order.objects.select_related('customer').prefetch_related('items')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
 </body>
 </html>
