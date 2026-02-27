@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -19,7 +19,6 @@ class CustomUser(AbstractUser):
         is_new = self.pk is None
         super().save(*args, **kwargs)
         if is_new and self.role:
-            from django.contrib.auth.models import Group
             # Usamos filter().first() para evitar crash si el grupo no existe aún (ej: bootstrapping)
             group = Group.objects.filter(name=self.role).first()
             if group:
