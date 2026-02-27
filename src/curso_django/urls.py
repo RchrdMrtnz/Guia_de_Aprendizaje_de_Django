@@ -20,7 +20,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # Incluye las URLs de autenticación por defecto de Django (login, logout, password_reset, etc.)
+    # Incluye las URLs de autenticación por defecto de Django
+    # (login, logout, password_reset, etc.)
     path("accounts/", include("django.contrib.auth.urls")),
     path("", include("proyectos_reales.urls")),
     path("", include("conceptos_basicos.urls")),

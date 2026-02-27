@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class RegistroViewTest(TestCase):
     def test_registro_page_loads(self):
         """Prueba que se puede acceder a la página de registro (GET)."""
@@ -51,6 +52,7 @@ class RegistroViewTest(TestCase):
         # Verificar que hay errores en el formulario
         form = response.context['form']
         self.assertTrue(form.errors)
-        # UserCreationForm pone el error de coincidencia en __all__ o en password2 dependiendo de la versión
+        # UserCreationForm pone el error de coincidencia en __all__
+        # o en password2 dependiendo de la versión
         # Pero podemos verificar que el form no es válido.
         self.assertFalse(form.is_valid())

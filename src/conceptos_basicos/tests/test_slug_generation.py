@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from conceptos_basicos.models import Curso
 import datetime
 
+
 class CursoSlugTest(TestCase):
     def test_basic_slug_generation(self):
         """Checks that a normal title generates the expected slug."""

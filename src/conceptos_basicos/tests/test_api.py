@@ -7,10 +7,15 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class CursoAPITests(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.categoria = Categoria.objects.create(nombre="Test Categoria", slug="test-cat")
+        self.user = User.objects.create_user(
+            username='testuser', password='testpassword'
+        )
+        self.categoria = Categoria.objects.create(
+            nombre="Test Categoria", slug="test-cat"
+        )
         self.curso_data = {
             "titulo": "Curso API Test",
             "descripcion": "Descripcion de prueba",
@@ -43,7 +48,9 @@ class CursoAPITests(APITestCase):
         response = self.client.post(url, self.curso_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Curso.objects.count(), 2)
-        self.assertEqual(Curso.objects.get(titulo="Curso API Test").categoria, self.categoria)
+        self.assertEqual(
+            Curso.objects.get(titulo="Curso API Test").categoria, self.categoria
+        )
 
     def test_unauthenticated_access_denied(self):
         url = reverse('curso-list')

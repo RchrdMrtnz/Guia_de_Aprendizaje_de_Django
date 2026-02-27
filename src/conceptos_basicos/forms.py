@@ -2,6 +2,7 @@ from django import forms
 from .models import Curso
 from django.core.exceptions import ValidationError
 
+
 class CursoForm(forms.ModelForm):
     class Meta:
         model = Curso
@@ -18,5 +19,7 @@ class CursoForm(forms.ModelForm):
         """Validación personalizada: Evitar títulos todo en mayúsculas."""
         titulo = self.cleaned_data.get('titulo')
         if titulo.isupper():
-            raise ValidationError("El título no puede estar escrito completamente en mayúsculas.")
+            raise ValidationError(
+                "El título no puede estar escrito completamente en mayúsculas."
+            )
         return titulo

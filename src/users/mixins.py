@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
+
 class TeacherRequiredMixin(PermissionRequiredMixin):
     """
     Mixin para asegurar que el usuario tenga permisos de profesor.
