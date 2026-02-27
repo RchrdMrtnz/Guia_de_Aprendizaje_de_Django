@@ -55,7 +55,7 @@ class Curso(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Precio")
     publicado = models.BooleanField(default=False, verbose_name="¿Publicado?")
 
-    fecha_inicio = models.DateField(verbose_name="Fecha de Inicio")
+    fecha_inicio = models.DateField(db_index=True, verbose_name="Fecha de Inicio")
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
