@@ -4,11 +4,16 @@ from conceptos_basicos.models import Curso, Categoria, Estudiante, PerfilEstudia
 from django.utils import timezone
 import datetime
 
+
 class ORMAvanzadoTest(TestCase):
     def setUp(self):
         # Setup Data
-        self.cat_web = Categoria.objects.create(nombre="Desarrollo Web", slug="desarrollo-web")
-        self.cat_data = Categoria.objects.create(nombre="Data Science", slug="data-science")
+        self.cat_web = Categoria.objects.create(
+            nombre="Desarrollo Web", slug="desarrollo-web"
+        )
+        self.cat_data = Categoria.objects.create(
+            nombre="Data Science", slug="data-science"
+        )
 
         self.curso_django = Curso.objects.create(
             titulo="Django Experto",
@@ -42,7 +47,9 @@ class ORMAvanzadoTest(TestCase):
         self.est1.cursos.add(self.curso_django, self.curso_python)
         self.est2.cursos.add(self.curso_python)
 
-        PerfilEstudiante.objects.create(estudiante=self.est1, bio="Pythonista", website="http://juan.dev")
+        PerfilEstudiante.objects.create(
+            estudiante=self.est1, bio="Pythonista", website="http://juan.dev"
+        )
 
     def test_filtrado_basico(self):
         """Demuestra filter, exclude y get"""
@@ -65,15 +72,16 @@ class ORMAvanzadoTest(TestCase):
         web_courses = Curso.objects.filter(titulo__icontains="django")
         self.assertTrue(web_courses.exists())
 
-        # Relación inversa y spanning (buscando cursos de una categoria por nombre de categoria)
+        # Relación inversa y spanning (buscando cursos de una categoria por
+        # nombre de categoria)
         cursos_web = Curso.objects.filter(categoria__nombre="Desarrollo Web")
-        self.assertEqual(cursos_web.count(), 2) # Django + Borrador
+        self.assertEqual(cursos_web.count(), 2)  # Django + Borrador
 
     def test_consultas_complejas_Q(self):
         """Demuestra uso de Q objects para OR"""
         # Cursos que son GRATIS O son NIVEL AVANZADO
         query = Curso.objects.filter(Q(precio=0) | Q(nivel="AVANZADO"))
-        self.assertEqual(query.count(), 2) # Python (Gratis) + Django (Avanzado)
+        self.assertEqual(query.count(), 2)  # Python (Gratis) + Django (Avanzado)
 
     def test_agregacion(self):
         """Demuestra Avg, Count"""
@@ -85,7 +93,7 @@ class ORMAvanzadoTest(TestCase):
         # Anotación: Contar estudiantes por curso
         cursos_con_conteo = Curso.objects.annotate(num_estudiantes=Count('estudiantes'))
         c_python = cursos_con_conteo.get(titulo="Python Básico")
-        self.assertEqual(c_python.num_estudiantes, 2) # Juan y Maria
+        self.assertEqual(c_python.num_estudiantes, 2)  # Juan y Maria
 
     def test_actualizacion_F(self):
         """Demuestra expresiones F para updates atómicos"""

@@ -3,6 +3,7 @@ from django.urls import reverse
 from users.models import CustomUser
 from django.contrib.auth.models import Group
 
+
 class PermissionTests(TestCase):
     def setUp(self):
         # Create users

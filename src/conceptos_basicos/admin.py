@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Curso, Estudiante
 
+
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'fecha_inicio', 'creado_en', 'es_reciente_display')
@@ -18,12 +19,18 @@ class CursoAdmin(admin.ModelAdmin):
         return obj.es_reciente
 
     def marcar_como_archivado(self, request, queryset):
-        # Ejemplo de acción personalizada (aunque no tenemos campo 'archivado', es demostrativo)
-        self.message_user(request, f"{queryset.count()} cursos seleccionados para archivar.")
-    marcar_como_archivado.short_description = "Marcar cursos seleccionados como archivados"
+        # Ejemplo de acción personalizada (aunque no tenemos campo 'archivado',
+        # es demostrativo)
+        self.message_user(
+            request, f"{queryset.count()} cursos seleccionados para archivar."
+        )
+    marcar_como_archivado.short_description = (
+        "Marcar cursos seleccionados como archivados"
+    )
+
 
 @admin.register(Estudiante)
 class EstudianteAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'email', 'fecha_registro')
     search_fields = ('nombre', 'email')
-    filter_horizontal = ('cursos',) # Widget mejorado para ManyToMany
+    filter_horizontal = ('cursos',)  # Widget mejorado para ManyToMany
