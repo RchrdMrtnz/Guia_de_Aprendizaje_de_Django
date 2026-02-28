@@ -71,7 +71,7 @@ class Curso(models.Model):
     )
     publicado = models.BooleanField(default=False, verbose_name="¿Publicado?")
 
-    fecha_inicio = models.DateField(verbose_name="Fecha de Inicio")
+    fecha_inicio = models.DateField(db_index=True, verbose_name="Fecha de Inicio")
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
