@@ -69,6 +69,12 @@ class VistasTest(TestCase):
         self.assertContains(response, "Curso de Prueba")
         self.assertContains(response, "Descripcion de prueba")
 
+    def test_detalle_curso_404(self):
+        """Prueba que la vista de detalle devuelve 404 para un ID inexistente."""
+        url = reverse('detalle_curso', args=[9999])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
     def test_lista_cursos_cbv(self):
         """Prueba la Class Based View de lista con template."""
         url = reverse('curso_list_cbv')
@@ -84,6 +90,12 @@ class VistasTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "conceptos_basicos/curso_detail.html")
         self.assertContains(response, self.curso.titulo)
+
+    def test_detalle_curso_cbv_404(self):
+        """Prueba que la CBV de detalle devuelve 404 para un slug inexistente."""
+        url = reverse('curso_detail_cbv', args=['slug-inexistente'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_crear_curso_requiere_login(self):
         """Prueba que crear curso redirige al login si no estás autenticado."""
