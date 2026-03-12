@@ -97,7 +97,7 @@ class ORMAvanzadoTest(TestCase):
 
     def test_actualizacion_F(self):
         """Demuestra expresiones F para updates atómicos"""
-        # Aumentar precio de todos los cursos web en un 10%
+        # Incrementa el precio de los cursos de la categoría web en un 10%
         Curso.objects.filter(categoria=self.cat_web).update(precio=F('precio') * 1.1)
 
         self.curso_django.refresh_from_db()

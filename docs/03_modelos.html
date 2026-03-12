@@ -222,7 +222,7 @@ for c in cursos:
 <p>Actualizar un campo basándose en su valor actual, directamente en la base de datos (sin race conditions).</p>
 <pre><code class="language-python">from django.db.models import F
 
-# Aumentar el precio de TODOS los cursos en un 10%
+# Incrementa el precio de cada curso en un 10%
 Curso.objects.update(precio=F('precio') * 1.1)
 </code></pre>
 
