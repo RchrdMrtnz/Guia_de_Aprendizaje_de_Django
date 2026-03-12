@@ -73,4 +73,4 @@ class CursoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Curso.objects.with_es_reciente().all()
+        return Curso.objects.with_es_reciente().select_related('categoria').all()
