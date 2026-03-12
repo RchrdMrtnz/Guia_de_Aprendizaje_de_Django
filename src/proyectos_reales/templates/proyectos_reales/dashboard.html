@@ -116,7 +116,7 @@
             </div>
             <!-- Placeholder for Chart -->
             <div class="h-64 flex items-end justify-between gap-2 px-4">
-                 {% for i in "123456789012" %}
+                 {% for i in chart_range %}
                     <div class="w-full bg-blue-50 rounded-t-lg relative group h-full flex flex-col justify-end">
                         <div class="w-full bg-blue-600 rounded-t-lg transition-all duration-300 hover:bg-blue-700" style="height: {{ forloop.counter }}0%;"></div>
                     </div>
