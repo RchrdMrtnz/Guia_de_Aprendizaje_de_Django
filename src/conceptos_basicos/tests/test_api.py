@@ -68,6 +68,12 @@ class CursoAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['titulo'], self.curso.titulo)
 
+    def test_retrieve_curso_404(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('curso-detail', args=[9999])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_update_curso(self):
         self.client.force_authenticate(user=self.user)
         url = reverse('curso-detail', args=[self.curso.id])
